@@ -1,0 +1,51 @@
+<view class="page browse">
+  <view class="paper-grain" />
+
+  <navigator class="browse-search" url="/pages/search/search" hover-class="none">
+    <image class="browse-search-icon" src="/assets/figma-browse/icon-2.svg" mode="aspectFit" />
+    <text>搜索诗名、作者、朝代</text>
+  </navigator>
+
+  <view class="filters">
+    <view class="filter-row" wx:for="{{groups}}" wx:for-item="group" wx:key="key">
+      <text class="filter-label">{{group.label}}</text>
+      <scroll-view class="filter-scroll" scroll-x enable-flex>
+        <view class="filter-chips">
+          <view
+            class="chip {{group.value === option ? 'chip--on' : ''}}"
+            wx:for="{{group.options}}"
+            wx:for-item="option"
+            wx:key="*this"
+            data-key="{{group.key}}"
+            data-value="{{option}}"
+            bindtap="onFilter"
+            aria-label="{{group.label}} {{option}}"
+          >{{option}}</view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="result-count">{{list.length}} 首诗词</view>
+
+  <view class="pc-list">
+    <view class="pc-card" wx:for="{{list}}" wx:key="id" bindtap="goPoem" data-id="{{item.id}}">
+      <view class="pc-img" style="background:{{item.coverBg}}" />
+      <view class="pc-main">
+        <text class="pc-title serif">《{{item.title}}》</text>
+        <text class="pc-sub">{{item.author}} · {{item.dynasty}}</text>
+        <view class="pc-tags"><text class="pc-tag pc-tag--green">{{item.genre}}</text><text class="pc-tag pc-tag--gold">{{item.stage}}</text></view>
+      </view>
+      <view
+        class="pc-star {{item.fav ? 'is-on' : ''}}"
+        catchtap="toggleFav"
+        data-id="{{item.id}}"
+        aria-label="{{item.fav ? '取消收藏' : '收藏'}}{{item.title}}"
+      />
+    </view>
+
+    <view class="pc-empty" wx:if="{{list.length === 0}}">
+      <text>没有符合条件的诗词，试试放宽筛选</text>
+    </view>
+  </view>
+</view>

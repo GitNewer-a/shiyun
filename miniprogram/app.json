@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/launch/launch",
+    "pages/home/home",
+    "pages/browse/browse",
+    "pages/learn/learn",
+    "pages/growth/growth",
+    "pages/poem/poem",
+    "pages/practice/practice",
+    "pages/recite/recite",
+    "pages/profile/profile",
+    "pages/progress/progress",
+    "pages/favorites/favorites",
+    "pages/search/search",
+    "pages/category/category",
+    "pages/textbook/textbook",
+    "pages/exam/exam",
+    "pages/achieve/achieve",
+    "pages/task/task"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F8F4EA",
+    "navigationBarTitleText": "诗韵",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F8F4EA"
+  },
+  "tabBar": {
+    "color": "#7E8785",
+    "selectedColor": "#C94A4A",
+    "backgroundColor": "#FFFDF8",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/browse/browse", "text": "诗词库" },
+      { "pagePath": "pages/learn/learn", "text": "学习" },
+      { "pagePath": "pages/profile/profile", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

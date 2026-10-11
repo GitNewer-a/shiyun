@@ -1,0 +1,144 @@
+<view class="page">
+  <view class="nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="nav-back" bindtap="goBack" hover-class="is-press">
+        <view class="nav-arrow" />
+      </view>
+      <text class="nav-title">学习成长</text>
+      <view class="nav-side" />
+    </view>
+  </view>
+
+  <scroll-view class="scroll" scroll-y show-scrollbar="{{false}}">
+    <view style="height: {{navOffset}}px;" />
+    <view class="level-card" bindtap="onLevel" hover-class="is-press">
+      <view class="level-top">
+        <view class="level-copy">
+          <text class="lv">Lv.{{level.lv}}</text>
+          <text class="lv-name">{{level.name}}</text>
+        </view>
+        <view class="badge">
+          <view class="badge-ring">
+            <text class="badge-char">诗</text>
+          </view>
+        </view>
+      </view>
+      <text class="xp">{{level.xp}} / {{level.xpMax}} XP</text>
+      <view class="bar">
+        <view class="bar-fill" style="width: {{level.percent}}%;" />
+      </view>
+      <text class="xp-hint">{{level.hint}}</text>
+    </view>
+
+    <view class="sec">
+      <text class="sec-title">学习概览</text>
+      <view class="ov-card">
+        <view class="ov-item" wx:for="{{overview}}" wx:key="key">
+          <view class="ov-ico ov-ico--{{item.key}}" />
+          <view class="ov-num-row">
+            <text class="ov-num">{{item.num}}</text>
+            <text class="ov-unit" wx:if="{{item.unit}}">{{item.unit}}</text>
+          </view>
+          <text class="ov-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="sec">
+      <view class="sec-head" bindtap="toggleCalendar" hover-class="is-press">
+        <text class="sec-title">学习日历</text>
+        <view class="chev {{calendarOpen ? 'is-up' : ''}}" />
+      </view>
+      <view class="fold {{calendarOpen ? 'is-open' : ''}}">
+        <view class="cal-card">
+          <text class="cal-month">{{monthLabel}}</text>
+          <view class="cal-week">
+            <text class="cal-wd" wx:for="{{weekdays}}" wx:key="*this">{{item}}</text>
+          </view>
+          <view class="cal-grid">
+            <view
+              class="cal-cell {{item.empty ? 'is-empty' : ''}} {{item.studied ? 'is-on d' + item.density : ''}}"
+              wx:for="{{cells}}"
+              wx:key="id"
+              data-day="{{item.day}}"
+              data-studied="{{item.studied}}"
+              bindtap="onDay"
+            >
+              <text wx:if="{{!item.empty}}">{{item.day}}</text>
+            </view>
+          </view>
+          <view class="streak" wx:if="{{!isEmpty}}">
+            <text class="streak-mark">续</text>
+            <text class="streak-text">已连续学习 {{streak}} 天</text>
+          </view>
+          <text class="empty-note" wx:else>今天开始学习，留下你的第一个足迹吧</text>
+        </view>
+      </view>
+      <view class="summary" wx:if="{{!calendarOpen && !isEmpty}}">
+        <text class="streak-mark">续</text>
+        <text>已连续学习 {{streak}} 天</text>
+      </view>
+      <text class="summary" wx:elif="{{!calendarOpen}}">今天开始学习，留下你的第一个足迹吧</text>
+    </view>
+
+    <view class="sec">
+      <view class="sec-head" bindtap="toggleAchieve" hover-class="is-press">
+        <text class="sec-title">学习成果</text>
+        <view class="chev {{achieveOpen ? 'is-up' : ''}}" />
+      </view>
+      <text class="summary" wx:if="{{!achieveOpen}}">{{achieveSummary}}</text>
+      <view class="fold {{achieveOpen ? 'is-open' : ''}}">
+        <view class="ach-card">
+          <view class="ach-item" data-key="mastered" bindtap="onAchieve" hover-class="is-press">
+            <view class="ach-ico ach-ico--book" />
+            <text class="ach-num">{{achieve.mastered}}<text class="ach-unit">首</text></text>
+            <text class="ach-label">已掌握</text>
+          </view>
+          <view class="ach-item" data-key="spoken" bindtap="onAchieve" hover-class="is-press">
+            <view class="ach-ico ach-ico--mic" />
+            <text class="ach-num">{{achieve.recited}}<text class="ach-unit">首</text></text>
+            <text class="ach-label">已朗诵</text>
+          </view>
+          <view class="ach-item" data-key="saved" bindtap="onAchieve" hover-class="is-press">
+            <view class="ach-ico ach-ico--star" />
+            <text class="ach-num">{{achieve.saved}}<text class="ach-unit">首</text></text>
+            <text class="ach-label">已收藏</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="sec">
+      <view class="sec-head" bindtap="toggleRecord" hover-class="is-press">
+        <text class="sec-title">成长记录</text>
+        <view class="chev {{recordOpen ? 'is-up' : ''}}" />
+      </view>
+      <view class="summary summary--xp" wx:if="{{!recordOpen}}">
+        <text>{{recordSummary}}</text>
+        <text class="xp-em" wx:if="{{recordXp}}"> +{{recordXp}} XP</text>
+      </view>
+      <view class="fold {{recordOpen ? 'is-open' : ''}}">
+        <view class="tl" wx:if="{{records.length}}">
+          <view class="tl-item" wx:for="{{records}}" wx:key="id">
+            <view class="tl-rail">
+              <view class="tl-dot" />
+              <view class="tl-line" wx:if="{{index < records.length - 1}}" />
+            </view>
+            <view class="tl-body">
+              <text class="tl-when">{{item.when}}</text>
+              <text class="tl-text">{{item.text}}</text>
+              <text class="tl-xp">+{{item.xp}} XP</text>
+            </view>
+          </view>
+          <view class="more" bindtap="goAllRecords" hover-class="is-press">
+            <text>查看全部</text>
+            <text class="more-arrow">→</text>
+          </view>
+        </view>
+        <text class="empty-note empty-note--out" wx:else>今天开始学习，留下你的第一个足迹吧</text>
+      </view>
+    </view>
+
+    <view class="bottom-pad" />
+  </scroll-view>
+</view>

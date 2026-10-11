@@ -1,0 +1,19 @@
+/* 课本必背页 */
+.page { min-height: 100vh; background: var(--paper); padding-bottom: 160rpx; }
+
+.grade-tabs { display: flex; gap: 16rpx; padding: 24rpx 32rpx; box-sizing: border-box; }
+.grade-tab { flex: 1; height: 68rpx; display: flex; align-items: center; justify-content: center; border-radius: 34rpx; background: #ece7da; color: var(--ink-3); font-size: 26rpx; }
+.grade-tab.is-on { background: var(--ink); color: #fffdf8; }
+
+.sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 40rpx 32rpx 20rpx; box-sizing: border-box; }
+.sec-title { font-size: var(--fs-17); letter-spacing: 0.1em; color: var(--ink); }
+
+.rec-list { padding: 0 32rpx; box-sizing: border-box; display: flex; flex-direction: column; gap: 20rpx; }
+.rec-item { display: flex; align-items: center; padding: 20rpx; }
+.rec-cover { width: 120rpx; height: 120rpx; flex: none; margin-right: 20rpx; border-radius: var(--r-sm); overflow: hidden; position: relative; }
+.rec-cover-tag { position: absolute; top: 8rpx; left: 8rpx; padding: 4rpx 10rpx; border-radius: 10rpx; background: rgba(0,0,0,.45); color: #fff; font-size: 18rpx; }
+.rec-body { flex: 1; min-width: 0; }
+.rec-title { display: block; font-size: 30rpx; color: var(--ink); font-weight: 600; letter-spacing: 2rpx; }
+.rec-author { display: block; margin-top: 6rpx; font-size: 20rpx; color: var(--ink-3); }
+.rec-line { display: block; margin-top: 12rpx; font-size: 22rpx; color: var(--ink-2); line-height: 1.6; }
+.rec-arrow { width: 24rpx; height: 24rpx; opacity: 0.35; flex: none; margin-left: 12rpx; }

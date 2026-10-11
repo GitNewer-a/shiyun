@@ -1,0 +1,212 @@
+<view class="mem-page">
+  <!-- 页面介绍 -->
+  <view class="intro">
+    <text class="intro-title">一首诗，一段记忆</text>
+    <text class="intro-sub">让诗词走进你的心里</text>
+  </view>
+
+  <!-- 训练方式 Tab -->
+  <scroll-view class="mode-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="mode-tabs">
+      <view
+        wx:for="{{modes}}"
+        wx:key="id"
+        class="mode-tab {{activeMode === item.id ? 'is-active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onSwitchMode"
+      >
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 核心训练卡片 -->
+  <view class="train-card {{fadeClass}}">
+    <view class="card-top">
+      <view class="card-tag">
+        <text>{{poem.genre || '唐诗'}} · {{themeTag}}</text>
+      </view>
+      <view class="hint-btn" bindtap="onShowHint" hover-class="hint-btn--hover">
+        <text class="hint-label">提示</text>
+        <view class="bulb-ico">
+          <view class="bulb-head" />
+          <view class="bulb-base" />
+        </view>
+      </view>
+    </view>
+
+    <view class="poem-head">
+      <text class="poem-title">{{poem.title}}</text>
+      <text class="poem-meta">{{poem.author}} · [{{poem.dynasty}}]</text>
+    </view>
+
+    <view class="guide-row">
+      <text class="guide-pen">✎</text>
+      <text class="guide-text">{{guideText}}</text>
+    </view>
+
+    <!-- ===== 全文默写 ===== -->
+    <block wx:if="{{activeMode === 'write'}}">
+      <view class="paper">
+        <view class="paper-lines" />
+        <textarea
+          class="paper-input"
+          value="{{writeText}}"
+          maxlength="400"
+          placeholder="请输入诗的全文，每行限20字..."
+          placeholder-class="paper-ph"
+          adjust-position
+          show-confirm-bar="{{false}}"
+          bindinput="onWriteInput"
+        />
+      </view>
+    </block>
+
+    <!-- ===== 填空默写 ===== -->
+    <block wx:elif="{{activeMode === 'blank'}}">
+      <view class="blank-list">
+        <view class="blank-line" wx:for="{{blankLines}}" wx:key="index">
+          <text class="blank-idx">{{index + 1}}</text>
+          <view class="blank-body">
+            <block wx:for="{{item.parts}}" wx:for-item="part" wx:for-index="pi" wx:key="pi">
+              <text wx:if="{{part.type === 'text'}}" class="blank-char">{{part.value}}</text>
+              <input
+                wx:else
+                class="blank-slot"
+                value="{{part.value}}"
+                maxlength="{{part.len}}"
+                data-line="{{index}}"
+                data-part="{{pi}}"
+                bindinput="onBlankInput"
+              />
+            </block>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- ===== 关键词提示 ===== -->
+    <block wx:elif="{{activeMode === 'hint'}}">
+      <view class="kw-box">
+        <text class="kw-label">关键词</text>
+        <view class="kw-row">
+          <text class="kw-chip" wx:for="{{keywords}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      <view class="paper paper--short">
+        <view class="paper-lines" />
+        <textarea
+          class="paper-input"
+          value="{{writeText}}"
+          maxlength="400"
+          placeholder="根据关键词，默写出全文..."
+          placeholder-class="paper-ph"
+          adjust-position
+          show-confirm-bar="{{false}}"
+          bindinput="onWriteInput"
+        />
+      </view>
+    </block>
+
+    <!-- ===== 首句接龙 ===== -->
+    <block wx:elif="{{activeMode === 'chain'}}">
+      <view class="chain-box">
+        <view class="chain-step">
+          <text class="chain-step-label">第 {{chainIndex + 1}} / {{poem.lines.length}} 句</text>
+        </view>
+        <view class="chain-prev" wx:if="{{chainIndex === 0}}">
+          <text class="chain-prev-label">诗题提示</text>
+          <text class="chain-prev-text">《{{poem.title}}》</text>
+        </view>
+        <view class="chain-prev" wx:else>
+          <text class="chain-prev-label">上一句</text>
+          <text class="chain-prev-text">{{poem.lines[chainIndex - 1]}}</text>
+        </view>
+        <view class="chain-ask">
+          <text class="chain-ask-label">请写出下一句</text>
+          <input
+            class="chain-input"
+            value="{{chainAnswer}}"
+            maxlength="20"
+            placeholder="输入下一句…"
+            placeholder-class="paper-ph"
+            bindinput="onChainInput"
+            confirm-type="done"
+            bindconfirm="onStartTrain"
+          />
+        </view>
+      </view>
+    </block>
+
+    <!-- ===== 诗句排序 ===== -->
+    <block wx:elif="{{activeMode === 'order'}}">
+      <view class="order-box">
+        <text class="order-tip">点击诗句，按正确顺序排列</text>
+        <view class="order-picked" wx:if="{{orderPicked.length}}">
+          <view
+            class="order-chip is-picked"
+            wx:for="{{orderPicked}}"
+            wx:key="uid"
+            data-uid="{{item.uid}}"
+            bindtap="onUnpickLine"
+          >
+            <text class="order-num">{{index + 1}}</text>
+            <text class="order-text">{{item.text}}</text>
+          </view>
+        </view>
+        <view class="order-pool">
+          <view
+            class="order-chip {{item.picked ? 'is-used' : ''}}"
+            wx:for="{{orderPool}}"
+            wx:key="uid"
+            data-uid="{{item.uid}}"
+            bindtap="onPickLine"
+          >
+            <text class="order-text">{{item.text}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- CTA -->
+    <view class="cta-row">
+      <text class="cta-count">已默写 {{practiceCount}} 次</text>
+      <view class="cta-btn" bindtap="onStartTrain" hover-class="cta-btn--hover">
+        <text class="cta-pen">✎</text>
+        <text class="cta-label">{{ctaLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近练习 -->
+  <view class="recent-sec">
+    <view class="recent-head">
+      <text class="recent-title">最近练习</text>
+      <view class="recent-more" bindtap="onViewMore">
+        <text>查看更多</text>
+        <text class="recent-arrow">›</text>
+      </view>
+    </view>
+    <view
+      class="recent-item"
+      wx:for="{{recentList}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onOpenRecent"
+    >
+      <view class="recent-body">
+        <text class="recent-name">{{item.title}}</text>
+        <text class="recent-meta">{{item.author}} · [{{item.dynasty}}]</text>
+      </view>
+      <view class="recent-right">
+        <view class="done-badge">
+          <text class="done-check">✓</text>
+          <text class="done-text">已完成</text>
+        </view>
+        <text class="acc-text">正确率 {{item.accuracy}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-pad" />
+</view>

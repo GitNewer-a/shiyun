@@ -1,0 +1,109 @@
+<view class="my-page">
+  <view class="profile-header">
+    <view class="avatar-wrap">
+      <view class="avatar"><text class="avatar-char">山</text></view>
+    </view>
+    <view class="user-info">
+      <view class="user-name-row">
+        <text class="user-name">{{userInfo.nickname}}</text>
+        <text class="level-badge">Lv.{{userInfo.level}}</text>
+      </view>
+      <text class="user-subtitle">与诗词相伴 {{userInfo.studyDays}} 天</text>
+    </view>
+  </view>
+
+  <view class="statistics-card my-card">
+    <view
+      class="stat-item {{item.cls}}"
+      wx:for="{{statistics}}"
+      wx:key="label"
+      data-soon="{{item.comingSoon}}"
+      bindtap="onStatTap"
+    >
+      <text class="stat-number">{{item.value}}</text>
+      <text class="stat-label">{{item.label}}</text>
+      <view class="stat-div" wx:if="{{index != 3}}" />
+    </view>
+  </view>
+
+  <view class="growth-card my-card my-press" bindtap="onGrowthTap">
+    <view class="card-head">
+      <text class="card-title">我的诗词成长</text>
+      <text class="card-arrow">›</text>
+    </view>
+    <view class="growth-body">
+      <view class="ring" style="background:{{ringStyle}}">
+        <view class="ring-inner">
+          <text class="ring-pct">{{growth.progress}}%</text>
+          <text class="ring-sub">学习进度</text>
+        </view>
+      </view>
+      <view class="growth-right">
+        <text class="growth-count">学习 {{growth.learned}} / {{growth.total}} 首</text>
+        <view class="growth-bar"><view class="growth-fill" style="width:{{growth.barWidth}}" /></view>
+        <view class="growth-level-row">
+          <text class="growth-level">Lv.{{growth.level}}</text>
+          <text class="growth-level-name">{{growth.levelName}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="growth-badge-line">
+      <text class="growth-badge-tip">已获得 {{growth.badges}} 个成就徽章</text>
+      <view class="badge-row">
+        <view class="badge {{item.cls}}" wx:for="{{badgeList}}" wx:key="name">
+          <text class="badge-char">{{item.char}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="content-card my-card">
+    <view class="card-head">
+      <text class="card-title">我的内容</text>
+      <text class="card-more">全部 ›</text>
+    </view>
+    <view class="content-item my-press" wx:for="{{contents}}" wx:key="title" data-index="{{index}}" bindtap="onContentTap">
+      <view class="content-icon {{item.iconCls}}"><text>{{item.iconText}}</text></view>
+      <view class="content-info">
+        <text class="content-title">{{item.title}}</text>
+        <text class="content-desc">{{item.desc}}</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="learning-data-card my-card">
+    <view class="card-head">
+      <text class="card-title">学习数据</text>
+      <text class="card-more">本周 ⌄</text>
+    </view>
+    <view class="data-body">
+      <view class="bars">
+        <view class="bar-col" wx:for="{{barList}}" wx:key="day">
+          <view class="bar-track">
+            <view class="bar-fill" style="height:{{item.height}}" />
+          </view>
+          <text class="bar-day">{{item.day}}</text>
+        </view>
+      </view>
+      <view class="data-summary">
+        <view class="summary-item" wx:for="{{learnSummary}}" wx:key="label">
+          <text class="summary-num">{{item.value}}</text>
+          <text class="summary-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="settings-card my-card">
+    <view class="setting-item my-press" bindtap="onSettingsTap">
+      <text class="setting-name">设置</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="setting-div" />
+    <view class="setting-item my-press" bindtap="onAboutTap">
+      <text class="setting-name">关于诗词库</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+</view>

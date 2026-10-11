@@ -1,0 +1,78 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 1624" width="750" height="1624">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2a22"/>
+      <stop offset="40%" style="stop-color:#1c2b24"/>
+      <stop offset="100%" style="stop-color:#141f1a"/>
+    </linearGradient>
+    <linearGradient id="mist1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(200,220,210,0)"/>
+      <stop offset="50%" style="stop-color:rgba(200,220,210,0.08)"/>
+      <stop offset="100%" style="stop-color:rgba(200,220,210,0)"/>
+    </linearGradient>
+    <linearGradient id="mist2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgba(200,220,210,0)"/>
+      <stop offset="60%" style="stop-color:rgba(200,220,210,0.05)"/>
+      <stop offset="100%" style="stop-color:rgba(200,220,210,0)"/>
+    </linearGradient>
+    <radialGradient id="moon-glow" cx="75%" cy="12%" r="25%">
+      <stop offset="0%" style="stop-color:rgba(232,210,170,0.35)"/>
+      <stop offset="60%" style="stop-color:rgba(232,210,170,0.08)"/>
+      <stop offset="100%" style="stop-color:rgba(232,210,170,0)"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="soft2" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  
+  <!-- 底色 -->
+  <rect width="750" height="1624" fill="url(#sky)"/>
+  
+  <!-- 月光晕 -->
+  <rect width="750" height="1624" fill="url(#moon-glow)"/>
+  
+  <!-- 月亮 -->
+  <circle cx="600" cy="150" r="45" fill="rgba(232,215,175,0.85)" filter="url(#soft2)"/>
+  <circle cx="600" cy="150" r="38" fill="rgba(235,220,185,0.9)"/>
+  
+  <!-- 远山 - 最远层 -->
+  <ellipse cx="200" cy="900" rx="500" ry="250" fill="rgba(60,85,75,0.3)" filter="url(#soft2)"/>
+  <ellipse cx="550" cy="950" rx="450" ry="220" fill="rgba(50,75,65,0.25)" filter="url(#soft2)"/>
+  
+  <!-- 中远山 -->
+  <ellipse cx="150" cy="1050" rx="400" ry="200" fill="rgba(45,68,58,0.4)" filter="url(#soft)"/>
+  <ellipse cx="600" cy="1000" rx="380" ry="230" fill="rgba(40,62,52,0.35)" filter="url(#soft)"/>
+  
+  <!-- 近山 -->
+  <ellipse cx="100" cy="1200" rx="350" ry="250" fill="rgba(35,55,45,0.5)" filter="url(#soft)"/>
+  <ellipse cx="650" cy="1180" rx="320" ry="220" fill="rgba(38,58,48,0.45)" filter="url(#soft)"/>
+  <ellipse cx="380" cy="1250" rx="300" ry="180" fill="rgba(42,62,52,0.4)" filter="url(#soft)"/>
+  
+  <!-- 山脊线 -->
+  <path d="M-50 950 Q100 750 250 880 T500 800 T750 900 L750 1624 L-50 1624 Z" fill="rgba(35,55,45,0.25)"/>
+  <path d="M-50 1100 Q150 900 300 1050 T550 950 T800 1080 L800 1624 L-50 1624 Z" fill="rgba(30,50,40,0.35)"/>
+  
+  <!-- 水面/雾气 -->
+  <ellipse cx="375" cy="1400" rx="500" ry="200" fill="rgba(180,200,190,0.06)" filter="url(#soft2)"/>
+  
+  <!-- 薄雾带 -->
+  <rect x="0" y="700" width="750" height="120" fill="url(#mist1)"/>
+  <rect x="0" y="1050" width="750" height="100" fill="url(#mist2)"/>
+  <rect x="0" y="1350" width="750" height="80" fill="url(#mist1)"/>
+  
+  <!-- 小舟剪影 -->
+  <ellipse cx="180" cy="1380" rx="60" ry="8" fill="rgba(25,40,32,0.6)" filter="url(#soft)"/>
+  <line x1="180" y1="1372" x2="180" y2="1340" stroke="rgba(25,40,32,0.5)" stroke-width="2"/>
+  
+  <!-- 飞鸟 -->
+  <path d="M450 350 Q455 340 460 350" stroke="rgba(100,130,115,0.4)" stroke-width="1.5" fill="none"/>
+  <path d="M480 330 Q485 320 490 330" stroke="rgba(100,130,115,0.3)" stroke-width="1.5" fill="none"/>
+  <path d="M430 365 Q435 355 440 365" stroke="rgba(100,130,115,0.35)" stroke-width="1.5" fill="none"/>
+  
+  <!-- 竹叶点缀 -->
+  <path d="M680 200 Q700 180 720 195" stroke="rgba(79,122,93,0.15)" stroke-width="2" fill="none"/>
+  <path d="M670 220 Q690 200 710 215" stroke="rgba(79,122,93,0.12)" stroke-width="2" fill="none"/>
+</svg>

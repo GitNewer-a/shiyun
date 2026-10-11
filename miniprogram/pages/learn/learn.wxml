@@ -1,0 +1,137 @@
+<view class="learn-page">
+  <view class="learn-toolbar">
+    <view class="rank-btn" bindtap="goRank" aria-label="排行榜">
+      <text class="rank-ico">勋</text>
+    </view>
+  </view>
+
+  <!-- 我的诗词成长 -->
+  <view class="growth-card">
+    <view class="growth-top">
+      <text class="growth-title">我的诗词成长</text>
+      <view class="level-pill">
+        <text class="level-first">初</text>
+        <text class="level-name">{{growth.levelTag}}</text>
+      </view>
+    </view>
+    <view class="growth-main">
+      <view class="ring" style="background:{{ringStyle}}">
+        <view class="ring-inner">
+          <text class="ring-pct">{{growth.percent}}%</text>
+          <text class="ring-sub">已掌握</text>
+        </view>
+      </view>
+      <view class="growth-stats">
+        <view class="g-stat">
+          <text class="g-num">{{growth.learned}}</text>
+          <text class="g-label">已学习</text>
+        </view>
+        <view class="g-stat">
+          <text class="g-num">{{growth.mastered}}</text>
+          <text class="g-label">已掌握</text>
+        </view>
+        <view class="g-stat">
+          <text class="g-num">{{growth.streak}}<text class="g-unit">天</text></text>
+          <text class="g-label">连续学习</text>
+        </view>
+      </view>
+    </view>
+    <view class="growth-foot">
+      <text class="growth-next">距「{{growth.nextLevel}}」还需掌握 {{growth.remain}} 首</text>
+      <text class="growth-pct">{{growth.percent}}%</text>
+    </view>
+    <view class="growth-bar"><view class="growth-fill" style="width:{{growth.percent}}%" /></view>
+  </view>
+
+  <!-- 学习模块 -->
+  <view class="sec-head">
+    <text class="sec-title">学习模块</text>
+    <text class="sec-sub">循序渐进，读懂并记住</text>
+  </view>
+
+  <view class="mod-card">
+    <view class="mod-accent mod-accent--blue" />
+    <view class="mod-icon mod-icon--blue"><text>目</text></view>
+    <view class="mod-body">
+      <view class="mod-title-row">
+        <text class="mod-title">诗词理解</text>
+        <text class="mod-sub">读懂诗意，了解背景</text>
+      </view>
+      <view class="tag-row">
+        <text class="tag" data-key="read" bindtap="goUnderstand">原文阅读</text>
+        <text class="tag" data-key="notes" bindtap="goUnderstand">注释解析</text>
+        <text class="tag" data-key="trans" bindtap="goUnderstand">译文理解</text>
+        <text class="tag" data-key="apprec" bindtap="goUnderstand">鉴赏分析</text>
+        <text class="tag" data-key="author" bindtap="goUnderstand">作者背景</text>
+      </view>
+    </view>
+    <text class="mod-arrow" data-key="read" bindtap="goUnderstand">›</text>
+  </view>
+
+  <view class="mod-card">
+    <view class="mod-accent mod-accent--green" />
+    <view class="mod-icon mod-icon--green"><text>记</text></view>
+    <view class="mod-body">
+      <view class="mod-title-row">
+        <text class="mod-title">记忆训练</text>
+        <text class="mod-sub">练习背诵，强化记忆</text>
+      </view>
+                  <view class="tag-row">
+                    <text class="tag" data-type="write" bindtap="goRecite">全文默写</text>
+                    <text class="tag" data-type="blank" bindtap="goRecite">填空默写</text>
+                    <text class="tag" data-type="hint" bindtap="goRecite">关键词提示</text>
+                    <text class="tag" data-type="chain" bindtap="goRecite">首句接龙</text>
+                    <text class="tag" data-type="order" bindtap="goRecite">诗句排序</text>
+                  </view>
+      <view class="mem-foot">
+        <view class="mem-bar"><view class="mem-fill" style="width:36%" /></view>
+        <text class="mem-text">已完成 18/50 首</text>
+      </view>
+    </view>
+    <text class="mod-arrow" data-type="recite" bindtap="goRecite">›</text>
+  </view>
+
+  <!-- 今日学习 -->
+  <view class="sec-head">
+    <text class="sec-title">今日学习</text>
+    <text class="sec-sub">完成度 {{todayPercent}}%</text>
+  </view>
+  <view class="today-card">
+    <view class="today-pct-ring">
+      <text class="today-pct">{{todayPercent}}%</text>
+    </view>
+    <view class="today-list">
+      <view class="today-item" wx:for="{{today}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleToday">
+        <view class="today-check {{item.done ? 'is-on' : ''}}"><view wx:if="{{item.done}}" class="today-tick" /></view>
+        <view class="today-text" data-poem="{{item.poem}}" bindtap="goTodayDetail">
+          <text class="today-title {{item.done ? 'is-done' : ''}}">{{item.title}}</text>
+          <text class="today-sub">{{item.sub}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="continue-btn" bindtap="goContinue">
+      <text>继续学习</text>
+      <text class="continue-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 最近学习 -->
+  <view class="sec-head sec-head--row">
+    <text class="sec-title">最近学习</text>
+    <view class="all-link" bindtap="goAllRecords">
+      <text>全部记录</text>
+      <text class="all-arrow">›</text>
+    </view>
+  </view>
+  <view class="recent-card" wx:for="{{recent}}" wx:key="id" data-id="{{item.id}}" bindtap="goRecent">
+    <view class="recent-mark"><text>{{item.mark}}</text></view>
+    <view class="recent-body">
+      <text class="recent-title">{{item.title}}</text>
+      <text class="recent-sub">{{item.sub}}</text>
+    </view>
+    <text class="recent-status {{item.status === '学习中' ? 'is-doing' : ''}}">{{item.status}}</text>
+    <view class="recent-go" wx:if="{{item.status !== '学习中'}}"><text>›</text></view>
+    <view class="recent-continue" wx:else><text>继续</text></view>
+  </view>
+  <view class="bottom-pad" />
+</view>

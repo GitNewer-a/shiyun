@@ -1,0 +1,56 @@
+<view class="page">
+  <!-- 连续天数主卡 -->
+  <view class="pg-streak card">
+    <text class="pg-streak-num serif">{{progress.streak}}</text>
+    <text class="pg-streak-unit">天连续学习</text>
+    <view class="pg-week">
+      <view class="pg-week-dot {{item.done ? 'is-on' : ''}}" wx:for="{{week}}" wx:key="day" />
+    </view>
+  </view>
+
+  <view class="pg-metrics card">
+    <view class="pg-metric">
+      <text class="pg-metric-num serif">{{progress.learned}}</text>
+      <text class="pg-metric-label">已学诗词</text>
+    </view>
+    <view class="pg-metric">
+      <text class="pg-metric-num serif">{{progress.recited}}</text>
+      <text class="pg-metric-label">已背诵</text>
+    </view>
+    <view class="pg-metric">
+      <text class="pg-metric-num serif">{{totalMinutes}}</text>
+      <text class="pg-metric-label">本周分钟</text>
+    </view>
+  </view>
+
+  <!-- 本周学习时长：单序列柱状图（设计文档 §5） -->
+  <view class="sec-head">
+    <text class="sec-title serif">本周学习时长</text>
+  </view>
+  <view class="pg-chart card">
+    <view class="pg-bars">
+      <view class="pg-bar-wrap" wx:for="{{weekBars}}" wx:key="day">
+        <text class="pg-bar-val {{item.isToday ? 'is-today' : ''}}">{{item.minutes}}</text>
+        <view
+          class="pg-bar {{item.isToday ? 'is-today' : ''}}"
+          style="height:{{item.height}}rpx"
+        />
+        <text class="pg-bar-day">{{item.day}}</text>
+      </view>
+    </view>
+    <text class="pg-note">{{chartNote}}</text>
+  </view>
+
+  <view class="sec-head">
+    <text class="sec-title serif">最近学习</text>
+  </view>
+  <view class="ph" wx:if="{{recent.length === 0}}">
+    <text class="ph-desc">还没有学习记录，去诗词库读第一首诗吧</text>
+  </view>
+  <view class="pg-recent card" wx:else>
+    <view class="pg-recent-item" wx:for="{{recent}}" wx:key="id" data-id="{{item.id}}" bindtap="goPoem">
+      <text class="pg-recent-title serif">{{item.title}}</text>
+      <text class="pg-recent-sub">{{item.author}} · {{item.dynasty}}</text>
+    </view>
+  </view>
+</view>

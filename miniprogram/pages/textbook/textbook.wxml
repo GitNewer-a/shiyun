@@ -1,0 +1,23 @@
+<view class="page">
+  <view class="grade-tabs">
+    <view class="grade-tab {{activeGrade === g ? 'is-on' : ''}}" wx:for="{{grades}}" wx:key="key" data-idx="{{g}}" bindtap="switchGrade">{{item}}</view>
+  </view>
+
+  <!-- 推荐学习 -->
+  <view class="sec-head">
+    <text class="sec-title serif">推荐学习</text>
+  </view>
+  <view class="rec-list">
+    <view class="rec-item card" wx:for="{{filteredPoems}}" wx:key="id" data-id="{{item.id}}" bindtap="goPoem">
+      <view class="rec-cover" style="background:{{item.coverBg}}">
+        <text class="rec-cover-tag">{{item.stage}}</text>
+      </view>
+      <view class="rec-body">
+        <text class="rec-title serif">{{item.title}}</text>
+        <text class="rec-author">{{item.author}} · {{item.dynasty}}</text>
+        <text class="rec-line verse">{{item.lines[0]}}，{{item.lines[1]}}。</text>
+      </view>
+      <image src="/assets/figma-learn/icon-5.svg" class="rec-arrow" mode="aspectFit" />
+    </view>
+  </view>
+</view>

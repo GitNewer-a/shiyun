@@ -1,0 +1,115 @@
+<view class="poem">
+  <!-- 夜景山水底：CSS 层保底，有配图时叠图 -->
+  <view class="poem-scene" aria-hidden="true">
+    <view class="scene-glow" />
+    <view class="scene-moon" />
+    <view class="scene-hill scene-hill--far" />
+    <view class="scene-hill scene-hill--mid" />
+    <view class="scene-hill scene-hill--near" />
+    <view class="scene-mist" />
+  </view>
+  <image wx:if="{{poem.img}}" class="poem-bg" src="{{poem.img}}" mode="aspectFill" />
+  <view class="poem-dim" />
+
+  <scroll-view class="poem-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="title-section">
+      <view class="poem-fav" bindtap="toggleFav" aria-label="{{fav ? '取消收藏' : '收藏'}}">
+        <image src="{{fav ? '/assets/poem/star-on.svg' : '/assets/poem/star.svg'}}" class="poem-fav-ico" mode="aspectFit" />
+      </view>
+      <view class="title-chars">
+        <view class="char-col" wx:for="{{titleChars}}" wx:key="index">
+          <text class="char-pinyin">{{item.pinyin}}</text>
+          <text class="char-main serif">{{item.char}}</text>
+        </view>
+      </view>
+      <view class="title-divider" />
+      <view class="author-row">
+        <text class="author-dynasty serif">【{{poem.dynasty}}】</text>
+        <view class="char-col author-col" wx:for="{{authorChars}}" wx:key="index">
+          <text class="char-pinyin author-pinyin">{{item.pinyin}}</text>
+          <text class="char-main author-main serif">{{item.char}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="glass card-poem">
+      <view class="poem-lines">
+        <view class="poem-line" wx:for="{{lineChars}}" wx:key="index" wx:for-item="line">
+          <view class="char-pair" wx:for="{{line}}" wx:key="index" wx:for-item="pc">
+            <text class="line-pinyin {{showPinyin ? '' : 'is-hidden'}}">{{pc.pinyin}}</text>
+            <text class="line-char serif">{{pc.char}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="pinyin-toggle" bindtap="togglePinyin">
+        <view class="switch {{showPinyin ? 'switch--on' : ''}}">
+          <view class="switch-knob" />
+        </view>
+        <text class="toggle-label">显示拼音</text>
+      </view>
+    </view>
+
+    <view class="glass card-player">
+      <view class="progress-bar-wrap" bindtap="seekAudio">
+        <view class="progress-track">
+          <view class="progress-fill" style="width:{{audioProgress}}%" />
+        </view>
+        <view class="progress-knob" style="left:{{audioProgress}}%" />
+      </view>
+      <view class="time-labels">
+        <text class="time-label">{{audioTime}}</text>
+        <text class="time-label">{{audioEnd}}</text>
+      </view>
+      <view class="player-controls">
+        <view class="speed-btn" bindtap="cycleSpeed">
+          <text>{{speedLabel}}</text>
+        </view>
+        <view class="ctrl-btn" bindtap="prevTrack" aria-label="上一首">
+          <image src="/assets/poem/skip-prev.svg" class="ctrl-ico" mode="aspectFit" />
+        </view>
+        <view class="play-btn" bindtap="toggleAudio" aria-label="{{playing ? '暂停' : '播放'}}">
+          <view class="{{playing ? 'ico-pause' : 'ico-play'}}" />
+        </view>
+        <view class="ctrl-btn" bindtap="nextTrack" aria-label="下一首">
+          <image src="/assets/poem/skip-next.svg" class="ctrl-ico" mode="aspectFit" />
+        </view>
+        <view class="ctrl-btn" bindtap="toggleMusicNote" aria-label="歌词同步">
+          <image src="/assets/poem/note.svg" class="ctrl-ico" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <view class="glass kn-section">
+      <view class="kn-tabs">
+        <view class="kn-tab {{knTab === item ? 'is-on' : ''}}" wx:for="{{knTabs}}" wx:key="*this" data-tab="{{item}}" bindtap="switchKn">{{item}}</view>
+      </view>
+      <view class="kn-content">
+        <view class="kn-card">
+          <view class="kn-label">
+            <text class="kn-label-text">{{knTab}}</text>
+          </view>
+          <text class="kn-text">{{knBody}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="scroll-pad" />
+  </scroll-view>
+
+  <view class="poem-action-bar" style="padding-bottom:{{safeAreaBottom}}rpx">
+    <view class="action-btn action-btn--icon" bindtap="toggleFav" aria-label="{{fav ? '取消收藏' : '收藏'}}">
+      <image src="{{fav ? '/assets/poem/star-on.svg' : '/assets/poem/star.svg'}}" class="action-ico" mode="aspectFit" />
+    </view>
+    <view class="action-btn action-btn--primary" bindtap="goPractice">
+      <image src="/assets/poem/mic.svg" class="action-ico-btn" mode="aspectFit" />
+      <text>我要朗读</text>
+    </view>
+    <view class="action-btn action-btn--secondary" bindtap="goRecite">
+      <image src="/assets/poem/book.svg" class="action-ico-btn action-ico-btn--muted" mode="aspectFit" />
+      <text>背诵默写</text>
+    </view>
+    <view class="action-btn action-btn--icon" bindtap="sharePoem" aria-label="分享">
+      <image src="/assets/poem/share.svg" class="action-ico" mode="aspectFit" />
+    </view>
+  </view>
+</view>

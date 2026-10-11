@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "诗词学习",
+  "navigationBarBackgroundColor": "#141C18",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#141C18",
+  "backgroundColorTop": "#141C18",
+  "backgroundColorBottom": "#0E1412",
+  "usingComponents": {}
+}

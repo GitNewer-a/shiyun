@@ -1,0 +1,144 @@
+/* 启动页 —— 水墨山水开场（设计文档 §4.1） */
+
+.launch {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #243447 0%, #243f4f 45%, #1c2b24 100%);
+}
+
+/* 月 + 月晕光环 */
+.la-moon {
+  position: absolute;
+  top: 160rpx;
+  right: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 50%;
+  background: rgba(232, 184, 112, 0.14);
+  box-shadow: 0 0 0 40rpx rgba(232, 184, 112, 0.05);
+}
+
+.la-moon-txt {
+  font-size: 72rpx;
+  color: rgba(245, 237, 224, 0.85);
+}
+
+/* 三重远山：旋转椭圆 */
+.la-hill {
+  position: absolute;
+  left: 50%;
+  border-radius: 50% 50% 0 0;
+  transform: translateX(-50%);
+}
+
+.la-hill--1 {
+  bottom: 120rpx;
+  width: 900rpx;
+  height: 320rpx;
+  background: rgba(240, 232, 216, 0.06);
+}
+
+.la-hill--2 {
+  bottom: 60rpx;
+  width: 1100rpx;
+  height: 300rpx;
+  background: rgba(240, 232, 216, 0.1);
+}
+
+.la-hill--3 {
+  bottom: 0;
+  width: 1400rpx;
+  height: 280rpx;
+  background: rgba(240, 232, 216, 0.14);
+}
+
+/* 水纹 */
+.la-water {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160rpx;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(240, 232, 216, 0.08) 0rpx,
+    rgba(240, 232, 216, 0.08) 2rpx,
+    transparent 2rpx,
+    transparent 24rpx
+  );
+}
+
+.la-center {
+  position: absolute;
+  top: 420rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 朱砂印章 */
+.la-seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 12rpx;
+  background: var(--cinnabar);
+}
+
+.la-seal-txt {
+  font-size: 60rpx;
+  color: #fffdf8;
+}
+
+.la-brand {
+  margin-top: 36rpx;
+  font-size: 80rpx;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--immerse-title);
+}
+
+.la-line {
+  width: 2rpx;
+  height: 72rpx;
+  margin-top: 32rpx;
+  background: rgba(245, 237, 224, 0.35);
+}
+
+.la-slogan {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 32rpx;
+}
+
+.la-slogan-txt {
+  font-size: var(--fs-17);
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  line-height: 2.2;
+  color: rgba(240, 232, 216, 0.8);
+}
+
+.la-foot {
+  position: absolute;
+  left: 64rpx;
+  right: 64rpx;
+  bottom: calc(120rpx + env(safe-area-inset-bottom));
+}
+
+.la-tip {
+  display: block;
+  margin-top: 32rpx;
+  text-align: center;
+  font-size: var(--fs-11);
+  color: rgba(200, 220, 210, 0.6);
+}

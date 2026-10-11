@@ -1,0 +1,27 @@
+<view class="launch">
+  <!-- 水墨分层：月晕 → 三重远山 → 水纹 -->
+  <view class="la-moon">
+    <text class="la-moon-txt serif">月</text>
+  </view>
+  <view class="la-hill la-hill--3" />
+  <view class="la-hill la-hill--2" />
+  <view class="la-hill la-hill--1" />
+  <view class="la-water" />
+
+  <view class="la-center">
+    <view class="la-seal">
+      <text class="la-seal-txt serif">诗</text>
+    </view>
+    <text class="la-brand serif">诗韵</text>
+    <view class="la-line" />
+    <view class="la-slogan">
+      <text class="la-slogan-txt serif">读一首诗</text>
+      <text class="la-slogan-txt serif">养一段气</text>
+    </view>
+  </view>
+
+  <view class="la-foot">
+    <view class="btn-primary" bindtap="start" aria-label="开始学习">开始学习</view>
+    <text class="la-tip">今日已有 1,286 位诗友在读诗</text>
+  </view>
+</view>

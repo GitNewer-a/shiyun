@@ -1,0 +1,82 @@
+/* 诗词库 —— 宣纸系 */
+
+.browse {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 20rpx 160rpx;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.browse-search { display: flex; align-items: center; box-sizing: border-box; height: 72rpx; margin-top: 20rpx; padding: 0 26rpx; border-radius: 24rpx; background: var(--paper-sunken); color: #909594; font-size: 22rpx; }
+.browse-search-icon { width: 28rpx; height: 28rpx; margin-right: 14rpx; opacity: .75; }
+
+.filters {
+  padding: 34rpx 0 2rpx;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  min-height: 52rpx;
+  margin-bottom: 12rpx;
+}
+
+.filter-label {
+  width: 72rpx;
+  flex: none;
+  font-size: 20rpx;
+  line-height: 52rpx;
+  color: #a1a6a0;
+}
+
+.filter-scroll {
+  flex: 1;
+  height: 52rpx;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.filter-chips {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  height: 52rpx;
+}
+
+.filter-chips .chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52rpx;
+  margin-right: 10rpx;
+  padding: 0 24rpx;
+  flex: none;
+  border: 1rpx solid #d9d3c7;
+  border-radius: 28rpx;
+  background: #fffdf8;
+  color: #69716f;
+  font-size: 20rpx;
+  line-height: 50rpx;
+  white-space: nowrap;
+}
+
+.filter-row:nth-child(1) .chip--on { background: #243f4f; border-color: #243f4f; color: #fffdf8; }
+.filter-row:nth-child(2) .chip--on { background: #c94a4a; border-color: #c94a4a; color: #fffdf8; }
+.filter-row:nth-child(3) .chip--on { background: #4f7a5d; border-color: #4f7a5d; color: #fffdf8; }
+.result-count { height: 46rpx; padding-top: 2rpx; box-sizing: border-box; border-bottom: 1rpx solid rgba(36,52,71,.08); color: #969c96; font-size: 20rpx; }
+
+.pc-list { margin-top: 28rpx; }
+.pc-card { margin-bottom: 20rpx; padding: 20rpx 12rpx; border-radius: 32rpx; box-shadow: 0 10rpx 16rpx rgba(74,69,51,.07); }
+.pc-img { width: 144rpx; height: 144rpx; margin-right: 24rpx; border-radius: 20rpx; }
+.pc-title { font-size: 32rpx; letter-spacing: 1rpx; color: #1e2b1c; }
+.pc-sub { margin-top: 4rpx; font-size: 20rpx; color: #7e8785; }
+.pc-tags { display: flex; gap: 10rpx; margin-top: 8rpx; }
+.pc-tag { padding: 3rpx 12rpx; border-radius: 8rpx; font-size: 18rpx; line-height: 26rpx; }
+.pc-tag--green { color: #637060; background: #eef1ea; }
+.pc-tag--gold { color: #9b754e; background: #f2ece3; }
+.pc-star { width: 38rpx; height: 38rpx; margin-left: 8rpx; background: transparent; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.pc-star.is-on { background: var(--cinnabar); }
+
+/* 列表卡样式已提到 app.wxss（browse 与 favorites 共用） */

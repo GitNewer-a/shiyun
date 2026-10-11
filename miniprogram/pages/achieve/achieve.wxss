@@ -1,0 +1,29 @@
+/* 学习进度页 */
+.page { min-height: 100vh; background: var(--paper); padding-bottom: 160rpx; }
+
+.sec-head { margin: 48rpx 32rpx 20rpx; box-sizing: border-box; }
+.sec-title { font-size: var(--fs-17); letter-spacing: 0.1em; color: var(--ink); }
+
+/* 进度主卡 */
+.progress-card { margin: 32rpx; padding: 40rpx 32rpx; display: flex; align-items: center; gap: 28rpx; }
+.prog-ring-wrap { flex: none; width: 160rpx; height: 160rpx; }
+.prog-ring { width: 160rpx; height: 160rpx; border-radius: 50%; }
+.prog-ring-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 120rpx; height: 120rpx; margin: 20rpx; border-radius: 50%; background: var(--paper-card); }
+.prog-ring-num { font-size: var(--fs-27); color: var(--cinnabar); line-height: 1; }
+.prog-ring-total { font-size: var(--fs-11); color: var(--ink-4); margin-top: 4rpx; }
+.prog-stats { flex: 1; display: flex; flex-direction: column; gap: 24rpx; }
+.prog-stat { display: flex; flex-direction: column; }
+.prog-stat-num { font-size: var(--fs-21); color: var(--ink); line-height: 1; }
+.prog-stat-label { font-size: var(--fs-10); color: var(--ink-3); margin-top: 6rpx; }
+
+/* 成就卡片 */
+.badge-list { padding: 0 32rpx; box-sizing: border-box; display: flex; flex-direction: column; gap: 20rpx; }
+.badge-card { display: flex; align-items: center; padding: 24rpx; }
+.badge-icon { width: 72rpx; height: 72rpx; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; margin-right: 24rpx; }
+.badge-icon--on { background: rgba(201,151,90,0.18); }
+.badge-icon--off { background: #ece7da; }
+.badge-icon-txt { font-size: 32rpx; }
+.badge-body { flex: 1; }
+.badge-name { display: block; font-size: 28rpx; color: var(--ink); font-weight: 600; }
+.badge-desc { display: block; font-size: 20rpx; color: var(--ink-3); margin-top: 6rpx; }
+.badge-card.is-on .badge-desc { color: var(--bamboo); }

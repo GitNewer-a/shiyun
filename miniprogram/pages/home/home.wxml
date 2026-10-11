@@ -1,0 +1,58 @@
+<view class="page home">
+  <view class="paper-grain" />
+  <navigator class="home-search" url="/pages/search/search" hover-class="none">
+    <image class="home-search-ico" src="/assets/figma-home/icon-9.svg" mode="aspectFit" />
+    <text class="home-search-txt">搜索诗人、诗词</text>
+  </navigator>
+
+  <view class="daily" bindtap="goDaily" aria-label="每日一诗 {{dailyPoem.title}}，点击开始学习">
+    <view class="daily-moon" /><view class="daily-hill daily-hill--back" /><view class="daily-hill daily-hill--front" />
+    <view class="daily-body">
+      <view class="daily-tag">今日一诗</view>
+      <text class="daily-author">{{dailyPoem.author}} · {{dailyPoem.dynasty}}</text>
+      <text class="daily-title serif">{{dailyPoem.title}}</text>
+      <view class="daily-lines">
+        <text class="daily-line verse">{{dailyPoem.lines[0]}}，{{dailyPoem.lines[1]}}。</text>
+        <text class="daily-line verse">{{dailyPoem.lines[2]}}，{{dailyPoem.lines[3]}}。</text>
+      </view>
+      <view class="daily-cta"><text>开始学习</text><image src="/assets/figma-home/icon-0.svg" class="daily-cta-ico" mode="aspectFit" /></view>
+    </view>
+  </view>
+
+  <view class="cats">
+    <view class="cat" wx:for="{{categories}}" wx:key="name" bindtap="goShortcut" data-action="{{item.action}}" aria-label="{{item.name}}">
+      <view class="cat-mark" style="background:{{item.color}}"><image class="cat-ico" src="{{item.icon}}" mode="aspectFit" /></view>
+      <text class="cat-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="home-section-head">
+    <text class="home-section-title serif">继续学习</text>
+    <navigator class="home-section-more" url="/pages/progress/progress" hover-class="none"><text>学习记录</text><image src="/assets/figma-home/icon-5.svg" class="home-more-ico" mode="aspectFit" /></navigator>
+  </view>
+  <view class="resume" bindtap="goResume" aria-label="继续学习 {{resume.title}}">
+    <view class="resume-cover"><text class="serif">{{resume.mark}}</text></view>
+    <view class="resume-main">
+      <text class="resume-sub">{{resume.author}} · {{resume.dynasty}} · 第 {{resume.lesson}} 课</text>
+      <text class="resume-title serif">《{{resume.title}}》</text>
+      <view class="resume-bar"><view class="resume-bar-fill" style="width:{{resume.progress}}%" /></view>
+      <text class="resume-tip">学习进度 <text class="resume-percent">{{resume.progress}}%</text></text>
+    </view>
+    <view class="resume-go"><image src="/assets/figma-home/icon-11.svg" mode="aspectFit" /></view>
+  </view>
+
+  <view class="home-section-head">
+    <text class="home-section-title serif">热门朗读</text>
+    <view class="home-section-more" bindtap="goBrowse"><text>更多</text><image src="/assets/figma-home/icon-5.svg" class="home-more-ico" mode="aspectFit" /></view>
+  </view>
+  <view class="hot">
+    <view class="hot-item" wx:for="{{hotList}}" wx:key="id">
+      <view class="hot-avatar" style="background:{{item.avatarColor}}"><text class="serif">{{item.mark}}</text></view>
+      <view class="hot-main" bindtap="goPoem" data-id="{{item.id}}">
+        <text class="hot-listener">{{item.listener}}</text><text class="hot-title serif">《{{item.title}}》</text>
+        <view class="hot-count"><image src="/assets/figma-home/icon-4.svg" mode="aspectFit" /><text>{{item.plays}}</text></view>
+      </view>
+      <view class="hot-play {{playingIndex === index ? 'is-playing' : ''}}" bindtap="togglePlay" data-index="{{index}}" aria-label="{{playingIndex === index ? '暂停' : '播放'}}{{item.title}}"><image src="/assets/figma-home/icon-7.svg" class="hot-play-ico" mode="aspectFit" /></view>
+    </view>
+  </view>
+</view>

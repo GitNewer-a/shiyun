@@ -1,0 +1,373 @@
+/* 诗韵 · 设计令牌层
+   对应设计文档 §6.1。所有字面量在此收口，页面样式只引用变量。
+   基准机型 393 × 852（iPhone 15 Pro），1px = 1.91rpx，统一用 rpx。
+   ------------------------------------------------------------------ */
+
+page {
+  /* 宣纸系 */
+  --paper: #f8f4ea;
+  --paper-card: #fffdf8;
+  --paper-sunken: #ece7da;
+
+  /* 墨阶 */
+  --ink: #243447;
+  --ink-card: #243f4f;
+  --ink-soft: #2c4b59;
+  --ink-2: #7e8785;
+  --ink-3: #959b94;
+  --ink-4: #a5aaa3;
+  --ink-5: #b9bdb6;
+
+  /* 语义色 */
+  --cinnabar: #c94a4a;
+  --cinnabar-deep: #a93c3c;
+  --gold: #c9975a;
+  --gold-light: #e8b870;
+  --bamboo: #4f7a5d;
+  --bamboo-light: #5e8a6a;
+
+  /* 沉浸系 */
+  --immerse-bg: #1c2b24;
+  --immerse-bg-2: #1a3330;
+  --immerse-card: rgba(255, 252, 245, 0.1);
+  --immerse-card-strong: rgba(255, 252, 245, 0.18);
+  --immerse-border: rgba(255, 255, 255, 0.13);
+  --immerse-text: #f0e8d8;
+  --immerse-title: #f5ede0;
+  --immerse-sub: rgba(200, 220, 210, 0.7);
+  --immerse-body: rgba(230, 220, 200, 0.85);
+
+  /* 字号阶（设计文档 §6.1：最小 10px） */
+  --fs-10: 20rpx;
+  --fs-11: 22rpx;
+  --fs-12: 24rpx;
+  --fs-13: 26rpx;
+  --fs-15: 30rpx;
+  --fs-17: 34rpx;
+  --fs-21: 42rpx;
+  --fs-27: 54rpx;
+  --fs-38: 76rpx;
+
+  /* 圆角 */
+  --r-chip: 20rpx;
+  --r-sm: 26rpx;
+  --r-md: 32rpx;
+  --r-lg: 40rpx;
+
+  /* 阴影 */
+  --sh-light: 0 8rpx 20rpx rgba(74, 69, 51, 0.05);
+  --sh-card: 0 22rpx 44rpx rgba(36, 52, 71, 0.18);
+  --sh-immerse: 0 16rpx 48rpx rgba(0, 0, 0, 0.28);
+
+  /* 触控下限（设计文档 §6.2） */
+  --tap-min: 92rpx;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-family: -apple-system, 'PingFang SC', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+  font-size: var(--fs-13);
+  line-height: 1.6;
+}
+
+/* 衬线：诗句、标题、荣誉值 */
+.serif {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+}
+
+/* 诗句排版：字距放宽、行高 1.85（设计文档 §2.2） */
+.verse {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  letter-spacing: 0.08em;
+  line-height: 1.85;
+}
+
+/* 通用容器 */
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 32rpx 32rpx 160rpx;
+}
+
+.card {
+  background: var(--paper-card);
+  border-radius: var(--r-md);
+  box-shadow: var(--sh-light);
+}
+
+/* 沉浸式页面根：深墨绿底 */
+.immerse-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--immerse-bg);
+  color: var(--immerse-text);
+}
+
+/* 毛玻璃卡片。部分 Android 机型不支持 backdrop-filter，
+   底色已取 .10 保证降级后仍有足够对比度（设计文档 §7）。 */
+.glass {
+  background: var(--immerse-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1rpx solid var(--immerse-border);
+  border-radius: var(--r-md);
+}
+
+.glass--fallback {
+  background: var(--immerse-card-strong);
+}
+
+/* 按钮 */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--tap-min);
+  border-radius: 28rpx;
+  background: var(--cinnabar);
+  color: #fffdf8;
+  font-size: var(--fs-15);
+  box-shadow: 0 8rpx 0 var(--cinnabar-deep);
+}
+
+.btn-primary:active {
+  transform: translateY(4rpx);
+  box-shadow: 0 4rpx 0 var(--cinnabar-deep);
+}
+
+.btn-immerse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--tap-min);
+  border-radius: 24rpx;
+  background: linear-gradient(180deg, #4f7a5d 0%, #3d6248 100%);
+  color: #f5ede0;
+  font-size: var(--fs-15);
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--tap-min);
+  border-radius: 28rpx;
+  background: var(--paper-sunken);
+  color: var(--ink);
+  font-size: var(--fs-15);
+}
+
+/* 芯片 / 标签 */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 28rpx;
+  border-radius: var(--r-chip);
+  background: var(--paper-sunken);
+  color: var(--ink-2);
+  font-size: var(--fs-12);
+}
+
+.chip--on {
+  background: var(--cinnabar);
+  color: #fffdf8;
+}
+
+/* 纸纹叠层：细横纹 + 颗粒（设计文档 §2.3）
+   小程序内用 repeating-linear-gradient 近似，避免引入大图 */
+.paper-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.44;
+  mix-blend-mode: multiply;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(120, 110, 90, 0.05) 0rpx,
+    rgba(120, 110, 90, 0.05) 2rpx,
+    transparent 2rpx,
+    transparent 8rpx
+  );
+}
+
+/* 空 / 未解锁态（设计文档 §6） */
+.state-empty {
+  background: #ddd9d0;
+  color: #aaa69d;
+}
+
+/* 无障碍：小程序无 :focus-visible，用 hover-class 与足够对比度兜底 */
+.divider {
+  height: 1rpx;
+  background: rgba(36, 52, 71, 0.08);
+}
+
+/* 跨页共享：区块标题（home / profile / progress 共用） */
+.sec-head {
+  margin: 56rpx 0 24rpx;
+}
+
+.sec-title {
+  font-size: var(--fs-17);
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+
+/* 跨页共享：诗词列表卡（browse / favorites 共用） */
+.pc-list {
+  margin-top: 24rpx;
+}
+
+.pc-card {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding: 24rpx;
+  border-radius: var(--r-md);
+  background: var(--paper-card);
+  box-shadow: var(--sh-light);
+}
+
+.pc-img {
+  width: 128rpx;
+  height: 128rpx;
+  flex: none;
+  margin-right: 28rpx;
+  border-radius: var(--r-sm);
+  background-size: cover;
+  background-position: center;
+}
+
+.pc-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.pc-title {
+  display: block;
+  font-size: var(--fs-21);
+  letter-spacing: 0.1em;
+  color: var(--ink);
+}
+
+.pc-sub {
+  display: block;
+  margin-top: 10rpx;
+  font-size: var(--fs-11);
+  color: var(--ink-3);
+}
+
+/* 五角星：clip-path 绘制，不用 emoji */
+.pc-star {
+  width: 44rpx;
+  height: 44rpx;
+  flex: none;
+  margin-left: 16rpx;
+  background: #ddd9d0;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+
+.pc-star.is-on {
+  background: var(--cinnabar);
+}
+
+.pc-empty {
+  padding: 96rpx 0;
+  text-align: center;
+  font-size: var(--fs-12);
+  color: var(--ink-4);
+}
+
+/* 跨页共享：搜索框（search 页） */
+.ph-search {
+  padding: 8rpx 0 24rpx;
+}
+
+.ph-search-input {
+  height: 76rpx;
+  padding: 0 32rpx;
+  border-radius: var(--r-chip);
+  background: var(--paper-sunken);
+  font-size: var(--fs-13);
+  color: var(--ink);
+}
+
+.ph-search-ph {
+  color: var(--ink-4);
+}
+
+.ph-list {
+  margin-top: 8rpx;
+}
+
+.ph-item {
+  padding: 28rpx 8rpx;
+  border-bottom: 1rpx solid rgba(36, 52, 71, 0.06);
+}
+
+.ph-item-title {
+  display: block;
+  font-size: var(--fs-15);
+  letter-spacing: 0.06em;
+}
+
+.ph-item-sub {
+  display: block;
+  margin-top: 6rpx;
+  font-size: var(--fs-10);
+  color: var(--ink-3);
+}
+
+/* 占位页（骨架阶段）：所有未实现页面共用，避免逐页重复写 wxss */
+.ph {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 80rpx 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ph-seal {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 16rpx;
+  background: var(--cinnabar);
+  opacity: 0.9;
+}
+
+.ph-title {
+  margin-top: 48rpx;
+  font-size: var(--fs-21);
+  letter-spacing: 0.14em;
+  color: var(--ink);
+}
+
+.ph-desc {
+  margin-top: 24rpx;
+  font-size: var(--fs-12);
+  line-height: 1.9;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+.ph-todo {
+  margin-top: 40rpx;
+  padding: 16rpx 32rpx;
+  border-radius: var(--r-chip);
+  background: var(--paper-sunken);
+  font-size: var(--fs-11);
+  color: var(--ink-2);
+}

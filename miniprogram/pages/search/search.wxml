@@ -1,0 +1,24 @@
+<view class="page">
+  <view class="ph-search">
+    <input
+      class="ph-search-input"
+      placeholder="搜索诗题、诗人、朝代"
+      placeholder-class="ph-search-ph"
+      value="{{keyword}}"
+      bindinput="onInput"
+      bindconfirm="doSearch"
+      confirm-type="search"
+    />
+  </view>
+
+  <view class="ph-list" wx:if="{{result.length}}">
+    <view class="ph-item" wx:for="{{result}}" wx:key="id" data-id="{{item.id}}" bindtap="goPoem">
+      <text class="ph-item-title serif">{{item.title}}</text>
+      <text class="ph-item-sub">{{item.dynasty}} · {{item.author}}</text>
+    </view>
+  </view>
+
+  <view class="ph" wx:else>
+    <text class="ph-desc">{{keyword ? '没有找到相关诗词' : '输入关键词开始搜索'}}</text>
+  </view>
+</view>

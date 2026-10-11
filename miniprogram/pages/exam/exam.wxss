@@ -1,0 +1,16 @@
+/* 中考/高考篇 */
+.page { min-height: 100vh; background: var(--paper); padding-bottom: 160rpx; }
+
+.exam-tags { display: flex; gap: 12rpx; padding: 20rpx 32rpx; box-sizing: border-box; overflow-x: auto; white-space: nowrap; }
+.exam-tag { flex: none; height: 56rpx; padding: 0 24rpx; border-radius: 28rpx; background: #ece7da; color: var(--ink-3); font-size: 22rpx; display: flex; align-items: center; }
+.exam-tag.is-on { background: var(--ink); color: #fffdf8; }
+
+.poem-list { padding: 0 32rpx; box-sizing: border-box; display: flex; flex-direction: column; gap: 20rpx; }
+.poem-card { display: flex; align-items: center; padding: 20rpx; }
+.poem-cover { width: 120rpx; height: 120rpx; flex: none; margin-right: 20rpx; border-radius: var(--r-sm); background: linear-gradient(160deg, #57747a 0%, #2c4b59 100%); }
+.poem-body { flex: 1; min-width: 0; }
+.poem-title { display: block; font-size: 30rpx; color: var(--ink); font-weight: 600; letter-spacing: 2rpx; }
+.poem-author { display: block; margin-top: 6rpx; font-size: 20rpx; color: var(--ink-3); }
+.poem-tags { display: flex; gap: 8rpx; margin-top: 10rpx; }
+.poem-tag { padding: 4rpx 12rpx; border-radius: 10rpx; font-size: 18rpx; background: rgba(79,122,93,.12); color: var(--bamboo); }
+.poem-arrow { width: 24rpx; height: 24rpx; opacity: 0.35; flex: none; margin-left: 12rpx; }

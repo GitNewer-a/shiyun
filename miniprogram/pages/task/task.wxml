@@ -1,0 +1,43 @@
+<view class="page">
+  <!-- 每日一诗打卡 -->
+  <view class="daily-card card">
+    <view class="daily-left">
+      <view class="daily-icon"><image src="/assets/figma-learn/icon-9.svg" class="daily-icon-img" mode="aspectFit" /></view>
+      <view>
+        <text class="daily-title">每日一诗</text>
+        <text class="daily-sub">坚持打卡，积累诗词</text>
+      </view>
+    </view>
+    <view class="daily-cta" bindtap="doDailyCheck">
+      <text>{{dailyDone ? '已打卡' : '去打卡'}}</text>
+    </view>
+  </view>
+
+  <!-- 任务列表 -->
+  <view class="sec-head">
+    <text class="sec-title serif">任务列表</text>
+    <navigator url="/pages/learn/learn" hover-class="none">
+      <text class="sec-more">全部任务 ></text>
+    </navigator>
+  </view>
+  <view class="task-list">
+    <view
+      class="task-item card {{item.done ? 'is-done' : ''}}"
+      wx:for="{{tasks}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="toggleTask"
+    >
+      <view class="task-icon" style="background:{{item.color}}">
+        <image src="{{item.icon}}" class="task-icon-img" mode="aspectFit" />
+      </view>
+      <view class="task-body">
+        <text class="task-name">{{item.name}}</text>
+        <text class="task-desc">{{item.desc}}</text>
+      </view>
+      <view class="task-check">
+        <view class="check-mark {{item.done ? 'is-on' : ''}}" />
+      </view>
+    </view>
+  </view>
+</view>

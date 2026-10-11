@@ -1,0 +1,18 @@
+# WeChat Mini Program
+miniprogram/npm_build/
+miniprogram/dev/
+miniprogram/unpackage/
+cloudfunctions/**/*.log
+cloudfunctions/node_modules/
+miniprogram/node_modules/
+
+# IDE
+.cursor/
+.workbuddy/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config with sensitive info
+*.local.json

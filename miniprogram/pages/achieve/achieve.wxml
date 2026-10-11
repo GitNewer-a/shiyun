@@ -1,0 +1,43 @@
+<view class="page">
+  <!-- 进度主卡 -->
+  <view class="progress-card card">
+    <view class="prog-ring-wrap">
+      <view class="prog-ring" style="background:{{ringStyle}}">
+        <view class="prog-ring-inner">
+          <text class="prog-ring-num serif">{{progress.learned}}</text>
+          <text class="prog-ring-total">/{{maxLearn}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="prog-stats">
+      <view class="prog-stat">
+        <text class="prog-stat-num serif">{{progress.recited}}</text>
+        <text class="prog-stat-label">已背诵诗词</text>
+      </view>
+      <view class="prog-stat">
+        <text class="prog-stat-num serif">{{progress.streak}}</text>
+        <text class="prog-stat-label">连续打卡天数</text>
+      </view>
+      <view class="prog-stat">
+        <text class="prog-stat-num serif">{{favCount}}</text>
+        <text class="prog-stat-label">收藏诗词</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 学习成就 -->
+  <view class="sec-head">
+    <text class="sec-title serif">学习成就</text>
+  </view>
+  <view class="badge-list">
+    <view class="badge-card card {{item.got ? 'is-on' : ''}}" wx:for="{{badges}}" wx:key="name">
+      <view class="badge-icon {{item.got ? 'badge-icon--on' : 'badge-icon--off'}}">
+        <text class="badge-icon-txt">{{item.got ? '★' : '☆'}}</text>
+      </view>
+      <view class="badge-body">
+        <text class="badge-name">{{item.name}}</text>
+        <text class="badge-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+</view>
