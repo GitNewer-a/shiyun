@@ -14,6 +14,6 @@
     <view class="ph-seal state-empty" />
     <text class="ph-title serif">还没有收藏</text>
     <text class="ph-desc">在诗词库点星标，把喜欢的诗收进来</text>
-    <navigator class="ph-todo" url="/pages/browse/browse">去诗词库看看</navigator>
+    <navigator class="ph-todo" url="/pages/browse/browse" open-type="switchTab">去诗词库看看</navigator>
   </view>
 </view>

@@ -118,14 +118,38 @@
   letter-spacing: 0.04em;
   color: var(--immerse-sub);
   line-height: 1;
+  min-height: 1em;
+}
+.char-glyph {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  height: 1.15em;
+  font-size: 52rpx;
+}
+.char-punct-slot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 0.55em;
+  height: 100%;
+  margin-left: -0.06em;
+  overflow: visible;
 }
 .char-main {
-  font-size: 52rpx;
+  font-size: 1em;
   letter-spacing: 0.06em;
   color: var(--immerse-title);
   font-weight: 600;
   line-height: 1.15;
   text-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.28);
+}
+.char-main--punct {
+  width: 1em;
+  line-height: 1;
+  /* 全角标点墨心偏中，贴到汉字底边 */
+  transform: translateY(0.00em);
 }
 .title-divider {
   width: 56rpx;
@@ -147,8 +171,9 @@
   padding-bottom: 4rpx;
 }
 .author-col { gap: 6rpx; }
+.author-col .char-glyph { font-size: 40rpx; }
 .author-pinyin { font-size: 18rpx; }
-.author-main { font-size: 40rpx; font-weight: 500; }
+.author-main { font-weight: 500; }
 
 /* ── 诗句玻璃卡 ── */
 .card-poem {
@@ -174,12 +199,31 @@
   align-items: center;
   gap: 6rpx;
   min-width: 48rpx;
+  flex-shrink: 0;
+}
+.line-glyph {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  height: 1.2em;
+  font-size: var(--fs-21);
+}
+.line-punct-slot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 0.5em;
+  height: 100%;
+  margin-left: -0.04em;
+  overflow: visible;
 }
 .line-pinyin {
   font-size: 18rpx;
   letter-spacing: 0.04em;
   color: rgba(200, 220, 210, 0.62);
   line-height: 1.2;
+  min-height: 1.2em;
   white-space: nowrap;
 }
 .line-pinyin.is-hidden {
@@ -190,10 +234,16 @@
   margin: 0;
 }
 .line-char {
-  font-size: var(--fs-21);
+  font-size: 1em;
   color: var(--immerse-text);
   letter-spacing: 0.08em;
-  line-height: 1.35;
+  line-height: 1.2;
+}
+/* 槽位贴底 + 微调，使标点与汉字底部齐平 */
+.line-char--punct {
+  width: 1em;
+  line-height: 1;
+  transform: translateY(0.00em);
 }
 .pinyin-toggle {
   display: flex;

@@ -1,9 +1,9 @@
 /** 学习中心 —— 对应 Figma node 10:499 Chinese Poetry Learning UI
- * 版式（393x852）：标题栏 / 成长卡 / 学习模块(2) / 今日学习 / 最近学习
- * 数据优先读本地 progress，空态时用设计稿演示值（35/18/7天/51%）保证与稿一致。
+ * 版式（393x852）：标题栏 / 成长卡 / 学习模块(3) / 今日学习 / 最近学习
+ * 成长数据与「我的」页共用 utils/growth 快照。
  */
-const db = require('../../utils/db.js');
-const { POEMS, getPoemById } = require('../../data/poems.js');
+const { getGrowthSnapshot } = require('../../utils/growth.js');
+const { POEMS } = require('../../data/poems.js');
 
 function getByTitle(t) {
   const f = POEMS.filter(function (p) { return p.title === t; });
@@ -12,7 +12,15 @@ function getByTitle(t) {
 
 Page({
   data: {
-    growth: { percent: 51, learned: 35, mastered: 18, streak: 7, remain: 7, nextLevel: '诗词学徒', levelTag: '诗词初学者' },
+    growth: {
+      percent: 0,
+      learned: 0,
+      mastered: 0,
+      streak: 0,
+      remain: 0,
+      nextLevel: '',
+      levelTag: ''
+    },
     ringStyle: '',
     today: [
       { id: 'td1', title: '阅读《静夜思》', sub: '唐 · 李白', done: false, poem: '静夜思' },
@@ -32,27 +40,18 @@ Page({
   },
 
   renderGrowth() {
-    const p = db.getProgress();
-    let g = { percent: 51, learned: 35, mastered: 18, streak: 7, remain: 7, nextLevel: '诗词学徒', levelTag: '诗词初学者' };
-    if (p && (p.learned > 0 || p.recited > 0 || p.streak > 0)) {
-      const learned = p.learned || 0;
-      const mastered = p.recited || 0;
-      const streak = p.streak || 0;
-      const total = 50;
-      const percent = Math.min(99, Math.round(((mastered) / total) * 100));
-      g = {
-        percent: percent,
-        learned: learned,
-        mastered: mastered,
-        streak: streak,
-        remain: Math.max(0, 25 - mastered),
-        nextLevel: mastered >= 25 ? '诗词学徒' : '诗词学徒',
-        levelTag: mastered >= 25 ? '诗词学徒' : '诗词初学者'
-      };
-    }
+    const g = getGrowthSnapshot();
     const ratio = (g.percent / 100).toFixed(2);
     this.setData({
-      growth: g,
+      growth: {
+        percent: g.percent,
+        learned: g.learned,
+        mastered: g.mastered,
+        streak: g.streak,
+        remain: g.remain,
+        nextLevel: g.nextLevel,
+        levelTag: g.levelTag
+      },
       ringStyle: 'conic-gradient(#E8B870 0turn ' + ratio + 'turn, rgba(255,255,255,.22) ' + ratio + 'turn 1turn)'
     });
   },
@@ -83,17 +82,21 @@ Page({
     wx.navigateTo({ url: '/pages/poem/poem?id=' + (poem ? poem.id : 'p001') });
   },
 
-  goRank() {
-    wx.navigateTo({ url: '/pages/achieve/achieve' });
-  },
-
   goUnderstand() {
     wx.switchTab({ url: '/pages/browse/browse' });
   },
 
   goRecite(e) {
-    const type = e.currentTarget.dataset.type || 'recite';
+    let type = e.currentTarget.dataset.type || 'write';
+    if (type !== 'write' && type !== 'blank') type = 'write';
     wx.navigateTo({ url: '/pages/recite/recite?type=' + type });
+  },
+
+  goGrowth(e) {
+    const key = e.currentTarget.dataset.key || 'record';
+    if (key === 'poems') wx.navigateTo({ url: '/pages/favorites/favorites' });
+    else if (key === 'badge') wx.navigateTo({ url: '/pages/achieve/achieve' });
+    else wx.navigateTo({ url: '/pages/growth/growth' });
   },
 
   goRecent(e) {

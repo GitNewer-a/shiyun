@@ -2,26 +2,17 @@ const { getPoemById, POEMS } = require('../../data/poems.js');
 
 const MODES = [
   { id: 'write', name: '全文默写' },
-  { id: 'blank', name: '填空默写' },
-  { id: 'hint', name: '关键词提示' },
-  { id: 'chain', name: '首句接龙' },
-  { id: 'order', name: '诗句排序' }
+  { id: 'blank', name: '填空默写' }
 ];
 
 const GUIDE = {
   write: '请根据记忆，默写下这首诗的全文。',
-  blank: '请根据上下文，填写诗句中缺失的文字。',
-  hint: '参考关键词，回忆并默写出这首诗。',
-  chain: '根据上一句，写出紧接的下一句。',
-  order: '将打乱的诗句重新排列为正确顺序。'
+  blank: '请根据上下文，填写诗句中缺失的文字。'
 };
 
 const CTA = {
   write: '开始默写',
-  blank: '提交填空',
-  hint: '开始默写',
-  chain: '确认本句',
-  order: '提交排序'
+  blank: '提交填空'
 };
 
 const THEME_MAP = {
@@ -31,18 +22,6 @@ const THEME_MAP = {
   将进酒: '豪放',
   登鹳雀楼: '登高'
 };
-
-/** 从诗句中抽取关键词（取每句末字 / 关键名词） */
-function pickKeywords(lines) {
-  const pool = [];
-  (lines || []).forEach(function (line) {
-    if (!line) return;
-    const chars = line.replace(/[，。！？、；：\s]/g, '');
-    if (chars.length >= 2) pool.push(chars.slice(-2));
-    else if (chars.length) pool.push(chars);
-  });
-  return pool.slice(0, 4);
-}
 
 /** 生成填空：每隔若干字挖空 */
 function buildBlankLines(lines) {
@@ -67,18 +46,6 @@ function buildBlankLines(lines) {
   });
 }
 
-/** Fisher–Yates 打乱 */
-function shuffle(arr) {
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const t = a[i];
-    a[i] = a[j];
-    a[j] = t;
-  }
-  return a;
-}
-
 Page({
   data: {
     modes: MODES,
@@ -90,11 +57,6 @@ Page({
     ctaLabel: CTA.write,
     writeText: '',
     blankLines: [],
-    keywords: [],
-    chainIndex: 0,
-    chainAnswer: '',
-    orderPool: [],
-    orderPicked: [],
     practiceCount: 0,
     recentList: []
   },
@@ -157,24 +119,12 @@ Page({
     const lines = this._lines || [];
     const patch = {
       writeText: '',
-      chainIndex: 0,
-      chainAnswer: '',
-      blankLines: [],
-      keywords: [],
-      orderPool: [],
-      orderPicked: []
+      blankLines: []
     };
 
     if (mode === 'blank') {
+      this._blankDraft = {};
       patch.blankLines = buildBlankLines(lines);
-    } else if (mode === 'hint') {
-      patch.keywords = pickKeywords(lines);
-    } else if (mode === 'order') {
-      const pool = shuffle(lines.map(function (text, i) {
-        return { uid: 'o' + i + '-' + text, text: text, picked: false, origin: i };
-      }));
-      patch.orderPool = pool;
-      patch.orderPicked = [];
     }
 
     this.setData(patch);
@@ -200,53 +150,86 @@ Page({
     this.setData({ writeText: e.detail.value || '' });
   },
 
+  /** 填空输入：组拼音期间不 setData、不截断，避免打断手机输入法 */
   onBlankInput(e) {
     const line = e.currentTarget.dataset.line;
     const part = e.currentTarget.dataset.part;
-    const val = (e.detail.value || '').slice(0, 1);
-    const key = 'blankLines[' + line + '].parts[' + part + '].value';
-    this.setData({ [key]: val });
+    if (!this._blankDraft) this._blankDraft = {};
+    this._blankDraft[line + '_' + part] = e.detail.value || '';
   },
 
-  onChainInput(e) {
-    this.setData({ chainAnswer: e.detail.value || '' });
+  onBlankBlur(e) {
+    const line = e.currentTarget.dataset.line;
+    const part = e.currentTarget.dataset.part;
+    this.commitBlankSlot(line, part, e.detail.value);
   },
 
-  onPickLine(e) {
-    const uid = e.currentTarget.dataset.uid;
-    const pool = this.data.orderPool;
-    const item = pool.filter(function (p) { return p.uid === uid; })[0];
-    if (!item || item.picked) return;
+  /** 将输入归一为答案字数内的汉字；纯拼音未上屏则保留草稿不强制清空显示 */
+  commitBlankSlot(line, partIdx, raw) {
+    const lines = this.data.blankLines || [];
+    const part = lines[line] && lines[line].parts && lines[line].parts[partIdx];
+    if (!part || part.type !== 'blank') return;
 
-    const orderPool = pool.map(function (p) {
-      return p.uid === uid ? Object.assign({}, p, { picked: true }) : p;
-    });
-    const orderPicked = this.data.orderPicked.concat([Object.assign({}, item)]);
-    this.setData({ orderPool: orderPool, orderPicked: orderPicked });
+    const draftKey = line + '_' + partIdx;
+    const draft = this._blankDraft || {};
+    let val = raw != null ? String(raw) : (draft[draftKey] || part.value || '');
+    val = val.trim();
+
+    const hans = val.match(/[\u4e00-\u9fff]/g);
+    const len = part.len || 1;
+    let next = '';
+    if (hans && hans.length) {
+      next = hans.join('').slice(0, len);
+    } else if (!val) {
+      next = '';
+    } else {
+      // 仍在输入拼音或未选字：暂不回写受控 value，避免打断；提交时再判空
+      draft[draftKey] = val;
+      this._blankDraft = draft;
+      return;
+    }
+
+    if (draft[draftKey] !== undefined) delete draft[draftKey];
+    this._blankDraft = draft;
+    if (part.value === next) return;
+    const key = 'blankLines[' + line + '].parts[' + partIdx + '].value';
+    this.setData({ [key]: next });
   },
 
-  onUnpickLine(e) {
-    const uid = e.currentTarget.dataset.uid;
-    const orderPicked = this.data.orderPicked.filter(function (p) { return p.uid !== uid; });
-    const orderPool = this.data.orderPool.map(function (p) {
-      return p.uid === uid ? Object.assign({}, p, { picked: false }) : p;
-    });
-    this.setData({ orderPool: orderPool, orderPicked: orderPicked });
+  /** 提交前把各空草稿收成汉字 */
+  flushBlankDrafts() {
+    const lines = this.data.blankLines || [];
+    const draft = this._blankDraft || {};
+    const patch = {};
+    let i;
+    let j;
+    for (i = 0; i < lines.length; i++) {
+      const parts = lines[i].parts || [];
+      for (j = 0; j < parts.length; j++) {
+        const p = parts[j];
+        if (p.type !== 'blank') continue;
+        const dk = i + '_' + j;
+        const raw = draft[dk] != null ? draft[dk] : p.value;
+        const hans = String(raw || '').match(/[\u4e00-\u9fff]/g);
+        const next = hans ? hans.join('').slice(0, p.len || 1) : '';
+        if (p.value !== next) {
+          patch['blankLines[' + i + '].parts[' + j + '].value'] = next;
+        }
+        if (draft[dk] !== undefined) delete draft[dk];
+      }
+    }
+    this._blankDraft = draft;
+    if (Object.keys(patch).length) this.setData(patch);
   },
 
   onShowHint() {
     const mode = this.data.activeMode;
     const lines = this._lines || [];
     let tip = '';
-    if (mode === 'write' || mode === 'hint') {
+    if (mode === 'write') {
       tip = '共 ' + lines.length + ' 句，首字为「' + (lines[0] || '').charAt(0) + '」';
     } else if (mode === 'blank') {
       tip = '空格处各填一字，注意上下文连贯';
-    } else if (mode === 'chain') {
-      const i = this.data.chainIndex;
-      tip = i < lines.length ? '本句共 ' + lines[i].length + ' 字' : '已完成全部接龙';
-    } else if (mode === 'order') {
-      tip = '第一句以「' + (lines[0] || '').charAt(0) + '」开头';
     }
     wx.showToast({ title: tip || '暂无提示', icon: 'none', duration: 2200 });
   },
@@ -256,32 +239,13 @@ Page({
     let ok = false;
     let msg = '';
 
-    if (mode === 'write' || mode === 'hint') {
+    if (mode === 'write') {
       const result = this.judgeFullText(this.data.writeText);
       ok = result.ok;
       msg = result.msg;
     } else if (mode === 'blank') {
+      this.flushBlankDrafts();
       const result = this.judgeBlank();
-      ok = result.ok;
-      msg = result.msg;
-    } else if (mode === 'chain') {
-      const result = this.judgeChain();
-      if (result.advance) {
-        this.setData({
-          chainIndex: result.nextIndex,
-          chainAnswer: '',
-          practiceCount: this.data.practiceCount + (result.done ? 1 : 0)
-        });
-        wx.showToast({
-          title: result.done ? '接龙完成！' : '正确，继续下一句',
-          icon: result.done ? 'success' : 'none'
-        });
-        return;
-      }
-      ok = false;
-      msg = result.msg;
-    } else if (mode === 'order') {
-      const result = this.judgeOrder();
       ok = result.ok;
       msg = result.msg;
     }
@@ -337,30 +301,6 @@ Page({
     return { ok: false, msg: '答对 ' + correct + '/' + total + '，再检查一下' };
   },
 
-  judgeChain() {
-    const lines = this._lines || [];
-    const i = this.data.chainIndex;
-    if (i >= lines.length) return { advance: true, done: true, nextIndex: i, msg: '已完成' };
-    const expect = this.normalize(lines[i]);
-    const got = this.normalize(this.data.chainAnswer);
-    if (!got) return { advance: false, msg: '请输入下一句' };
-    if (got !== expect) return { advance: false, msg: '不对哦，再想想' };
-    const next = i + 1;
-    return { advance: true, done: next >= lines.length, nextIndex: next };
-  },
-
-  judgeOrder() {
-    const lines = this._lines || [];
-    const picked = this.data.orderPicked || [];
-    if (picked.length < lines.length) {
-      return { ok: false, msg: '请排完所有诗句（' + picked.length + '/' + lines.length + '）' };
-    }
-    const ok = picked.every(function (p, i) { return p.text === lines[i]; });
-    return ok
-      ? { ok: true, msg: '顺序正确' }
-      : { ok: false, msg: '顺序有误，点击已选项可撤回' };
-  },
-
   onViewMore() {
     wx.navigateTo({ url: '/pages/progress/progress' });
   },
@@ -376,8 +316,6 @@ Page({
       poem: poem,
       themeTag: THEME_MAP[poem.title] || '经典',
       writeText: '',
-      chainIndex: 0,
-      chainAnswer: '',
       recentList: this.buildRecent(poem.id)
     });
     this.setupMode(this.data.activeMode);

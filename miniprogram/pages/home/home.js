@@ -6,9 +6,9 @@ Page({
   data: {
     dailyPoem: {},
     categories: [
-      { name: 'AI学诗', action: 'poem', color: '#e4eaf0', icon: '/assets/figma-home/icon-6.svg' },
-      { name: '背诵', action: 'recite', color: '#f0e8e4', icon: '/assets/figma-home/icon-10.svg' },
-      { name: '分类', action: 'browse', color: '#edf0de', icon: '/assets/figma-home/icon-2.svg' },
+      { name: '诗词学习', action: 'poem', color: '#e4eaf0', icon: '/assets/figma-home/icon-6.svg' },
+      { name: '记忆训练', action: 'recite', color: '#f0e8e4', icon: '/assets/figma-home/icon-10.svg' },
+      { name: '诗词库', action: 'browse', color: '#edf0de', icon: '/assets/figma-home/icon-2.svg' },
       { name: '学习计划', action: 'learn', color: '#ede8f0', icon: '/assets/figma-home/icon-1.svg' }
     ],
     resume: {
@@ -98,10 +98,6 @@ Page({
     } else if (action === 'learn') {
       wx.switchTab({ url: '/pages/learn/learn' });
     }
-  },
-
-  goBrowse() {
-    wx.switchTab({ url: '/pages/browse/browse' });
   },
 
   togglePlay() {

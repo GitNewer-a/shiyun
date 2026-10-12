@@ -2,10 +2,45 @@ const db = require('../../utils/db.js');
 const { toastReciteSoon } = require('../../utils/toast.js');
 const { getPoemById } = require('../../data/poems.js');
 
+/** 开标点挂下一字、闭标点挂上一字，避免行首/单独成行 */
+const OPEN_PUNCT = /[「『《（【〖〈“‘]/;
+const HANZI = /[\u4e00-\u9fff]/;
+
+/** 汉字才配对拼音；标点挂靠相邻汉字，拼音留空 */
 function parseLinePinyin(line, pyStr) {
-  const chars = [...line];
-  const pys = pyStr ? pyStr.trim().split(/\s+/) : [];
-  return chars.map((c, i) => ({ char: c, pinyin: pys[i] || '' }));
+  const chars = [...(line || '')];
+  const pys = pyStr ? pyStr.trim().split(/\s+/).filter(Boolean) : [];
+  let pi = 0;
+  const out = [];
+  let pendingOpen = '';
+
+  chars.forEach(function (c) {
+    if (HANZI.test(c)) {
+      const pinyin = pys[pi] || '';
+      pi += 1;
+      out.push({ char: c, prefix: pendingOpen, suffix: '', pinyin: pinyin });
+      pendingOpen = '';
+      return;
+    }
+    if (OPEN_PUNCT.test(c)) {
+      pendingOpen += c;
+      return;
+    }
+    if (out.length) {
+      out[out.length - 1].suffix += c;
+    } else {
+      pendingOpen += c;
+    }
+  });
+
+  if (pendingOpen) {
+    if (out.length) {
+      out[out.length - 1].suffix += pendingOpen;
+    } else {
+      out.push({ char: '', prefix: pendingOpen, suffix: '', pinyin: '' });
+    }
+  }
+  return out;
 }
 
 function fmt(sec) {
@@ -64,6 +99,7 @@ Page({
       titleChars, authorChars, lineChars,
       knBody: knBodyOf(poem, '译文')
     });
+    db.addBrowseHistory(id);
     wx.setNavigationBarTitle({ title: poem.title });
   },
 

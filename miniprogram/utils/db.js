@@ -88,6 +88,24 @@ function isFavorite(poemId) {
   return getFavorites().indexOf(poemId) > -1;
 }
 
+/** 浏览历史：最近查看的诗词 id，去重后最新在前 */
+const BROWSE_HISTORY_KEY = 'browseHistory';
+const BROWSE_HISTORY_MAX = 50;
+
+function addBrowseHistory(poemId) {
+  if (!poemId) return [];
+  let list = wx.getStorageSync(BROWSE_HISTORY_KEY) || [];
+  list = list.filter(function (id) { return id !== poemId; });
+  list.unshift(poemId);
+  if (list.length > BROWSE_HISTORY_MAX) list = list.slice(0, BROWSE_HISTORY_MAX);
+  wx.setStorageSync(BROWSE_HISTORY_KEY, list);
+  return list;
+}
+
+function getBrowseHistory() {
+  return wx.getStorageSync(BROWSE_HISTORY_KEY) || [];
+}
+
 /** 学习进度：已学 / 已背诵 / 连续天数，落本地，待接入云数据库 */
 const PROGRESS_KEY = 'progress';
 
@@ -113,6 +131,8 @@ module.exports = {
   toggleFavorite: toggleFavorite,
   getFavorites: getFavorites,
   isFavorite: isFavorite,
+  addBrowseHistory: addBrowseHistory,
+  getBrowseHistory: getBrowseHistory,
   getProgress: getProgress,
   saveProgress: saveProgress
 };

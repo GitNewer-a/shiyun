@@ -29,7 +29,7 @@ Page({
   data: {
     groups: [
       { key: 'stage', label: '学段', options: ['全部', '小学', '初中', '高中'], value: '全部' },
-      { key: 'genre', label: '体裁', options: ['全部', '唐诗', '宋词', '元曲'], value: '全部' },
+      { key: 'genre', label: '体裁', options: ['全部', '唐诗', '宋词', '宋诗', '元曲'], value: '全部' },
       { key: 'author', label: '作者', options: authorOptions(), value: '全部' }
     ],
     list: []

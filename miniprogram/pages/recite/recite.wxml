@@ -74,95 +74,18 @@
                 wx:else
                 class="blank-slot"
                 value="{{part.value}}"
-                maxlength="{{part.len}}"
+                maxlength="12"
+                type="text"
+                confirm-type="done"
+                hold-keyboard="{{true}}"
+                adjust-position="{{true}}"
                 data-line="{{index}}"
                 data-part="{{pi}}"
                 bindinput="onBlankInput"
+                bindblur="onBlankBlur"
+                bindconfirm="onBlankBlur"
               />
             </block>
-          </view>
-        </view>
-      </view>
-    </block>
-
-    <!-- ===== 关键词提示 ===== -->
-    <block wx:elif="{{activeMode === 'hint'}}">
-      <view class="kw-box">
-        <text class="kw-label">关键词</text>
-        <view class="kw-row">
-          <text class="kw-chip" wx:for="{{keywords}}" wx:key="*this">{{item}}</text>
-        </view>
-      </view>
-      <view class="paper paper--short">
-        <view class="paper-lines" />
-        <textarea
-          class="paper-input"
-          value="{{writeText}}"
-          maxlength="400"
-          placeholder="根据关键词，默写出全文..."
-          placeholder-class="paper-ph"
-          adjust-position
-          show-confirm-bar="{{false}}"
-          bindinput="onWriteInput"
-        />
-      </view>
-    </block>
-
-    <!-- ===== 首句接龙 ===== -->
-    <block wx:elif="{{activeMode === 'chain'}}">
-      <view class="chain-box">
-        <view class="chain-step">
-          <text class="chain-step-label">第 {{chainIndex + 1}} / {{poem.lines.length}} 句</text>
-        </view>
-        <view class="chain-prev" wx:if="{{chainIndex === 0}}">
-          <text class="chain-prev-label">诗题提示</text>
-          <text class="chain-prev-text">《{{poem.title}}》</text>
-        </view>
-        <view class="chain-prev" wx:else>
-          <text class="chain-prev-label">上一句</text>
-          <text class="chain-prev-text">{{poem.lines[chainIndex - 1]}}</text>
-        </view>
-        <view class="chain-ask">
-          <text class="chain-ask-label">请写出下一句</text>
-          <input
-            class="chain-input"
-            value="{{chainAnswer}}"
-            maxlength="20"
-            placeholder="输入下一句…"
-            placeholder-class="paper-ph"
-            bindinput="onChainInput"
-            confirm-type="done"
-            bindconfirm="onStartTrain"
-          />
-        </view>
-      </view>
-    </block>
-
-    <!-- ===== 诗句排序 ===== -->
-    <block wx:elif="{{activeMode === 'order'}}">
-      <view class="order-box">
-        <text class="order-tip">点击诗句，按正确顺序排列</text>
-        <view class="order-picked" wx:if="{{orderPicked.length}}">
-          <view
-            class="order-chip is-picked"
-            wx:for="{{orderPicked}}"
-            wx:key="uid"
-            data-uid="{{item.uid}}"
-            bindtap="onUnpickLine"
-          >
-            <text class="order-num">{{index + 1}}</text>
-            <text class="order-text">{{item.text}}</text>
-          </view>
-        </view>
-        <view class="order-pool">
-          <view
-            class="order-chip {{item.picked ? 'is-used' : ''}}"
-            wx:for="{{orderPool}}"
-            wx:key="uid"
-            data-uid="{{item.uid}}"
-            bindtap="onPickLine"
-          >
-            <text class="order-text">{{item.text}}</text>
           </view>
         </view>
       </view>

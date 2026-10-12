@@ -1,141 +1,184 @@
 <view class="page">
   <view class="nav" style="padding-top: {{statusBarHeight}}px;">
     <view class="nav-inner">
-      <view class="nav-back" bindtap="goBack" hover-class="is-press">
-        <view class="nav-arrow" />
+      <view class="nav-back" bindtap="goBack" hover-class="is-press" aria-label="返回">
+        <image class="nav-back-ico" src="/assets/figma-growth/back.svg" mode="aspectFit" />
       </view>
-      <text class="nav-title">学习成长</text>
+      <text class="nav-title serif">学习记录</text>
       <view class="nav-side" />
     </view>
   </view>
 
   <scroll-view class="scroll" scroll-y show-scrollbar="{{false}}">
     <view style="height: {{navOffset}}px;" />
-    <view class="level-card" bindtap="onLevel" hover-class="is-press">
-      <view class="level-top">
-        <view class="level-copy">
-          <text class="lv">Lv.{{level.lv}}</text>
-          <text class="lv-name">{{level.name}}</text>
-        </view>
-        <view class="badge">
-          <view class="badge-ring">
-            <text class="badge-char">诗</text>
-          </view>
-        </view>
-      </view>
-      <text class="xp">{{level.xp}} / {{level.xpMax}} XP</text>
-      <view class="bar">
-        <view class="bar-fill" style="width: {{level.percent}}%;" />
-      </view>
-      <text class="xp-hint">{{level.hint}}</text>
-    </view>
 
-    <view class="sec">
-      <text class="sec-title">学习概览</text>
-      <view class="ov-card">
-        <view class="ov-item" wx:for="{{overview}}" wx:key="key">
-          <view class="ov-ico ov-ico--{{item.key}}" />
-          <view class="ov-num-row">
-            <text class="ov-num">{{item.num}}</text>
-            <text class="ov-unit" wx:if="{{item.unit}}">{{item.unit}}</text>
+    <!-- 连续学习 -->
+    <view class="streak-card">
+      <view class="streak-main">
+        <view class="streak-copy">
+          <text class="streak-label">连续学习</text>
+          <view class="streak-num-row">
+            <text class="streak-num serif">{{streak}}</text>
+            <text class="streak-unit">天</text>
           </view>
-          <text class="ov-label">{{item.label}}</text>
+          <text class="streak-hint">{{streakHint}}</text>
         </view>
+        <view class="streak-badge">
+          <image class="streak-flame" src="/assets/figma-growth/flame.svg" mode="aspectFit" />
+        </view>
+      </view>
+      <view class="streak-dots">
+        <view class="streak-dot {{item.on ? 'is-on' : ''}}" wx:for="{{streakDots}}" wx:key="id" />
       </view>
     </view>
 
-    <view class="sec">
-      <view class="sec-head" bindtap="toggleCalendar" hover-class="is-press">
-        <text class="sec-title">学习日历</text>
-        <view class="chev {{calendarOpen ? 'is-up' : ''}}" />
+    <!-- 概览双卡 -->
+    <view class="metric-row">
+      <view class="metric-card">
+        <view class="metric-num-row">
+          <text class="metric-num serif">{{learned}}</text>
+          <text class="metric-unit">首</text>
+        </view>
+        <text class="metric-label">已学习诗词</text>
       </view>
-      <view class="fold {{calendarOpen ? 'is-open' : ''}}">
-        <view class="cal-card">
-          <text class="cal-month">{{monthLabel}}</text>
-          <view class="cal-week">
-            <text class="cal-wd" wx:for="{{weekdays}}" wx:key="*this">{{item}}</text>
+      <view class="metric-card">
+        <view class="metric-num-row">
+          <text class="metric-num serif">{{weekMinutesTotal}}</text>
+          <text class="metric-unit">分钟</text>
+        </view>
+        <text class="metric-label">本周学习时长</text>
+      </view>
+    </view>
+
+    <!-- 学习日历 -->
+    <view class="card">
+      <view class="card-head">
+        <view class="month-nav">
+          <view class="month-btn" bindtap="prevMonth" hover-class="is-press" aria-label="上一月">
+            <view class="month-chev month-chev--left" />
           </view>
-          <view class="cal-grid">
+          <picker
+            mode="date"
+            fields="month"
+            value="{{pickerValue}}"
+            start="{{pickerStart}}"
+            end="{{pickerEnd}}"
+            bindchange="onMonthPick"
+          >
+            <view class="month-pick" hover-class="is-press">
+              <text class="card-title serif">{{monthLabel}}</text>
+              <view class="month-pick-caret" />
+            </view>
+          </picker>
+          <view
+            class="month-btn {{canGoNext ? '' : 'is-disabled'}}"
+            bindtap="nextMonth"
+            hover-class="{{canGoNext ? 'is-press' : ''}}"
+            aria-label="下一月"
+          >
+            <view class="month-chev month-chev--right" />
+          </view>
+        </view>
+        <view class="legend">
+          <view class="legend-dot is-on" />
+          <text class="legend-text">已学习</text>
+          <view class="legend-dot" />
+          <text class="legend-text">未学习</text>
+        </view>
+      </view>
+      <view class="cal-week">
+        <text class="cal-wd" wx:for="{{weekdays}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="cal-grid">
+        <view
+          class="cal-cell {{item.empty ? 'is-empty' : ''}} {{item.studied ? 'is-on' : ''}} {{item.isToday ? 'is-today' : ''}}"
+          wx:for="{{cells}}"
+          wx:key="id"
+          data-day="{{item.day}}"
+          data-studied="{{item.studied}}"
+          bindtap="onDay"
+        >
+          <text wx:if="{{!item.empty}}">{{item.day}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学习时长（可切换历史周） -->
+    <view class="card">
+      <view class="card-head">
+        <view class="month-nav">
+          <view class="month-btn" bindtap="prevWeek" hover-class="is-press" aria-label="上一周">
+            <view class="month-chev month-chev--left" />
+          </view>
+          <picker
+            mode="date"
+            value="{{weekPickerValue}}"
+            start="{{weekPickerStart}}"
+            end="{{weekPickerEnd}}"
+            bindchange="onWeekPick"
+          >
+            <view class="month-pick" hover-class="is-press">
+              <text class="card-title serif">{{weekLabel}}</text>
+              <view class="month-pick-caret" />
+            </view>
+          </picker>
+          <view
+            class="month-btn {{canGoNextWeek ? '' : 'is-disabled'}}"
+            bindtap="nextWeek"
+            hover-class="{{canGoNextWeek ? 'is-press' : ''}}"
+            aria-label="下一周"
+          >
+            <view class="month-chev month-chev--right" />
+          </view>
+        </view>
+        <text class="card-sub">单位：分钟</text>
+      </view>
+      <view class="chart">
+        <view class="chart-lines">
+          <view class="chart-line" />
+          <view class="chart-line" />
+          <view class="chart-line" />
+        </view>
+        <view class="chart-bars">
+          <view class="chart-col {{item.isFuture ? 'is-future' : ''}}" wx:for="{{weekBars}}" wx:key="day">
+            <text class="chart-val {{item.isToday ? 'is-today' : ''}}" wx:if="{{!item.isFuture}}">{{item.minutes}}</text>
             <view
-              class="cal-cell {{item.empty ? 'is-empty' : ''}} {{item.studied ? 'is-on d' + item.density : ''}}"
-              wx:for="{{cells}}"
-              wx:key="id"
-              data-day="{{item.day}}"
-              data-studied="{{item.studied}}"
-              bindtap="onDay"
-            >
-              <text wx:if="{{!item.empty}}">{{item.day}}</text>
-            </view>
+              class="chart-bar {{item.isToday ? 'is-today' : ''}}"
+              style="height: {{item.height}}rpx;"
+            />
+            <text class="chart-day {{item.isToday ? 'is-today' : ''}} {{item.isFuture ? 'is-future' : ''}}">{{item.day}}</text>
           </view>
-          <view class="streak" wx:if="{{!isEmpty}}">
-            <text class="streak-mark">续</text>
-            <text class="streak-text">已连续学习 {{streak}} 天</text>
-          </view>
-          <text class="empty-note" wx:else>今天开始学习，留下你的第一个足迹吧</text>
         </view>
       </view>
-      <view class="summary" wx:if="{{!calendarOpen && !isEmpty}}">
-        <text class="streak-mark">续</text>
-        <text>已连续学习 {{streak}} 天</text>
-      </view>
-      <text class="summary" wx:elif="{{!calendarOpen}}">今天开始学习，留下你的第一个足迹吧</text>
+      <text class="chart-note">{{chartNote}}</text>
     </view>
 
-    <view class="sec">
-      <view class="sec-head" bindtap="toggleAchieve" hover-class="is-press">
-        <text class="sec-title">学习成果</text>
-        <view class="chev {{achieveOpen ? 'is-up' : ''}}" />
-      </view>
-      <text class="summary" wx:if="{{!achieveOpen}}">{{achieveSummary}}</text>
-      <view class="fold {{achieveOpen ? 'is-open' : ''}}">
-        <view class="ach-card">
-          <view class="ach-item" data-key="mastered" bindtap="onAchieve" hover-class="is-press">
-            <view class="ach-ico ach-ico--book" />
-            <text class="ach-num">{{achieve.mastered}}<text class="ach-unit">首</text></text>
-            <text class="ach-label">已掌握</text>
-          </view>
-          <view class="ach-item" data-key="spoken" bindtap="onAchieve" hover-class="is-press">
-            <view class="ach-ico ach-ico--mic" />
-            <text class="ach-num">{{achieve.recited}}<text class="ach-unit">首</text></text>
-            <text class="ach-label">已朗诵</text>
-          </view>
-          <view class="ach-item" data-key="saved" bindtap="onAchieve" hover-class="is-press">
-            <view class="ach-ico ach-ico--star" />
-            <text class="ach-num">{{achieve.saved}}<text class="ach-unit">首</text></text>
-            <text class="ach-label">已收藏</text>
-          </view>
+    <!-- 最近学习 -->
+    <view class="card">
+      <view class="card-head">
+        <text class="card-title serif">最近学习</text>
+        <view class="all-link" bindtap="goAll" hover-class="is-press">
+          <text>全部</text>
+          <image class="all-ico" src="/assets/figma-growth/chevron.svg" mode="aspectFit" />
         </view>
       </view>
-    </view>
-
-    <view class="sec">
-      <view class="sec-head" bindtap="toggleRecord" hover-class="is-press">
-        <text class="sec-title">成长记录</text>
-        <view class="chev {{recordOpen ? 'is-up' : ''}}" />
-      </view>
-      <view class="summary summary--xp" wx:if="{{!recordOpen}}">
-        <text>{{recordSummary}}</text>
-        <text class="xp-em" wx:if="{{recordXp}}"> +{{recordXp}} XP</text>
-      </view>
-      <view class="fold {{recordOpen ? 'is-open' : ''}}">
-        <view class="tl" wx:if="{{records.length}}">
-          <view class="tl-item" wx:for="{{records}}" wx:key="id">
-            <view class="tl-rail">
-              <view class="tl-dot" />
-              <view class="tl-line" wx:if="{{index < records.length - 1}}" />
-            </view>
-            <view class="tl-body">
-              <text class="tl-when">{{item.when}}</text>
-              <text class="tl-text">{{item.text}}</text>
-              <text class="tl-xp">+{{item.xp}} XP</text>
-            </view>
-          </view>
-          <view class="more" bindtap="goAllRecords" hover-class="is-press">
-            <text>查看全部</text>
-            <text class="more-arrow">→</text>
-          </view>
+      <view
+        class="recent-item"
+        wx:for="{{recent}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="goPoem"
+        hover-class="is-press"
+      >
+        <view class="recent-mark">
+          <text>{{item.mark}}</text>
         </view>
-        <text class="empty-note empty-note--out" wx:else>今天开始学习，留下你的第一个足迹吧</text>
+        <view class="recent-body">
+          <text class="recent-title serif">{{item.title}}</text>
+          <text class="recent-verse">{{item.verse}}</text>
+          <text class="recent-meta">{{item.meta}}</text>
+        </view>
+        <image class="recent-arrow" src="/assets/figma-growth/arrow.svg" mode="aspectFit" />
       </view>
     </view>
 

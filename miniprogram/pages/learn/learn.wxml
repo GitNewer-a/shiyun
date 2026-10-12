@@ -1,9 +1,4 @@
 <view class="learn-page">
-  <view class="learn-toolbar">
-    <view class="rank-btn" bindtap="goRank" aria-label="排行榜">
-      <text class="rank-ico">勋</text>
-    </view>
-  </view>
 
   <!-- 我的诗词成长 -->
   <view class="growth-card">
@@ -79,9 +74,6 @@
                   <view class="tag-row">
                     <text class="tag" data-type="write" bindtap="goRecite">全文默写</text>
                     <text class="tag" data-type="blank" bindtap="goRecite">填空默写</text>
-                    <text class="tag" data-type="hint" bindtap="goRecite">关键词提示</text>
-                    <text class="tag" data-type="chain" bindtap="goRecite">首句接龙</text>
-                    <text class="tag" data-type="order" bindtap="goRecite">诗句排序</text>
                   </view>
       <view class="mem-foot">
         <view class="mem-bar"><view class="mem-fill" style="width:36%" /></view>
@@ -89,6 +81,25 @@
       </view>
     </view>
     <text class="mod-arrow" data-type="recite" bindtap="goRecite">›</text>
+  </view>
+
+  <view class="mod-card">
+    <view class="mod-accent mod-accent--gold" />
+    <view class="mod-icon mod-icon--gold"><text>奖</text></view>
+    <view class="mod-body">
+      <view class="mod-title-row">
+        <text class="mod-title">学习成长</text>
+        <text class="mod-sub">记录每一次进步</text>
+      </view>
+      <view class="tag-row">
+        <text class="tag" data-key="record" bindtap="goGrowth">学习记录</text>
+        <text class="tag" data-key="poems" bindtap="goGrowth">掌握诗词</text>
+        <text class="tag" data-key="days" bindtap="goGrowth">学习天数</text>
+        <text class="tag" data-key="badge" bindtap="goGrowth">成就徽章</text>
+        <text class="tag" data-key="report" bindtap="goGrowth">学习报告</text>
+      </view>
+    </view>
+    <text class="mod-arrow" data-key="record" bindtap="goGrowth">›</text>
   </view>
 
   <!-- 今日学习 -->

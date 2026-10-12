@@ -287,17 +287,20 @@
 
 .blank-slot {
   display: inline-block;
+  min-width: 48rpx;
   width: 48rpx;
   height: 48rpx;
   margin: 0 2rpx;
   padding: 0;
   text-align: center;
   font-size: 28rpx;
+  line-height: 48rpx;
   color: #3F7568;
   font-weight: 600;
   background: #FFFFFF;
   border-bottom: 3rpx solid #3F7568;
   border-radius: 4rpx 4rpx 0 0;
+  overflow: visible;
 }
 
 /* —— 关键词 —— */

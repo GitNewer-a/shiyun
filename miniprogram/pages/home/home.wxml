@@ -28,7 +28,6 @@
 
   <view class="home-section-head">
     <text class="home-section-title serif">继续学习</text>
-    <navigator class="home-section-more" url="/pages/progress/progress" hover-class="none"><text>学习记录</text><image src="/assets/figma-home/icon-5.svg" class="home-more-ico" mode="aspectFit" /></navigator>
   </view>
   <view class="resume" bindtap="goResume" aria-label="继续学习 {{resume.title}}">
     <view class="resume-cover"><text class="serif">{{resume.mark}}</text></view>
@@ -43,7 +42,6 @@
 
   <view class="home-section-head">
     <text class="home-section-title serif">热门朗读</text>
-    <view class="home-section-more" bindtap="goBrowse"><text>更多</text><image src="/assets/figma-home/icon-5.svg" class="home-more-ico" mode="aspectFit" /></view>
   </view>
   <view class="hot">
     <view class="hot-item" wx:for="{{hotList}}" wx:key="id">

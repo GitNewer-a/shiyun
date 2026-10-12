@@ -18,16 +18,32 @@
       </view>
       <view class="title-chars">
         <view class="char-col" wx:for="{{titleChars}}" wx:key="index">
-          <text class="char-pinyin">{{item.pinyin}}</text>
-          <text class="char-main serif">{{item.char}}</text>
+          <text class="char-pinyin">{{item.pinyin || ' '}}</text>
+          <view class="char-glyph">
+            <view wx:if="{{item.prefix}}" class="char-punct-slot">
+              <text class="char-main char-main--punct serif">{{item.prefix}}</text>
+            </view>
+            <text wx:if="{{item.char}}" class="char-main serif">{{item.char}}</text>
+            <view wx:if="{{item.suffix}}" class="char-punct-slot">
+              <text class="char-main char-main--punct serif">{{item.suffix}}</text>
+            </view>
+          </view>
         </view>
       </view>
       <view class="title-divider" />
       <view class="author-row">
         <text class="author-dynasty serif">【{{poem.dynasty}}】</text>
         <view class="char-col author-col" wx:for="{{authorChars}}" wx:key="index">
-          <text class="char-pinyin author-pinyin">{{item.pinyin}}</text>
-          <text class="char-main author-main serif">{{item.char}}</text>
+          <text class="char-pinyin author-pinyin">{{item.pinyin || ' '}}</text>
+          <view class="char-glyph">
+            <view wx:if="{{item.prefix}}" class="char-punct-slot">
+              <text class="char-main author-main char-main--punct serif">{{item.prefix}}</text>
+            </view>
+            <text wx:if="{{item.char}}" class="char-main author-main serif">{{item.char}}</text>
+            <view wx:if="{{item.suffix}}" class="char-punct-slot">
+              <text class="char-main author-main char-main--punct serif">{{item.suffix}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -36,8 +52,16 @@
       <view class="poem-lines">
         <view class="poem-line" wx:for="{{lineChars}}" wx:key="index" wx:for-item="line">
           <view class="char-pair" wx:for="{{line}}" wx:key="index" wx:for-item="pc">
-            <text class="line-pinyin {{showPinyin ? '' : 'is-hidden'}}">{{pc.pinyin}}</text>
-            <text class="line-char serif">{{pc.char}}</text>
+            <text class="line-pinyin {{showPinyin ? '' : 'is-hidden'}}">{{pc.pinyin || ' '}}</text>
+            <view class="line-glyph">
+              <view wx:if="{{pc.prefix}}" class="line-punct-slot">
+                <text class="line-char line-char--punct serif">{{pc.prefix}}</text>
+              </view>
+              <text wx:if="{{pc.char}}" class="line-char serif">{{pc.char}}</text>
+              <view wx:if="{{pc.suffix}}" class="line-punct-slot">
+                <text class="line-char line-char--punct serif">{{pc.suffix}}</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
