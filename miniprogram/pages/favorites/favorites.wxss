@@ -1,0 +1,518 @@
+/* 我的收藏 —— Figma 59:2 */
+
+.page {
+  min-height: 100vh;
+  background: #f8f4ea;
+  color: #243447;
+}
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: rgba(248, 244, 234, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 38rpx;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58rpx;
+  height: 58rpx;
+  border-radius: 29rpx;
+  background: #ece7da;
+  flex: none;
+}
+
+.nav-btn.is-press {
+  opacity: 0.72;
+  transform: scale(0.96);
+}
+
+.nav-btn-ico {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 36rpx;
+  line-height: 54rpx;
+  letter-spacing: 0.06em;
+  color: #243447;
+}
+
+.scroll {
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+/* 统计卡：远山 + 月晕 */
+.stats {
+  position: relative;
+  margin: 12rpx 38rpx 0;
+  height: 204rpx;
+  border-radius: 42rpx;
+  overflow: hidden;
+  box-shadow: 0 22rpx 44rpx rgba(36, 52, 71, 0.18);
+}
+
+.stats-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(164deg, #1d3441 0%, #2c4b59 55%, #3b6070 100%);
+}
+
+.stats-moon {
+  position: absolute;
+  top: 28rpx;
+  right: 48rpx;
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 50%;
+  background: rgba(225, 190, 128, 0.32);
+  box-shadow: 0 0 0 18rpx rgba(225, 190, 128, 0.07);
+}
+
+.stats-hill {
+  position: absolute;
+  bottom: -20rpx;
+  border-radius: 50% 50% 0 0;
+}
+
+.stats-hill--back {
+  left: -72rpx;
+  width: 440rpx;
+  height: 160rpx;
+  background: #1d3441;
+  opacity: 0.8;
+  transform: rotate(5deg);
+}
+
+.stats-hill--front {
+  right: -40rpx;
+  bottom: -28rpx;
+  width: 380rpx;
+  height: 128rpx;
+  background: #162b36;
+  opacity: 0.9;
+  transform: rotate(-7deg);
+}
+
+.stats-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 12rpx;
+}
+
+.stats-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-num-row {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 52rpx;
+  padding-right: 18rpx;
+}
+
+.stats-num {
+  font-size: 52rpx;
+  line-height: 52rpx;
+  font-weight: 700;
+  color: #f6f1e4;
+}
+
+.stats-unit {
+  position: absolute;
+  right: 0;
+  bottom: 6rpx;
+  font-size: 20rpx;
+  line-height: 20rpx;
+  color: #e1be80;
+}
+
+.stats-label {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  line-height: 30rpx;
+  color: #98aaa8;
+}
+
+.stats-div {
+  width: 2rpx;
+  height: 72rpx;
+  background: rgba(255, 255, 255, 0.12);
+  flex: none;
+}
+
+/* 分类芯片 */
+.chips-wrap {
+  margin-top: 8rpx;
+  padding-top: 22rpx;
+}
+
+.chips {
+  width: 100%;
+  height: 66rpx;
+  white-space: nowrap;
+}
+
+.chips-inner {
+  display: flex;
+  align-items: center;
+  height: 66rpx;
+  padding-left: 38rpx;
+}
+
+.chips-end {
+  width: 38rpx;
+  height: 1rpx;
+  flex: none;
+}
+
+.chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  margin-right: 12rpx;
+  padding: 0 24rpx;
+  border: 2rpx solid #ddd8cc;
+  border-radius: 40rpx;
+  background: #fffdf8;
+  flex: none;
+}
+
+.chip-txt {
+  font-size: 22rpx;
+  line-height: 33rpx;
+  color: #7e8785;
+}
+
+.chip--on {
+  border-color: #c94a4a;
+  background: #fbeeed;
+}
+
+.chip--on .chip-txt {
+  color: #c94a4a;
+}
+
+.chip-press {
+  opacity: 0.78;
+}
+
+.chip-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34rpx;
+  height: 30rpx;
+  margin-left: 8rpx;
+  padding: 0 8rpx;
+  border-radius: 20rpx;
+  background: #c94a4a;
+  color: #fff;
+  font-size: 18rpx;
+  font-weight: 700;
+  line-height: 27rpx;
+}
+
+/* 工具条 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 38rpx 14rpx;
+}
+
+.toolbar-count {
+  flex: 1;
+  font-size: 20rpx;
+  line-height: 30rpx;
+  color: #959b94;
+}
+
+.sorts {
+  display: flex;
+  align-items: center;
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  margin-left: 14rpx;
+  padding: 10rpx 18rpx;
+  border: 2rpx solid #ddd8cc;
+  border-radius: 18rpx;
+  color: #7e8785;
+  font-size: 20rpx;
+  line-height: 30rpx;
+  background: transparent;
+}
+
+.sort-ico {
+  width: 22rpx;
+  height: 22rpx;
+  margin-right: 8rpx;
+}
+
+.sort--on {
+  border-color: #243f4f;
+  background: #243f4f;
+  color: #f5f0e6;
+}
+
+.sort-press {
+  opacity: 0.8;
+}
+
+/* 列表卡 */
+.list {
+  padding: 2rpx 38rpx 0;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 18rpx;
+  padding: 26rpx 24rpx;
+  border-radius: 34rpx;
+  background: #fffdf8;
+  box-shadow: 0 8rpx 20rpx rgba(74, 69, 51, 0.05);
+}
+
+.card-press {
+  background: #f7f2e8;
+  transform: scale(0.992);
+}
+
+.card-seal {
+  position: relative;
+  width: 66rpx;
+  height: 96rpx;
+  margin-right: 22rpx;
+  flex: none;
+  background: #c94a4a;
+  box-shadow: 2rpx 4rpx 0 #a93c3c;
+}
+
+.card-seal-char {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 30rpx;
+  line-height: 1;
+  color: #fff8ec;
+}
+
+.card-main {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2rpx;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-height: 48rpx;
+}
+
+.card-title {
+  max-width: 72%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 48rpx;
+  color: #243447;
+}
+
+.card-dynasty {
+  flex: none;
+  margin-left: 12rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 10rpx;
+  background: #e6efeb;
+  color: #44636b;
+  font-size: 18rpx;
+  line-height: 27rpx;
+}
+
+.card-author {
+  display: block;
+  margin-top: 2rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 33rpx;
+  color: #7e8785;
+}
+
+.card-quote {
+  display: block;
+  margin-top: 10rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 22rpx;
+  line-height: 36rpx;
+  letter-spacing: 0.04em;
+  color: #5c6764;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 14rpx;
+}
+
+.tag {
+  margin-right: 10rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 10rpx;
+  font-size: 18rpx;
+  line-height: 27rpx;
+  flex: none;
+}
+
+.tag--theme {
+  background: #f2ece3;
+  color: #9b754e;
+}
+
+.tag--stage {
+  background: #eef1ea;
+  color: #61734a;
+}
+
+.card-time {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  font-size: 18rpx;
+  line-height: 27rpx;
+  color: #a5aaa3;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  margin-left: 12rpx;
+  flex: none;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 58rpx;
+  height: 58rpx;
+  margin-bottom: 10rpx;
+  border-radius: 29rpx;
+  background: #ece7da;
+}
+
+.action-btn:last-child {
+  margin-bottom: 0;
+}
+
+.action-press {
+  opacity: 0.72;
+  transform: scale(0.94);
+}
+
+.action-ico {
+  width: 26rpx;
+  height: 26rpx;
+}
+
+/* 空态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 96rpx 48rpx 40rpx;
+}
+
+.empty--filter {
+  padding-top: 64rpx;
+}
+
+.empty-seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112rpx;
+  height: 148rpx;
+  background: #c94a4a;
+  box-shadow: 4rpx 6rpx 0 #a93c3c;
+}
+
+.empty-seal--soft {
+  background: #b9bdb6;
+  box-shadow: 4rpx 6rpx 0 #959b94;
+}
+
+.empty-seal-char {
+  font-size: 48rpx;
+  line-height: 1;
+  color: #fff8ec;
+}
+
+.empty-title {
+  margin-top: 40rpx;
+  font-size: 42rpx;
+  letter-spacing: 0.14em;
+  color: #243447;
+}
+
+.empty-desc {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  line-height: 1.9;
+  color: #959b94;
+  text-align: center;
+}
+
+.empty-link {
+  margin-top: 36rpx;
+  padding: 16rpx 36rpx;
+  border-radius: 24rpx;
+  background: #ece7da;
+  font-size: 22rpx;
+  color: #7e8785;
+}
+
+.empty-link-press {
+  opacity: 0.75;
+}
+
+.scroll-pad {
+  height: 56rpx;
+}

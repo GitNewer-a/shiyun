@@ -1,19 +1,164 @@
 <view class="page">
-  <view class="pc-list">
-    <view class="pc-card" wx:for="{{list}}" wx:key="id" bindtap="goPoem" data-id="{{item.id}}">
-      <view class="pc-img" style="background:{{item.coverBg}}" />
-      <view class="pc-main">
-        <text class="pc-title serif">{{item.title}}</text>
-        <text class="pc-sub">{{item.dynasty}} · {{item.author}}</text>
+  <view class="nav" style="padding-top: {{statusBarHeight}}px;">
+    <view class="nav-inner">
+      <view class="nav-btn" bindtap="goBack" hover-class="is-press" aria-label="返回">
+        <image class="nav-btn-ico" src="/assets/figma-favorites/back.svg" mode="aspectFit" />
       </view>
-      <view class="pc-star is-on" catchtap="toggleFav" data-id="{{item.id}}" aria-label="取消收藏" />
+      <text class="nav-title serif">我的收藏</text>
+      <view class="nav-btn" bindtap="goSearch" hover-class="is-press" aria-label="搜索收藏">
+        <image class="nav-btn-ico" src="/assets/figma-favorites/search.svg" mode="aspectFit" />
+      </view>
     </view>
   </view>
 
-  <view class="ph" wx:if="{{list.length === 0}}">
-    <view class="ph-seal state-empty" />
-    <text class="ph-title serif">还没有收藏</text>
-    <text class="ph-desc">在诗词库点星标，把喜欢的诗收进来</text>
-    <navigator class="ph-todo" url="/pages/browse/browse" open-type="switchTab">去诗词库看看</navigator>
-  </view>
+  <scroll-view class="scroll" scroll-y show-scrollbar="{{false}}">
+    <view style="height: {{navOffset}}px;" />
+
+    <view class="stats">
+      <view class="stats-bg" />
+      <view class="stats-moon" />
+      <view class="stats-hill stats-hill--back" />
+      <view class="stats-hill stats-hill--front" />
+      <view class="stats-row">
+        <view class="stats-item">
+          <view class="stats-num-row">
+            <text class="stats-num serif">{{stats.count}}</text>
+            <text class="stats-unit">首</text>
+          </view>
+          <text class="stats-label">已收藏</text>
+        </view>
+        <view class="stats-div" />
+        <view class="stats-item">
+          <view class="stats-num-row">
+            <text class="stats-num serif">{{stats.authors}}</text>
+            <text class="stats-unit">位</text>
+          </view>
+          <text class="stats-label">诗词名家</text>
+        </view>
+        <view class="stats-div" />
+        <view class="stats-item">
+          <view class="stats-num-row">
+            <text class="stats-num serif">{{stats.dynasties}}</text>
+            <text class="stats-unit">个</text>
+          </view>
+          <text class="stats-label">历史朝代</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="chips-wrap">
+      <scroll-view class="chips" scroll-x enhanced show-scrollbar="{{false}}" enable-flex>
+        <view class="chips-inner">
+          <view
+            class="chip {{filter === item.key ? 'chip--on' : ''}}"
+            wx:for="{{filters}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="onFilter"
+            hover-class="chip-press"
+            aria-label="{{item.label}}"
+          >
+            <text class="chip-txt">{{item.label}}</text>
+            <view class="chip-badge" wx:if="{{item.key === 'all' && filter === 'all' && stats.count > 0}}">
+              <text>{{stats.count}}</text>
+            </view>
+          </view>
+          <view class="chips-end" />
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="toolbar">
+      <text class="toolbar-count">{{list.length}} 首诗词</text>
+      <view class="sorts">
+        <view
+          class="sort {{sort === 'time' ? 'sort--on' : ''}}"
+          data-sort="time"
+          bindtap="onSort"
+          hover-class="sort-press"
+          aria-label="按收藏时间排序"
+        >
+          <image class="sort-ico" src="{{sortTimeIcon}}" mode="aspectFit" />
+          <text>收藏时间</text>
+        </view>
+        <view
+          class="sort {{sort === 'title' ? 'sort--on' : ''}}"
+          data-sort="title"
+          bindtap="onSort"
+          hover-class="sort-press"
+          aria-label="按标题排序"
+        >
+          <image class="sort-ico" src="{{sortTitleIcon}}" mode="aspectFit" />
+          <text>按标题</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="list">
+      <view
+        class="card"
+        wx:for="{{list}}"
+        wx:key="id"
+        bindtap="goPoem"
+        data-id="{{item.id}}"
+        hover-class="card-press"
+        hover-stay-time="80"
+      >
+        <view class="card-seal">
+          <text class="card-seal-char serif">{{item.seal}}</text>
+        </view>
+        <view class="card-main">
+          <view class="card-title-row">
+            <text class="card-title serif">《{{item.title}}》</text>
+            <text class="card-dynasty">{{item.dynasty}}</text>
+          </view>
+          <text class="card-author serif">{{item.author}}</text>
+          <text class="card-quote serif">{{item.quote}}</text>
+          <view class="card-meta">
+            <text class="tag tag--theme">{{item.theme}}</text>
+            <text class="tag tag--stage">{{item.stageLabel}}</text>
+            <text class="card-time" wx:if="{{item.timeLabel}}">{{item.timeLabel}}</text>
+          </view>
+        </view>
+        <view class="card-actions">
+          <view
+            class="action-btn"
+            catchtap="onPlay"
+            data-id="{{item.id}}"
+            hover-class="action-press"
+            aria-label="朗读{{item.title}}"
+          >
+            <image class="action-ico" src="/assets/figma-favorites/play.svg" mode="aspectFit" />
+          </view>
+          <view
+            class="action-btn"
+            catchtap="toggleFav"
+            data-id="{{item.id}}"
+            hover-class="action-press"
+            aria-label="取消收藏{{item.title}}"
+          >
+            <image class="action-ico" src="/assets/figma-favorites/bookmark.svg" mode="aspectFit" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{list.length === 0 && stats.count === 0}}">
+      <view class="empty-seal">
+        <text class="empty-seal-char serif">藏</text>
+      </view>
+      <text class="empty-title serif">还没有收藏</text>
+      <text class="empty-desc">在诗词库点星标，把喜欢的诗收进来</text>
+      <navigator class="empty-link" url="/pages/browse/browse" open-type="switchTab" hover-class="empty-link-press">去诗词库看看</navigator>
+    </view>
+    <view class="empty empty--filter" wx:elif="{{list.length === 0}}">
+      <view class="empty-seal empty-seal--soft">
+        <text class="empty-seal-char serif">空</text>
+      </view>
+      <text class="empty-title serif">该分类暂无收藏</text>
+      <text class="empty-desc">换个分类看看，或去诗词库继续收藏</text>
+    </view>
+
+    <view class="scroll-pad" />
+  </scroll-view>
 </view>

@@ -69,19 +69,40 @@ function getPoem(id) {
     });
 }
 
-/** 收藏 / 取消收藏 */
+/** 收藏条目：兼容旧版纯 id 字符串，新版为 { id, at } */
+function normalizeFavoriteEntries(raw) {
+  const list = raw || [];
+  return list.map(function (item) {
+    if (typeof item === 'string') return { id: item, at: 0 };
+    if (item && item.id) return { id: item.id, at: item.at || 0 };
+    return null;
+  }).filter(Boolean);
+}
+
+function getFavoriteEntries() {
+  return normalizeFavoriteEntries(wx.getStorageSync('favorites'));
+}
+
+/** 收藏 / 取消收藏；新收藏写入时间戳，供收藏页按时间排序 */
 function toggleFavorite(poemId) {
-  const key = 'favorites';
-  const list = wx.getStorageSync(key) || [];
-  const idx = list.indexOf(poemId);
+  const list = getFavoriteEntries();
+  let idx = -1;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === poemId) {
+      idx = i;
+      break;
+    }
+  }
   if (idx > -1) list.splice(idx, 1);
-  else list.push(poemId);
-  wx.setStorageSync(key, list);
+  else list.push({ id: poemId, at: Date.now() });
+  wx.setStorageSync('favorites', list);
   return idx === -1;
 }
 
 function getFavorites() {
-  return wx.getStorageSync('favorites') || [];
+  return getFavoriteEntries().map(function (item) {
+    return item.id;
+  });
 }
 
 function isFavorite(poemId) {
@@ -130,6 +151,7 @@ module.exports = {
   getPoem: getPoem,
   toggleFavorite: toggleFavorite,
   getFavorites: getFavorites,
+  getFavoriteEntries: getFavoriteEntries,
   isFavorite: isFavorite,
   addBrowseHistory: addBrowseHistory,
   getBrowseHistory: getBrowseHistory,
