@@ -1,6 +1,6 @@
 const db = require('../../utils/db.js');
 const { toastReciteSoon } = require('../../utils/toast.js');
-const { getPoemById } = require('../../data/poems.js');
+const { getPoemById, POEMS } = require('../../data/poems.js');
 
 /** 开标点挂下一字、闭标点挂上一字，避免行首/单独成行 */
 const OPEN_PUNCT = /[「『《（【〖〈“‘]/;
@@ -71,7 +71,9 @@ Page({
     knTabs: ['译文', '注释', '赏析'],
     knTab: '译文',
     knBody: '',
-    speedLabel: '1x',
+    loopMode: 'single',
+    poemIndex: 0,
+    poemList: [],
     titleChars: [],
     authorChars: [],
     lineChars: []
@@ -93,11 +95,15 @@ Page({
       parseLinePinyin(line, (poem.pinyin && poem.pinyin[i]) || '')
     );
 
+    const poemList = POEMS;
+    const poemIndex = poemList.findIndex(function (p) { return p.id === id; });
+
     this.setData({
       id, poem, safeAreaBottom,
       fav: db.isFavorite(id),
       titleChars, authorChars, lineChars,
-      knBody: knBodyOf(poem, '译文')
+      knBody: knBodyOf(poem, '译文'),
+      poemList, poemIndex: poemIndex < 0 ? 0 : poemIndex
     });
     db.addBrowseHistory(id);
     wx.setNavigationBarTitle({ title: poem.title });
@@ -122,10 +128,8 @@ Page({
 
   startTimer() {
     this.setData({ playing: true });
-    const speedMap = { '0.5x': 0.5, '1x': 1, '1.25x': 1.25, '1.5x': 1.5, '2x': 2 };
-    const rate = speedMap[this.data.speedLabel] || 1;
     this.timer = setInterval(() => {
-      const next = this.data.audioProgress + (100 / TOTAL_SEC) * 0.5 * rate;
+      const next = this.data.audioProgress + (100 / TOTAL_SEC) * 0.5;
       if (next >= 100) {
         this.setData({ audioProgress: 100, audioTime: fmt(TOTAL_SEC), playing: false });
         this.stopTimer();
@@ -151,18 +155,47 @@ Page({
   },
 
   prevTrack() {
-    toastReciteSoon();
+    const { poemList, poemIndex, loopMode } = this.data;
+    if (loopMode === 'single') {
+      this.setData({ audioProgress: 0, audioTime: '00:00' });
+      this.startTimer();
+      return;
+    }
+    const prev = poemIndex <= 0 ? poemList.length - 1 : poemIndex - 1;
+    this._switchToPoem(poemList[prev].id);
   },
 
   nextTrack() {
-    toastReciteSoon();
+    const { poemList, poemIndex, loopMode } = this.data;
+    if (loopMode === 'single') {
+      this.setData({ audioProgress: 0, audioTime: '00:00' });
+      this.startTimer();
+      return;
+    }
+    let next;
+    if (loopMode === 'order') {
+      next = (poemIndex + 1) % poemList.length;
+    } else {
+      next = Math.floor(Math.random() * poemList.length);
+    }
+    this._switchToPoem(poemList[next].id);
+  },
+
+  _switchToPoem(id) {
+    wx.navigateTo({ url: '/pages/poem/poem?id=' + id });
+  },
+
+  cycleLoop() {
+    const modes = ['single', 'order', 'random'];
+    const cur = this.data.loopMode;
+    const idx = modes.indexOf(cur);
+    const next = modes[(idx + 1) % modes.length];
+    const labels = { single: '单曲循环', order: '顺序循环', random: '随机播放' };
+    wx.showToast({ title: labels[next], icon: 'none', duration: 800 });
+    this.setData({ loopMode: next });
   },
 
   toggleMusicNote() {
-    toastReciteSoon();
-  },
-
-  cycleSpeed() {
     toastReciteSoon();
   },
 

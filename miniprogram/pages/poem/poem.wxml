@@ -85,8 +85,8 @@
         <text class="time-label">{{audioEnd}}</text>
       </view>
       <view class="player-controls">
-        <view class="speed-btn" bindtap="cycleSpeed">
-          <text>{{speedLabel}}</text>
+        <view class="loop-btn" bindtap="cycleLoop" aria-label="循环播放">
+          <image src="/assets/poem/loop-{{loopMode}}.svg" class="ctrl-ico" mode="aspectFit" />
         </view>
         <view class="ctrl-btn" bindtap="prevTrack" aria-label="上一首">
           <image src="/assets/poem/skip-prev.svg" class="ctrl-ico" mode="aspectFit" />
