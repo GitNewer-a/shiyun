@@ -1,0 +1,313 @@
+/* 设置页
+   设计稿基准 393 × 852（iPhone 15 Pro），1px ≈ 2rpx，统一用 rpx。
+   样式令牌见 app.wxss。
+*/
+
+.set-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: var(--paper);
+  padding: 0 40rpx 80rpx;
+}
+
+/* 顶部：返回 + 居中标题 */
+/* 账户卡：墨蓝 → 深竹渐变 */
+.set-account {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+  padding: 28rpx;
+  border-radius: 36rpx;
+  background: linear-gradient(167deg, #2c4b59 0%, #3d6455 100%);
+  box-shadow: 0 20rpx 19rpx rgba(36, 63, 79, 0.16);
+}
+
+.set-account-avatar {
+  width: 104rpx;
+  height: 104rpx;
+  flex: none;
+  border-radius: 50%;
+  background: #c99a55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.set-account-char {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 44rpx;
+  color: #fffdf8;
+}
+
+.set-account-text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 28rpx;
+}
+
+.set-account-name {
+  display: block;
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-weight: 600;
+  font-size: 34rpx;
+  color: #fffdf8;
+}
+
+.set-account-sub {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 20rpx;
+  color: #cdd8d3;
+}
+
+/* 区块标题 */
+.set-sec-head {
+  margin: 40rpx 8rpx 16rpx;
+}
+
+.set-sec-title {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 24rpx;
+  color: #8a8f88;
+  letter-spacing: 0.12em;
+}
+
+/* 卡片 */
+.set-card {
+  background: var(--paper-card);
+  border-radius: 32rpx;
+  box-shadow: var(--sh-light);
+  overflow: hidden;
+}
+
+/* 卡片内首行（学段 / 字号 分段控件区） */
+.set-card-row {
+  padding: 24rpx 26rpx;
+}
+
+.set-row-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.set-row-name {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: var(--ink-card);
+}
+
+.set-row-tip {
+  font-size: 20rpx;
+  color: #9a9f99;
+}
+
+.set-row-sub {
+  display: block;
+  margin-top: 4rpx;
+  font-size: 20rpx;
+  color: var(--ink-3);
+}
+
+/* 分段控件 */
+.set-seg {
+  display: flex;
+  margin-top: 18rpx;
+  padding: 6rpx;
+  background: #f1ece0;
+  border-radius: 22rpx;
+}
+
+.set-seg-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12rpx 0;
+  border-radius: 16rpx;
+}
+
+.set-seg-item.is-on {
+  background: var(--paper-card);
+  box-shadow: 0 4rpx 6rpx rgba(60, 55, 40, 0.10);
+}
+
+.set-seg-item-text {
+  font-size: 22rpx;
+  color: #6f7a76;
+}
+
+.set-seg-item.is-on .set-seg-item-text {
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* 诗文字号预览 */
+.set-preview {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background: var(--paper);
+  border-radius: 20rpx;
+  text-align: center;
+}
+
+.set-preview-text {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  color: #2b3a3a;
+  letter-spacing: 0.12em;
+  line-height: 1.85;
+}
+
+/* 设置行 */
+.set-row {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 22rpx 26rpx;
+}
+
+.set-row--slim {
+  padding-top: 16rpx;
+  padding-bottom: 16rpx;
+}
+
+.set-row-ic {
+  width: 56rpx;
+  height: 56rpx;
+  flex: none;
+  padding: 13rpx;
+  box-sizing: border-box;
+  border-radius: 18rpx;
+  background: #e6efeb;
+}
+
+.set-row-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 数字步进器 */
+.set-stepper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: none;
+}
+
+.set-step-btn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  background: var(--paper-card);
+  border: 2rpx solid #e0dacd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.set-step-btn:active {
+  background: var(--paper-sunken);
+}
+
+.set-step-text {
+  font-size: 28rpx;
+  color: #44636b;
+  line-height: 1;
+}
+
+.set-step-num {
+  min-width: 28rpx;
+  text-align: center;
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 30rpx;
+  color: var(--ink-card);
+}
+
+/* 开关 */
+.set-switch {
+  width: 80rpx;
+  height: 46rpx;
+  flex: none;
+  border-radius: 46rpx;
+  background: #ddd8cc;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.set-switch.is-on {
+  background: #4e7a68;
+}
+
+.set-switch-knob {
+  position: absolute;
+  top: 4rpx;
+  left: 4rpx;
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.18);
+  transition: left 0.2s;
+}
+
+.set-switch.is-on .set-switch-knob {
+  left: 38rpx;
+}
+
+/* 行尾箭头 */
+.set-arrow {
+  flex: none;
+  font-size: 26rpx;
+  color: var(--ink-4);
+}
+
+/* 徽章 */
+.set-badge {
+  flex: none;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+  background: #f4ead6;
+}
+
+.set-badge-text {
+  font-size: 20rpx;
+  color: #a8844d;
+}
+
+/* 底部 */
+.set-foot {
+  margin-top: 80rpx;
+}
+
+.set-logout {
+  height: 86rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28rpx;
+  background: var(--paper-card);
+  box-shadow: 0 8rpx 11rpx rgba(74, 69, 51, 0.05);
+}
+
+.set-logout:active {
+  opacity: 0.85;
+}
+
+.set-logout-text {
+  font-size: 26rpx;
+  color: #b85b50;
+}
+
+.set-catchphrase {
+  padding-top: 32rpx;
+  text-align: center;
+}
+
+.set-catchphrase-text {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 20rpx;
+  color: #b4b0a5;
+  letter-spacing: 0.3em;
+}

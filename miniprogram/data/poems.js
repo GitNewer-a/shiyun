@@ -7,6 +7,7 @@
 const POEMS = [
   {
     id: 'p001',
+    audioUrl: '/assets/audio/audio-p001.mp3',
     title: '静夜思',
     titlePinyin: 'jìng yè sī',
     author: '李白',
@@ -28,6 +29,7 @@ const POEMS = [
   },
   {
     id: 'p002',
+    audioUrl: '',
     title: '春晓',
     titlePinyin: 'chūn xiǎo',
     author: '孟浩然',
@@ -49,6 +51,7 @@ const POEMS = [
   },
   {
     id: 'p003',
+    audioUrl: '',
     title: '望岳',
     titlePinyin: 'wàng yuè',
     author: '杜甫',
@@ -83,6 +86,7 @@ const POEMS = [
   },
   {
     id: 'p004',
+    audioUrl: '',
     title: '将进酒',
     titlePinyin: 'qiāng jìn jiǔ',
     author: '李白',
@@ -151,6 +155,7 @@ const POEMS = [
   },
   {
     id: 'p005',
+    audioUrl: '',
     title: '水调歌头',
     titlePinyin: 'shuǐ diào gē tóu',
     author: '苏轼',
@@ -207,6 +212,7 @@ const POEMS = [
   },
   {
     id: 'p006',
+    audioUrl: '',
     title: '绝句',
     titlePinyin: 'jué jù',
     author: '杜甫',
@@ -228,6 +234,7 @@ const POEMS = [
   },
   {
     id: 'p007',
+    audioUrl: '',
     title: '声声慢',
     titlePinyin: 'shēng shēng màn',
     author: '李清照',
@@ -284,6 +291,7 @@ const POEMS = [
   },
   {
     id: 'p008',
+    audioUrl: '',
     title: '天净沙·秋思',
     titlePinyin: 'tiān jìng shā qiū sī',
     author: '马致远',
@@ -312,6 +320,7 @@ const POEMS = [
   },
   {
     id: 'p009',
+    audioUrl: '',
     title: '钱塘湖春行',
     titlePinyin: 'qián táng hú chūn xíng',
     author: '白居易',
@@ -346,6 +355,7 @@ const POEMS = [
   },
   {
     id: 'p010',
+    audioUrl: '',
     title: '登鹳雀楼',
     titlePinyin: 'dēng guàn què lóu',
     author: '王之涣',
@@ -367,6 +377,7 @@ const POEMS = [
   },
   {
     id: 'p011',
+    audioUrl: '',
     title: '念奴娇·赤壁怀古',
     titlePinyin: 'niàn nú jiāo chì bì huái gǔ',
     author: '苏轼',
@@ -429,6 +440,7 @@ const POEMS = [
   },
   {
     id: 'p012',
+    audioUrl: '',
     title: '琵琶行',
     titlePinyin: 'pí pá xíng',
     author: '白居易',
@@ -523,6 +535,7 @@ const POEMS = [
   },
   {
     id: 'p013',
+    audioUrl: '',
     title: '春望',
     titlePinyin: 'chūn wàng',
     author: '杜甫',
@@ -557,6 +570,7 @@ const POEMS = [
   },
   {
     id: 'p014',
+    audioUrl: '',
     title: '早发白帝城',
     titlePinyin: 'zǎo fā bái dì chéng',
     author: '李白',
@@ -578,6 +592,7 @@ const POEMS = [
   },
   {
     id: 'p015',
+    audioUrl: '',
     title: '如梦令',
     titlePinyin: 'rú mèng lìng',
     author: '李清照',
@@ -610,6 +625,7 @@ const POEMS = [
   },
   {
     id: 'p016',
+    audioUrl: '',
     title: '望庐山瀑布',
     titlePinyin: 'wàng lú shān pù bù',
     author: '李白',
@@ -631,6 +647,7 @@ const POEMS = [
   },
   {
     id: 'p017',
+    audioUrl: '',
     title: '江雪',
     titlePinyin: 'jiāng xuě',
     author: '柳宗元',
@@ -652,6 +669,7 @@ const POEMS = [
   },
   {
     id: 'p018',
+    audioUrl: '',
     title: '悯农',
     titlePinyin: 'mǐn nóng',
     author: '李绅',
@@ -673,6 +691,7 @@ const POEMS = [
   },
   {
     id: 'p019',
+    audioUrl: '',
     title: '咏鹅',
     titlePinyin: 'yǒng é',
     author: '骆宾王',
@@ -694,6 +713,7 @@ const POEMS = [
   },
   {
     id: 'p020',
+    audioUrl: '',
     title: '登飞来峰',
     titlePinyin: 'dēng fēi lái fēng',
     author: '王安石',

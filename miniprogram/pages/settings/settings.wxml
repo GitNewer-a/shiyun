@@ -1,0 +1,182 @@
+<view class="set-page">
+  <view class="set-body">
+    <view class="set-account">
+      <view class="set-account-avatar">
+        <text class="set-account-char">{{account.char}}</text>
+      </view>
+      <view class="set-account-text">
+        <text class="set-account-name">{{account.name}}</text>
+        <text class="set-account-sub">{{account.sub}}</text>
+      </view>
+      <text class="set-arrow">›</text>
+    </view>
+
+    <view class="set-sec-head"><text class="set-sec-title">学习偏好</text></view>
+    <view class="set-card">
+      <view class="set-card-row">
+        <view class="set-row-label">
+          <text class="set-row-name">当前学段</text>
+          <text class="set-row-tip">推荐诗词将按学段调整</text>
+        </view>
+        <view class="set-seg">
+          <view
+            wx:for="{{stages}}"
+            wx:key="key"
+            class="set-seg-item {{settings.stage === item.key ? 'is-on' : ''}}"
+            data-key="{{item.key}}"
+            bindtap="onStageTap"
+          >
+            <text class="set-seg-item-text">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-goal.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">每日学习目标</text>
+          <text class="set-row-sub">每天学习 {{settings.dailyGoal}} 首诗词</text>
+        </view>
+        <view class="set-stepper">
+          <view class="set-step-btn" bindtap="onGoalMinus"><text class="set-step-text">−</text></view>
+          <text class="set-step-num">{{settings.dailyGoal}}</text>
+          <view class="set-step-btn" bindtap="onGoalPlus"><text class="set-step-text">+</text></view>
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-remind.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">学习提醒</text>
+          <text class="set-row-sub">每天 20:00 提醒我</text>
+        </view>
+        <view class="set-switch {{settings.remind ? 'is-on' : ''}}" data-key="remind" bindtap="onSwitch">
+          <view class="set-switch-knob" />
+        </view>
+      </view>
+    </view>
+
+    <view class="set-sec-head"><text class="set-sec-title">阅读与朗读</text></view>
+    <view class="set-card">
+      <view class="set-card-row">
+        <view class="set-row-label"><text class="set-row-name">诗文字号</text></view>
+        <view class="set-seg">
+          <view
+            wx:for="{{fontSizes}}"
+            wx:key="key"
+            class="set-seg-item {{settings.fontSize === item.key ? 'is-on' : ''}}"
+            data-key="{{item.key}}"
+            bindtap="onFontSizeTap"
+          >
+            <text class="set-seg-item-text">{{item.label}}</text>
+          </view>
+        </view>
+        <view class="set-preview">
+          <text class="set-preview-text" style="font-size:{{fontPreviewSize}}rpx">床前明月光，疑是地上霜。</text>
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-pinyin.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">显示拼音</text>
+          <text class="set-row-sub">生僻字上方标注读音</text>
+        </view>
+        <view class="set-switch {{settings.pinyin ? 'is-on' : ''}}" data-key="pinyin" bindtap="onSwitch">
+          <view class="set-switch-knob" />
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-voice.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">朗读音色</text>
+          <text class="set-row-sub">温润男声</text>
+        </view>
+        <text class="set-arrow">›</text>
+      </view>
+
+      <view class="set-row set-row--slim">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-autoplay.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">进入详情自动朗读</text>
+        </view>
+        <view class="set-switch {{settings.autoRead ? 'is-on' : ''}}" data-key="autoRead" bindtap="onSwitch">
+          <view class="set-switch-knob" />
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-sound.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">练习音效</text>
+          <text class="set-row-sub">答题与打卡提示音</text>
+        </view>
+        <view class="set-switch {{settings.sfx ? 'is-on' : ''}}" data-key="sfx" bindtap="onSwitch">
+          <view class="set-switch-knob" />
+        </view>
+      </view>
+    </view>
+
+    <view class="set-sec-head"><text class="set-sec-title">通用</text></view>
+    <view class="set-card">
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-night.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">夜读模式</text>
+          <text class="set-row-sub">降低亮度，护眼阅读</text>
+        </view>
+        <view class="set-switch {{settings.nightMode ? 'is-on' : ''}}" data-key="nightMode" bindtap="onSwitch">
+          <view class="set-switch-knob" />
+        </view>
+      </view>
+
+      <view class="set-row">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-cache.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">清除缓存</text>
+          <text class="set-row-sub">当前 128 MB</text>
+        </view>
+        <text class="set-arrow" bindtap="onCacheTap">›</text>
+      </view>
+
+      <view class="set-row set-row--slim" bindtap="onHelpTap">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-help.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">帮助与反馈</text>
+        </view>
+        <text class="set-arrow">›</text>
+      </view>
+
+      <view class="set-row set-row--slim" bindtap="onAgreementTap">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-agreement.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">用户协议与隐私</text>
+        </view>
+        <text class="set-arrow">›</text>
+      </view>
+
+      <view class="set-row" bindtap="onAboutTap">
+        <image class="set-row-ic" src="/assets/figma-settings/ic-about.svg" mode="aspectFit" />
+        <view class="set-row-text">
+          <text class="set-row-name">关于诗韵</text>
+          <text class="set-row-sub">版本 1.2.0</text>
+        </view>
+        <view class="set-badge">
+          <text class="set-badge-text">已是最新</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="set-foot">
+      <view class="set-logout" bindtap="onLogout">
+        <text class="set-logout-text">退出登录</text>
+      </view>
+      <view class="set-catchphrase">
+        <text class="set-catchphrase-text">一字一句，皆是山河</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<mini-player />

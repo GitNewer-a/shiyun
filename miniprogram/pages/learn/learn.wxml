@@ -46,7 +46,7 @@
 
   <view class="mod-card">
     <view class="mod-accent mod-accent--blue" />
-    <view class="mod-icon mod-icon--blue"><text>目</text></view>
+    <view class="mod-icon mod-icon--blue"><image class="mod-ico" src="/assets/learn/ic-understand.svg" mode="aspectFit" /></view>
     <view class="mod-body">
       <view class="mod-title-row">
         <text class="mod-title">诗词理解</text>
@@ -65,16 +65,16 @@
 
   <view class="mod-card">
     <view class="mod-accent mod-accent--green" />
-    <view class="mod-icon mod-icon--green"><text>记</text></view>
+    <view class="mod-icon mod-icon--green"><image class="mod-ico" src="/assets/learn/ic-memory.svg" mode="aspectFit" /></view>
     <view class="mod-body">
       <view class="mod-title-row">
         <text class="mod-title">记忆训练</text>
         <text class="mod-sub">练习背诵，强化记忆</text>
       </view>
-                  <view class="tag-row">
-                    <text class="tag" data-type="write" bindtap="goRecite">全文默写</text>
-                    <text class="tag" data-type="blank" bindtap="goRecite">填空默写</text>
-                  </view>
+      <view class="tag-row">
+        <text class="tag" data-type="write" bindtap="goRecite">全文默写</text>
+        <text class="tag" data-type="blank" bindtap="goRecite">填空默写</text>
+      </view>
       <view class="mem-foot">
         <view class="mem-bar"><view class="mem-fill" style="width:36%" /></view>
         <text class="mem-text">已完成 18/50 首</text>
@@ -85,7 +85,7 @@
 
   <view class="mod-card">
     <view class="mod-accent mod-accent--gold" />
-    <view class="mod-icon mod-icon--gold"><text>奖</text></view>
+    <view class="mod-icon mod-icon--gold"><image class="mod-ico" src="/assets/learn/ic-growth.svg" mode="aspectFit" /></view>
     <view class="mod-body">
       <view class="mod-title-row">
         <text class="mod-title">学习成长</text>
@@ -146,3 +146,5 @@
   </view>
   <view class="bottom-pad" />
 </view>
+
+<mini-player has-tab-bar />

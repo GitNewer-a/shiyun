@@ -21,6 +21,14 @@ App({
     this.login();
   },
 
+  // 小程序退到后台时停掉朗读，避免无声播放；小程序内切页不受影响
+  onHide() {
+    try {
+      const { getAudioPlayer } = require('./utils/audio.js');
+      getAudioPlayer().pause();
+    } catch (e) {}
+  },
+
   login() {
     if (!this.globalData.cloudReady) return Promise.resolve('');
 

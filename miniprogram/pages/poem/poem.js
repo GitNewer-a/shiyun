@@ -1,6 +1,7 @@
 const db = require('../../utils/db.js');
 const { toastReciteSoon } = require('../../utils/toast.js');
 const { getPoemById, POEMS } = require('../../data/poems.js');
+const { getAudioPlayer, playableIds } = require('../../utils/audio.js');
 
 /** 开标点挂下一字、闭标点挂上一字，避免行首/单独成行 */
 const OPEN_PUNCT = /[「『《（【〖〈“‘]/;
@@ -44,6 +45,7 @@ function parseLinePinyin(line, pyStr) {
 }
 
 function fmt(sec) {
+  sec = sec || 0;
   const m = Math.floor(sec / 60);
   const s = Math.floor(sec % 60);
   return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
@@ -55,8 +57,6 @@ function knBodyOf(poem, tab) {
   return poem.translation || '暂无译文';
 }
 
-const TOTAL_SEC = 32;
-
 Page({
   data: {
     poem: {},
@@ -65,9 +65,10 @@ Page({
     showPinyin: true,
     fav: false,
     playing: false,
+    hasAudio: false,
     audioProgress: 0,
     audioTime: '00:00',
-    audioEnd: fmt(TOTAL_SEC),
+    audioEnd: '00:00',
     knTabs: ['译文', '注释', '赏析'],
     knTab: '译文',
     knBody: '',
@@ -91,26 +92,84 @@ Page({
 
     const titleChars = parseLinePinyin(poem.title, poem.titlePinyin || '');
     const authorChars = parseLinePinyin(poem.author, poem.authorPinyin || '');
-    const lineChars = (poem.lines || []).map((line, i) =>
-      parseLinePinyin(line, (poem.pinyin && poem.pinyin[i]) || '')
-    );
+    const lineChars = (poem.lines || []).map(function (line, i) {
+      return parseLinePinyin(line, (poem.pinyin && poem.pinyin[i]) || '');
+    });
 
     const poemList = POEMS;
     const poemIndex = poemList.findIndex(function (p) { return p.id === id; });
 
     this.setData({
-      id, poem, safeAreaBottom,
+      id: id,
+      poem: poem,
+      safeAreaBottom: safeAreaBottom,
       fav: db.isFavorite(id),
-      titleChars, authorChars, lineChars,
+      titleChars: titleChars,
+      authorChars: authorChars,
+      lineChars: lineChars,
       knBody: knBodyOf(poem, '译文'),
-      poemList, poemIndex: poemIndex < 0 ? 0 : poemIndex
+      poemList: poemList,
+      poemIndex: poemIndex < 0 ? 0 : poemIndex
     });
     db.addBrowseHistory(id);
     wx.setNavigationBarTitle({ title: poem.title });
+    this._initAudio(poem);
   },
 
-  onUnload() { this.stopTimer(); },
-  onHide() { this.stopTimer(); },
+  onShow() {
+    // 从其他页返回时把按钮状态拉回真实播放态
+    if (!this.player) return;
+    this.setData({
+      playing: this.player.isPlaying() && this.player.getCurrentId() === this.data.id,
+      loopMode: this.player.getLoopMode()
+    });
+  },
+
+  onUnload() {
+    // 只解绑回调，不暂停也不销毁单例：退出本页后由悬浮播放器接着播
+    this._unsubAudio();
+  },
+
+  /** 初始化全局播放器；音频创建失败不影响页面渲染 */
+  _initAudio(poem) {
+    this._subs = [];
+    try {
+      this.player = getAudioPlayer();
+    } catch (e) {
+      this.player = null;
+      console.warn('[诗韵] 播放器初始化失败，降级无音频', e);
+      return;
+    }
+    const that = this;
+    const s = wx.getStorageSync('settings') || {};
+    this.player.setLoopMode(s.loopMode || 'single');
+    this.setData({ loopMode: s.loopMode || 'single' });
+
+    this._subs.push(this.player.onProgress(function (data) {
+      that.setData({
+        audioProgress: data.progress,
+        audioTime: fmt(data.time),
+        audioEnd: fmt(data.duration)
+      });
+    }));
+
+    this._subs.push(this.player.onState(function (data) {
+      that.setData({ playing: data.playing, loopMode: data.loopMode });
+    }));
+
+    this.setData({ hasAudio: this.player.hasAudio(poem) });
+
+    if (s.autoRead && this.player.hasAudio(poem)) {
+      this.player.play(poem.id);
+    }
+  },
+
+  _unsubAudio() {
+    (this._subs || []).forEach(function (off) {
+      if (typeof off === 'function') off();
+    });
+    this._subs = [];
+  },
 
   togglePinyin() {
     this.setData({ showPinyin: !this.data.showPinyin });
@@ -123,76 +182,93 @@ Page({
   },
 
   toggleAudio() {
-    toastReciteSoon();
+    if (!this.data.hasAudio) {
+      wx.showToast({ title: '暂无标准朗读', icon: 'none', duration: 1200 });
+      return;
+    }
+    this.player.toggle(this.data.id);
   },
 
-  startTimer() {
-    this.setData({ playing: true });
-    this.timer = setInterval(() => {
-      const next = this.data.audioProgress + (100 / TOTAL_SEC) * 0.5;
-      if (next >= 100) {
-        this.setData({ audioProgress: 100, audioTime: fmt(TOTAL_SEC), playing: false });
-        this.stopTimer();
-        return;
-      }
-      this.setData({ audioProgress: next, audioTime: fmt((next / 100) * TOTAL_SEC) });
-    }, 500);
-  },
-
-  stopTimer() {
-    if (this.timer) clearInterval(this.timer);
-    this.timer = null;
-    this.setData({ playing: false });
-  },
-
-  seekAudio() {
-    toastReciteSoon();
+  seekAudio(e) {
+    if (!this.data.hasAudio) return;
+    const that = this;
+    wx.createSelectorQuery()
+      .select('.progress-bar-wrap')
+      .boundingClientRect(function (rect) {
+        if (!rect) return;
+        const x = (e.detail && e.detail.x) || 0;
+        const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        that.player.seek(pct);
+      })
+      .exec();
   },
 
   switchKn(e) {
     const knTab = e.currentTarget.dataset.tab;
-    this.setData({ knTab, knBody: knBodyOf(this.data.poem, knTab) });
+    this.setData({ knTab: knTab, knBody: knBodyOf(this.data.poem, knTab) });
   },
 
   prevTrack() {
-    const { poemList, poemIndex, loopMode } = this.data;
-    if (loopMode === 'single') {
-      this.setData({ audioProgress: 0, audioTime: '00:00' });
-      this.startTimer();
-      return;
-    }
-    const prev = poemIndex <= 0 ? poemList.length - 1 : poemIndex - 1;
-    this._switchToPoem(poemList[prev].id);
+    this._stepTrack(-1);
   },
 
   nextTrack() {
-    const { poemList, poemIndex, loopMode } = this.data;
-    if (loopMode === 'single') {
-      this.setData({ audioProgress: 0, audioTime: '00:00' });
-      this.startTimer();
+    this._stepTrack(1);
+  },
+
+  _stepTrack(dir) {
+    if (!this.data.hasAudio) return;
+    const ids = playableIds();
+    if (!ids.length) return;
+    const loop = this.player.getLoopMode();
+    if (loop === 'single') {
+      this.player.seek(0);
       return;
     }
+    const idx = ids.indexOf(this.data.id);
     let next;
-    if (loopMode === 'order') {
-      next = (poemIndex + 1) % poemList.length;
-    } else {
-      next = Math.floor(Math.random() * poemList.length);
-    }
-    this._switchToPoem(poemList[next].id);
+    if (loop === 'order') next = (idx + dir + ids.length) % ids.length;
+    else next = Math.floor(Math.random() * ids.length);
+    this._switchToPoem(ids[next]);
   },
 
   _switchToPoem(id) {
-    wx.navigateTo({ url: '/pages/poem/poem?id=' + id });
+    const target = getPoemById(id);
+    if (!target) return;
+    if (!this.player) return;
+    const idx = this.data.poemList.findIndex(function (p) { return p.id === id; });
+    this.setData({
+      id: id,
+      poem: target,
+      audioProgress: 0,
+      audioTime: '00:00',
+      audioEnd: '00:00',
+      knBody: knBodyOf(target, this.data.knTab || '译文'),
+      poemIndex: idx < 0 ? 0 : idx,
+      titleChars: parseLinePinyin(target.title, target.titlePinyin || ''),
+      authorChars: parseLinePinyin(target.author, target.authorPinyin || ''),
+      lineChars: (target.lines || []).map(function (line, i) {
+        return parseLinePinyin(line, (target.pinyin && target.pinyin[i]) || '');
+      }),
+      hasAudio: this.player.hasAudio(target)
+    });
+    db.addBrowseHistory(id);
+    wx.setNavigationBarTitle({ title: target.title });
+    this.player.play(id);
   },
 
   cycleLoop() {
     const modes = ['single', 'order', 'random'];
-    const cur = this.data.loopMode;
-    const idx = modes.indexOf(cur);
-    const next = modes[(idx + 1) % modes.length];
+    const cur = this.player ? this.player.getLoopMode() : 'single';
+    const next = modes[(modes.indexOf(cur) + 1) % modes.length];
+    if (this.player) this.player.setLoopMode(next);
+    this.setData({ loopMode: next });
     const labels = { single: '单曲循环', order: '顺序循环', random: '随机播放' };
     wx.showToast({ title: labels[next], icon: 'none', duration: 800 });
-    this.setData({ loopMode: next });
+    try {
+      const s = wx.getStorageSync('settings') || {};
+      wx.setStorageSync('settings', Object.assign(s, { loopMode: next }));
+    } catch (e) {}
   },
 
   toggleMusicNote() {

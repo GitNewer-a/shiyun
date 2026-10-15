@@ -41,16 +41,20 @@
   </view>
 
   <view class="home-section-head">
-    <text class="home-section-title serif">热门朗读</text>
+    <text class="home-section-title serif">标准朗读</text>
   </view>
   <view class="hot">
     <view class="hot-item" wx:for="{{hotList}}" wx:key="id">
-      <view class="hot-avatar" style="background:{{item.avatarColor}}"><text class="serif">{{item.mark}}</text></view>
       <view class="hot-main" bindtap="goPoem" data-id="{{item.id}}">
-        <text class="hot-listener">{{item.listener}}</text><text class="hot-title serif">《{{item.title}}》</text>
+        <view class="hot-title-row">
+          <text class="hot-title serif">《{{item.title}}》</text>
+          <text class="hot-author"> · {{item.author}}</text>
+        </view>
         <view class="hot-count"><image src="/assets/figma-home/icon-4.svg" mode="aspectFit" /><text>{{item.plays}}</text></view>
       </view>
-      <view class="hot-play {{playingIndex === index ? 'is-playing' : ''}}" bindtap="togglePlay" data-index="{{index}}" aria-label="{{playingIndex === index ? '暂停' : '播放'}}{{item.title}}"><image src="/assets/figma-home/icon-7.svg" class="hot-play-ico" mode="aspectFit" /></view>
+      <view class="hot-play {{playingId === item.id ? 'is-playing' : ''}}" bindtap="togglePlay" data-id="{{item.id}}" aria-label="{{playingId === item.id ? '暂停' : '播放'}}{{item.title}}"><image src="/assets/figma-home/icon-7.svg" class="hot-play-ico" mode="aspectFit" /></view>
     </view>
   </view>
 </view>
+
+<mini-player has-tab-bar />

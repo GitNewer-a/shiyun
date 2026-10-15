@@ -49,3 +49,5 @@
     </view>
   </view>
 </view>
+
+<mini-player has-tab-bar />

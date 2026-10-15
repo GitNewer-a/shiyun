@@ -1,8 +1,0 @@
-<view class="page">
-  <view class="ph">
-    <view class="ph-seal" />
-    <text class="ph-title serif">朗读练习</text>
-    <text class="ph-desc">{{poem.title}} · {{poem.author}}\n录音 + 跟读 + 回放，不产出 AI 分数</text>
-    <view class="ph-todo">TODO：wx.getRecorderManager() 录音、波形、云存储上传、回放对比</view>
-  </view>
-</view>

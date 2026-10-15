@@ -10,5 +10,10 @@
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "compileHotReLoad": true
+  },
+  "condition": {
+    "miniprogram": {
+      "list": []
+    }
   }
 }

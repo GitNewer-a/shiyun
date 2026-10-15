@@ -162,3 +162,5 @@
     <view class="scroll-pad" />
   </scroll-view>
 </view>
+
+<mini-player />

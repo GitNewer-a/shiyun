@@ -1,0 +1,49 @@
+<view class="about-page">
+  <view class="about-body">
+    <view class="about-brand">
+      <view class="about-seal">
+        <text class="about-seal-char">韵</text>
+      </view>
+      <text class="about-name">诗韵</text>
+      <text class="about-slogan">古典诗词学习小程序</text>
+    </view>
+
+    <view class="about-card">
+      <text class="about-card-title">版本</text>
+      <view class="about-card-row">
+        <text class="about-card-label">当前版本</text>
+        <text class="about-card-value">v{{version}}</text>
+      </view>
+      <view class="about-card-row">
+        <text class="about-card-label">构建日期</text>
+        <text class="about-card-value">2026-09-15</text>
+      </view>
+    </view>
+
+    <view class="about-card">
+      <text class="about-card-title">功能一览</text>
+      <view class="about-feat-list">
+        <view class="about-feat-item" wx:for="{{[
+          ['诗词库', '按学段 / 主题 / 作者浏览'],
+          ['朗读练习', '跟读计时与循环播放'],
+          ['背诵默写', '易错字、连句、整篇默写'],
+          ['学习记录', '连续打卡与成长等级']
+        ]}}" wx:key="*this">
+          <text class="about-feat-name">{{item[0]}}</text>
+          <text class="about-feat-desc">{{item[1]}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="about-card">
+      <text class="about-card-title">设计语言</text>
+      <text class="about-design-text">水墨山水 + 宣纸质感，克制的现代中式。主色为墨蓝、宣纸白与朱砂，衬线字体承载文气，无 emoji、无彩虹色。</text>
+    </view>
+
+    <view class="about-catchphrase">
+      <text class="about-catchphrase-text">{{catchphrase}}</text>
+    </view>
+  </view>
+</view>
+
+<mini-player />

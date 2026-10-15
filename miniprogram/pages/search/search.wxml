@@ -22,3 +22,5 @@
     <text class="ph-desc">{{keyword ? '没有找到相关诗词' : '输入关键词开始搜索'}}</text>
   </view>
 </view>
+
+<mini-player />

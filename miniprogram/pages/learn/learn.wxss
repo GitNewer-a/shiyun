@@ -204,8 +204,10 @@
   flex: none;
   margin: 8rpx 20rpx 0 8rpx;
   border-radius: 24rpx;
-  font-family: 'Noto Serif SC',serif;
-  font-size: 36rpx;
+}
+.mod-ico {
+  width: 46rpx;
+  height: 46rpx;
 }
 .mod-icon--blue { background: rgba(61,90,115,.1); color: #3d5a73; }
 .mod-icon--green { background: rgba(79,122,93,.12); color: #4f7a5d; }

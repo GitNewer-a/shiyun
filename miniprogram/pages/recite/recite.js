@@ -61,6 +61,14 @@ Page({
     recentList: []
   },
 
+  onShow() {
+    // 默写时不该有朗读声；本页不放悬浮播放器，进页先把全局播放停掉
+    try {
+      const { getAudioPlayer } = require('../../utils/audio.js');
+      getAudioPlayer().pause();
+    } catch (e) {}
+  },
+
   onLoad(options) {
     const id = (options && options.id) || 'p001';
     let mode = (options && options.type) || 'write';

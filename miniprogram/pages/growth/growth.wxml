@@ -185,3 +185,5 @@
     <view class="bottom-pad" />
   </scroll-view>
 </view>
+
+<mini-player />

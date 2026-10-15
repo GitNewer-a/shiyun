@@ -6,17 +6,14 @@
     "pages/learn/learn",
     "pages/growth/growth",
     "pages/poem/poem",
-    "pages/practice/practice",
     "pages/recite/recite",
     "pages/profile/profile",
     "pages/progress/progress",
     "pages/favorites/favorites",
     "pages/search/search",
-    "pages/category/category",
-    "pages/textbook/textbook",
-    "pages/exam/exam",
     "pages/achieve/achieve",
-    "pages/task/task"
+    "pages/settings/settings",
+    "pages/about/about"
   ],
   "window": {
     "backgroundTextStyle": "dark",
@@ -38,5 +35,8 @@
     ]
   },
   "style": "v2",
+  "usingComponents": {
+    "mini-player": "/components/mini-player/mini-player"
+  },
   "sitemapLocation": "sitemap.json"
 }

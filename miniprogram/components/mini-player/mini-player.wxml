@@ -1,0 +1,70 @@
+<view wx:if="{{visible}}"
+      class="mp {{expanded ? 'mp--open' : ''}}"
+      style="bottom:{{bottom}}rpx"
+      catchtap="noop"
+      aria-role="region"
+      aria-label="悬浮播放器">
+
+  <!-- 收起态：一行胶囊 -->
+  <view wx:if="{{!expanded}}" class="mp-bar">
+    <view class="mp-bar-main" catchtap="onExpand">
+      <view class="mp-disc {{playing ? 'is-on' : ''}}">
+        <view class="mp-disc-hole" />
+      </view>
+      <view class="mp-bar-text">
+        <text class="mp-bar-title serif">《{{title}}》</text>
+        <text class="mp-bar-sub">{{author}} · {{dynasty}}</text>
+      </view>
+    </view>
+    <view class="mp-bar-ctrl">
+      <view class="mp-btn mp-btn--play" catchtap="onToggle" aria-label="{{playing ? '暂停' : '播放'}}">
+        <view class="{{playing ? 'mp-ico-pause' : 'mp-ico-play'}}" />
+      </view>
+      <view class="mp-btn mp-btn--ghost" catchtap="onExpand" aria-label="展开播放器">
+        <view class="mp-chev mp-chev--up" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 展开态 -->
+  <view wx:else class="mp-panel">
+    <view class="mp-head">
+      <view class="mp-head-info" catchtap="onGoPoem">
+        <text class="mp-title serif">《{{title}}》</text>
+        <text class="mp-sub">{{author}} · {{dynasty}}</text>
+      </view>
+      <view class="mp-btn mp-btn--ghost" catchtap="onClose" aria-label="关闭播放器">
+        <view class="mp-x" />
+      </view>
+    </view>
+
+    <view class="mp-prog-wrap" catchtap="onSeek" aria-label="拖动进度">
+      <view class="mp-prog-track">
+        <view class="mp-prog-fill" style="width:{{progress}}%" />
+      </view>
+      <view class="mp-prog-knob" style="left:{{progress}}%" />
+    </view>
+    <view class="mp-times">
+      <text class="mp-time">{{timeText}}</text>
+      <text class="mp-time">{{endText}}</text>
+    </view>
+
+    <view class="mp-ctrls">
+      <view class="mp-loop" catchtap="onCycle" aria-label="切换循环模式，当前{{loopText}}">
+        <text class="mp-loop-text">{{loopText}}</text>
+      </view>
+      <view class="mp-btn mp-btn--ghost" catchtap="onPrev" aria-label="上一首">
+        <image src="/assets/poem/skip-prev.svg" class="mp-ico" mode="aspectFit" />
+      </view>
+      <view class="mp-btn mp-btn--play mp-btn--lg" catchtap="onToggle" aria-label="{{playing ? '暂停' : '播放'}}">
+        <view class="{{playing ? 'mp-ico-pause' : 'mp-ico-play'}}" />
+      </view>
+      <view class="mp-btn mp-btn--ghost" catchtap="onNext" aria-label="下一首">
+        <image src="/assets/poem/skip-next.svg" class="mp-ico" mode="aspectFit" />
+      </view>
+      <view class="mp-btn mp-btn--ghost" catchtap="onCollapse" aria-label="收起播放器">
+        <view class="mp-chev mp-chev--down" />
+      </view>
+    </view>
+  </view>
+</view>
