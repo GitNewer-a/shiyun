@@ -1,0 +1,246 @@
+{
+  "_readme": "audioUrl 备份（2026-10-18 清空前）。回填云端 fileID 时按 id 对齐；若需切回本地，用这里的 audioUrl。",
+  "count": 40,
+  "items": [
+    {
+      "id": "p001",
+      "title": "静夜思",
+      "audioUrl": "/assets/audio/audio-p001.m4a",
+      "file": "audio-p001.m4a"
+    },
+    {
+      "id": "p002",
+      "title": "春晓",
+      "audioUrl": "/assets/audio/audio-p002.m4a",
+      "file": "audio-p002.m4a"
+    },
+    {
+      "id": "p003",
+      "title": "望庐山瀑布",
+      "audioUrl": "/assets/audio/audio-p003.m4a",
+      "file": "audio-p003.m4a"
+    },
+    {
+      "id": "p004",
+      "title": "江雪",
+      "audioUrl": "/assets/audio/audio-p004.m4a",
+      "file": "audio-p004.m4a"
+    },
+    {
+      "id": "p005",
+      "title": "逢雪宿芙蓉山主人",
+      "audioUrl": "/assets/audio/audio-p005.m4a",
+      "file": "audio-p005.m4a"
+    },
+    {
+      "id": "p006",
+      "title": "独坐敬亭山",
+      "audioUrl": "/assets/audio/audio-p006.m4a",
+      "file": "audio-p006.m4a"
+    },
+    {
+      "id": "p007",
+      "title": "登鹳雀楼",
+      "audioUrl": "/assets/audio/audio-p007.m4a",
+      "file": "audio-p007.m4a"
+    },
+    {
+      "id": "p008",
+      "title": "池上",
+      "audioUrl": "/assets/audio/audio-p008.m4a",
+      "file": "audio-p008.m4a"
+    },
+    {
+      "id": "p009",
+      "title": "鹿柴",
+      "audioUrl": "/assets/audio/audio-p009.m4a",
+      "file": "audio-p009.m4a"
+    },
+    {
+      "id": "p010",
+      "title": "马诗",
+      "audioUrl": "/assets/audio/audio-p010.m4a",
+      "file": "audio-p010.m4a"
+    },
+    {
+      "id": "p011",
+      "title": "悯农",
+      "audioUrl": "/assets/audio/audio-p011.m4a",
+      "file": "audio-p011.m4a"
+    },
+    {
+      "id": "p012",
+      "title": "鸟鸣涧",
+      "audioUrl": "/assets/audio/audio-p012.m4a",
+      "file": "audio-p012.m4a"
+    },
+    {
+      "id": "p013",
+      "title": "宿建德江",
+      "audioUrl": "/assets/audio/audio-p013.m4a",
+      "file": "audio-p013.m4a"
+    },
+    {
+      "id": "p014",
+      "title": "相思",
+      "audioUrl": "/assets/audio/audio-p014.m4a",
+      "file": "audio-p014.m4a"
+    },
+    {
+      "id": "p015",
+      "title": "寻隐者不遇",
+      "audioUrl": "/assets/audio/audio-p015.m4a",
+      "file": "audio-p015.m4a"
+    },
+    {
+      "id": "p016",
+      "title": "夜宿山寺",
+      "audioUrl": "/assets/audio/audio-p016.m4a",
+      "file": "audio-p016.m4a"
+    },
+    {
+      "id": "p017",
+      "title": "一去二三里",
+      "audioUrl": "/assets/audio/audio-p017.m4a",
+      "file": "audio-p017.m4a"
+    },
+    {
+      "id": "p018",
+      "title": "咏鹅",
+      "audioUrl": "/assets/audio/audio-p018.m4a",
+      "file": "audio-p018.m4a"
+    },
+    {
+      "id": "p019",
+      "title": "咏柳",
+      "audioUrl": "/assets/audio/audio-p019.m4a",
+      "file": "audio-p019.m4a"
+    },
+    {
+      "id": "p020",
+      "title": "杂诗",
+      "audioUrl": "/assets/audio/audio-p020.m4a",
+      "file": "audio-p020.m4a"
+    },
+    {
+      "id": "p021",
+      "title": "画",
+      "audioUrl": "/assets/audio/audio-p021.m4a",
+      "file": "audio-p021.m4a"
+    },
+    {
+      "id": "p022",
+      "title": "芙蓉楼送辛渐",
+      "audioUrl": "/assets/audio/audio-p022.m4a",
+      "file": "audio-p022.m4a"
+    },
+    {
+      "id": "p023",
+      "title": "乌衣巷",
+      "audioUrl": "/assets/audio/audio-p023.m4a",
+      "file": "audio-p023.m4a"
+    },
+    {
+      "id": "p024",
+      "title": "暮江吟",
+      "audioUrl": "/assets/audio/audio-p024.m4a",
+      "file": "audio-p024.m4a"
+    },
+    {
+      "id": "p025",
+      "title": "枫桥夜泊",
+      "audioUrl": "/assets/audio/audio-p025.m4a",
+      "file": "audio-p025.m4a"
+    },
+    {
+      "id": "p026",
+      "title": "江南春",
+      "audioUrl": "/assets/audio/audio-p026.m4a",
+      "file": "audio-p026.m4a"
+    },
+    {
+      "id": "p027",
+      "title": "大林寺桃花",
+      "audioUrl": "/assets/audio/audio-p027.m4a",
+      "file": "audio-p027.m4a"
+    },
+    {
+      "id": "p028",
+      "title": "回乡偶书",
+      "audioUrl": "/assets/audio/audio-p028.m4a",
+      "file": "audio-p028.m4a"
+    },
+    {
+      "id": "p029",
+      "title": "游子吟",
+      "audioUrl": "/assets/audio/audio-p029.m4a",
+      "file": "audio-p029.m4a"
+    },
+    {
+      "id": "p030",
+      "title": "赋得古原草送别",
+      "audioUrl": "/assets/audio/audio-p030.m4a",
+      "file": "audio-p030.m4a"
+    },
+    {
+      "id": "p031",
+      "title": "赠花卿",
+      "audioUrl": "/assets/audio/audio-p031.m4a",
+      "file": "audio-p031.m4a"
+    },
+    {
+      "id": "p032",
+      "title": "九月九日忆山东兄弟",
+      "audioUrl": "/assets/audio/audio-p032.m4a",
+      "file": "audio-p032.m4a"
+    },
+    {
+      "id": "p033",
+      "title": "送元二使安西",
+      "audioUrl": "/assets/audio/audio-p033.m4a",
+      "file": "audio-p033.m4a"
+    },
+    {
+      "id": "p034",
+      "title": "山行",
+      "audioUrl": "/assets/audio/audio-p034.m4a",
+      "file": "audio-p034.m4a"
+    },
+    {
+      "id": "p035",
+      "title": "清明",
+      "audioUrl": "/assets/audio/audio-p035.m4a",
+      "file": "audio-p035.m4a"
+    },
+    {
+      "id": "p036",
+      "title": "出塞",
+      "audioUrl": "/assets/audio/audio-p036.m4a",
+      "file": "audio-p036.m4a"
+    },
+    {
+      "id": "p037",
+      "title": "黄鹤楼送孟浩然之广陵",
+      "audioUrl": "/assets/audio/audio-p037.m4a",
+      "file": "audio-p037.m4a"
+    },
+    {
+      "id": "p038",
+      "title": "赠汪伦",
+      "audioUrl": "/assets/audio/audio-p038.m4a",
+      "file": "audio-p038.m4a"
+    },
+    {
+      "id": "p039",
+      "title": "早发白帝城",
+      "audioUrl": "/assets/audio/audio-p039.m4a",
+      "file": "audio-p039.m4a"
+    },
+    {
+      "id": "p040",
+      "title": "绝句",
+      "audioUrl": "/assets/audio/audio-p040.m4a",
+      "file": "audio-p040.m4a"
+    }
+  ]
+}

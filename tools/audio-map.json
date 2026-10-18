@@ -1,0 +1,339 @@
+{
+  "_readme": [
+    "音频素材与诗库 id 的对应关系（唯一事实源）。",
+    "诗库 id 已按素材的 p01–p40 顺序对齐：p001=素材p01、p002=素材p02 …… p040=素材p40。",
+    "file 是音频在 outDir 里的规范文件名（audio-<id>.m4a）；originalName 是原始素材名，仅作溯源，不参与路径解析。",
+    "audioSources 是 audioUrl 的取值优先级（按顺序取第一个在 outDir 里真实存在的文件）：",
+    "  - \"audio-{id}.m4a\"  → 原始素材，本地直读（当前阶段）",
+    "  - \"audio-{id}.mp3\"  → 压缩转码后的成品（后续瘦身/上 CDN 阶段）",
+    "改完本表跑 `node tools/sync-audio.js` 回填 poems.js 的 audioUrl；--check 只体检不写。"
+  ],
+  "outDir": "miniprogram/assets/audio",
+  "urlPrefix": "/assets/audio/",
+  "audioSources": [
+    "audio-{id}.m4a",
+    "audio-{id}.mp3"
+  ],
+  "items": [
+    {
+      "id": "p001",
+      "file": "audio-p001.m4a",
+      "materialIndex": "p01",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p01 静夜思-李白.m4a",
+      "title": "静夜思",
+      "author": "李白"
+    },
+    {
+      "id": "p002",
+      "file": "audio-p002.m4a",
+      "materialIndex": "p02",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p02 春晓-孟浩然.m4a",
+      "title": "春晓",
+      "author": "孟浩然"
+    },
+    {
+      "id": "p003",
+      "file": "audio-p003.m4a",
+      "materialIndex": "p03",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p03 望庐山瀑布-李白.m4a",
+      "title": "望庐山瀑布",
+      "author": "李白"
+    },
+    {
+      "id": "p004",
+      "file": "audio-p004.m4a",
+      "materialIndex": "p04",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p04 江雪-柳宗元.m4a",
+      "title": "江雪",
+      "author": "柳宗元"
+    },
+    {
+      "id": "p005",
+      "file": "audio-p005.m4a",
+      "materialIndex": "p05",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p05 逢雪宿芙蓉山主人-刘长卿.m4a",
+      "title": "逢雪宿芙蓉山主人",
+      "author": "刘长卿"
+    },
+    {
+      "id": "p006",
+      "file": "audio-p006.m4a",
+      "materialIndex": "p06",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p06 独坐敬亭山-李白.m4a",
+      "title": "独坐敬亭山",
+      "author": "李白"
+    },
+    {
+      "id": "p007",
+      "file": "audio-p007.m4a",
+      "materialIndex": "p07",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p07 登鹳雀楼-王之涣.m4a",
+      "title": "登鹳雀楼",
+      "author": "王之涣"
+    },
+    {
+      "id": "p008",
+      "file": "audio-p008.m4a",
+      "materialIndex": "p08",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p08 池上-白居易.m4a",
+      "title": "池上",
+      "author": "白居易"
+    },
+    {
+      "id": "p009",
+      "file": "audio-p009.m4a",
+      "materialIndex": "p09",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p09 鹿柴-王维.m4a",
+      "title": "鹿柴",
+      "author": "王维"
+    },
+    {
+      "id": "p010",
+      "file": "audio-p010.m4a",
+      "materialIndex": "p10",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p10 马诗-李贺.m4a",
+      "title": "马诗",
+      "author": "李贺"
+    },
+    {
+      "id": "p011",
+      "file": "audio-p011.m4a",
+      "materialIndex": "p11",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p11 悯农-李绅.m4a",
+      "title": "悯农",
+      "author": "李绅"
+    },
+    {
+      "id": "p012",
+      "file": "audio-p012.m4a",
+      "materialIndex": "p12",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p12 鸟鸣涧-王维.m4a",
+      "title": "鸟鸣涧",
+      "author": "王维"
+    },
+    {
+      "id": "p013",
+      "file": "audio-p013.m4a",
+      "materialIndex": "p13",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p13 宿建德江-孟浩然.m4a",
+      "title": "宿建德江",
+      "author": "孟浩然"
+    },
+    {
+      "id": "p014",
+      "file": "audio-p014.m4a",
+      "materialIndex": "p14",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p14 相思-王维.m4a",
+      "title": "相思",
+      "author": "王维"
+    },
+    {
+      "id": "p015",
+      "file": "audio-p015.m4a",
+      "materialIndex": "p15",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p15 寻隐者不遇-贾岛.m4a",
+      "title": "寻隐者不遇",
+      "author": "贾岛"
+    },
+    {
+      "id": "p016",
+      "file": "audio-p016.m4a",
+      "materialIndex": "p16",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p16 夜宿山寺-李白.m4a",
+      "title": "夜宿山寺",
+      "author": "李白"
+    },
+    {
+      "id": "p017",
+      "file": "audio-p017.m4a",
+      "materialIndex": "p17",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p17 一去二三里-邵雍.m4a",
+      "title": "一去二三里",
+      "author": "邵雍"
+    },
+    {
+      "id": "p018",
+      "file": "audio-p018.m4a",
+      "materialIndex": "p18",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p18 咏鹅-骆宾王.m4a",
+      "title": "咏鹅",
+      "author": "骆宾王"
+    },
+    {
+      "id": "p019",
+      "file": "audio-p019.m4a",
+      "materialIndex": "p19",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p19 咏柳-贺知章.m4a",
+      "title": "咏柳",
+      "author": "贺知章"
+    },
+    {
+      "id": "p020",
+      "file": "audio-p020.m4a",
+      "materialIndex": "p20",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p20 杂诗-王维.m4a",
+      "title": "杂诗",
+      "author": "王维"
+    },
+    {
+      "id": "p021",
+      "file": "audio-p021.m4a",
+      "materialIndex": "p21",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p21 画-王维.m4a",
+      "title": "画",
+      "author": "王维"
+    },
+    {
+      "id": "p022",
+      "file": "audio-p022.m4a",
+      "materialIndex": "p22",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p22 芙蓉楼送辛渐-王昌龄.m4a",
+      "title": "芙蓉楼送辛渐",
+      "author": "王昌龄"
+    },
+    {
+      "id": "p023",
+      "file": "audio-p023.m4a",
+      "materialIndex": "p23",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p23 乌衣巷-刘禹锡.m4a",
+      "title": "乌衣巷",
+      "author": "刘禹锡"
+    },
+    {
+      "id": "p024",
+      "file": "audio-p024.m4a",
+      "materialIndex": "p24",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p24 暮江吟-白居易.m4a",
+      "title": "暮江吟",
+      "author": "白居易"
+    },
+    {
+      "id": "p025",
+      "file": "audio-p025.m4a",
+      "materialIndex": "p25",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p25 枫桥夜泊-张继.m4a",
+      "title": "枫桥夜泊",
+      "author": "张继"
+    },
+    {
+      "id": "p026",
+      "file": "audio-p026.m4a",
+      "materialIndex": "p26",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p26 江南春-杜牧.m4a",
+      "title": "江南春",
+      "author": "杜牧"
+    },
+    {
+      "id": "p027",
+      "file": "audio-p027.m4a",
+      "materialIndex": "p27",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p27 大林寺桃花-白居易.m4a",
+      "title": "大林寺桃花",
+      "author": "白居易"
+    },
+    {
+      "id": "p028",
+      "file": "audio-p028.m4a",
+      "materialIndex": "p28",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p28 回乡偶书-贺知章.m4a",
+      "title": "回乡偶书",
+      "author": "贺知章"
+    },
+    {
+      "id": "p029",
+      "file": "audio-p029.m4a",
+      "materialIndex": "p29",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p29 游子吟-孟郊.m4a",
+      "title": "游子吟",
+      "author": "孟郊"
+    },
+    {
+      "id": "p030",
+      "file": "audio-p030.m4a",
+      "materialIndex": "p30",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p30 赋得古原草送别-白居易.m4a",
+      "title": "赋得古原草送别",
+      "author": "白居易"
+    },
+    {
+      "id": "p031",
+      "file": "audio-p031.m4a",
+      "materialIndex": "p31",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p31 赠花卿-杜甫.m4a",
+      "title": "赠花卿",
+      "author": "杜甫"
+    },
+    {
+      "id": "p032",
+      "file": "audio-p032.m4a",
+      "materialIndex": "p32",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p32 九月九日忆山东兄弟-王维.m4a",
+      "title": "九月九日忆山东兄弟",
+      "author": "王维"
+    },
+    {
+      "id": "p033",
+      "file": "audio-p033.m4a",
+      "materialIndex": "p33",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p33 送元二使安西-王维.m4a",
+      "title": "送元二使安西",
+      "author": "王维"
+    },
+    {
+      "id": "p034",
+      "file": "audio-p034.m4a",
+      "materialIndex": "p34",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p34 山行-杜牧.m4a",
+      "title": "山行",
+      "author": "杜牧"
+    },
+    {
+      "id": "p035",
+      "file": "audio-p035.m4a",
+      "materialIndex": "p35",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p35 清明-杜牧.m4a",
+      "title": "清明",
+      "author": "杜牧"
+    },
+    {
+      "id": "p036",
+      "file": "audio-p036.m4a",
+      "materialIndex": "p36",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p36 出塞-王昌龄.m4a",
+      "title": "出塞",
+      "author": "王昌龄"
+    },
+    {
+      "id": "p037",
+      "file": "audio-p037.m4a",
+      "materialIndex": "p37",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p37 黄鹤楼送孟浩然之广陵-李白.m4a",
+      "title": "黄鹤楼送孟浩然之广陵",
+      "author": "李白"
+    },
+    {
+      "id": "p038",
+      "file": "audio-p038.m4a",
+      "materialIndex": "p38",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p38 赠汪伦-李白.m4a",
+      "title": "赠汪伦",
+      "author": "李白"
+    },
+    {
+      "id": "p039",
+      "file": "audio-p039.m4a",
+      "materialIndex": "p39",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p39 早发白帝城-李白.m4a",
+      "title": "早发白帝城",
+      "author": "李白"
+    },
+    {
+      "id": "p040",
+      "file": "audio-p040.m4a",
+      "materialIndex": "p40",
+      "originalName": "48首【动画唐诗】让孩子一眼爱上古诗 p40 绝句-杜甫.m4a",
+      "title": "绝句",
+      "author": "杜甫"
+    }
+  ]
+}

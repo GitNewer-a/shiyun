@@ -9,14 +9,26 @@ const STAGE_LABEL = {
   高中: '高中推荐'
 };
 
-const FILTERS = [
-  { key: 'all', label: '全部' },
-  { key: 'genre:唐诗', label: '唐诗' },
-  { key: 'genre:宋词', label: '宋词' },
-  { key: 'stage:小学', label: '小学必背' },
-  { key: 'stage:初中', label: '初中必读' },
-  { key: 'stage:高中', label: '高中推荐' }
-];
+/** 快捷筛选由诗库数据推导：库里没有的体裁 / 学段不会出现空桶
+    （原先写死了「宋词」「高中」，诗库调整后会点出空列表） */
+function buildFilters() {
+  const out = [{ key: 'all', label: '全部' }];
+  const genres = [];
+  const stages = [];
+  POEMS.forEach(function (p) {
+    if (genres.indexOf(p.genre) === -1) genres.push(p.genre);
+    if (stages.indexOf(p.stage) === -1) stages.push(p.stage);
+  });
+  genres.forEach(function (g) {
+    out.push({ key: 'genre:' + g, label: g });
+  });
+  stages.forEach(function (s) {
+    out.push({ key: 'stage:' + s, label: STAGE_LABEL[s] || s });
+  });
+  return out;
+}
+
+const FILTERS = buildFilters();
 
 const THEME_RULES = [
   { re: /故乡|乡思|思乡|低头思/, theme: '思乡' },

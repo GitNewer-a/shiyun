@@ -69,7 +69,8 @@
 
 .pc-list { margin-top: 28rpx; }
 .pc-card { margin-bottom: 20rpx; padding: 20rpx 12rpx; border-radius: 32rpx; box-shadow: 0 10rpx 16rpx rgba(74,69,51,.07); }
-.pc-img { width: 144rpx; height: 144rpx; margin-right: 24rpx; border-radius: 20rpx; }
+/* 配图可能是竖版大图（poem-bg/bg-*.jpg），cover+center 才能正确居中裁切成方图 */
+.pc-img { width: 144rpx; height: 144rpx; margin-right: 24rpx; border-radius: 20rpx; background-size: cover; background-position: center; }
 .pc-title { font-size: 32rpx; letter-spacing: 1rpx; color: #1e2b1c; }
 .pc-sub { margin-top: 4rpx; font-size: 20rpx; color: #7e8785; }
 .pc-tags { display: flex; gap: 10rpx; margin-top: 8rpx; }

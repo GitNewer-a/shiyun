@@ -119,10 +119,12 @@ Page({
       wx.showToast({ title: '暂无标准朗读', icon: 'none', duration: 1200 });
       return;
     }
+    // expand：页面里点播放是用户主动发起，播放器要展开到台前给人看，
+    // 不能只缩在右边缘（那样点了没反馈，无法暂停/切歌/看进度）
     if (this.player.getCurrentId() === id) {
-      this.player.toggle();
+      this.player.toggle(id, { expand: true });
     } else {
-      this.player.play(id);
+      this.player.play(id, { expand: true });
     }
   }
 });

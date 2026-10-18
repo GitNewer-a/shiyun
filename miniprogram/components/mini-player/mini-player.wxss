@@ -1,109 +1,169 @@
-/* 全局悬浮播放器 —— 沉浸系（深墨绿毛玻璃），在宣纸系页面上同样清晰 */
+/* 全局悬浮播放器 —— 沉浸系（深墨绿毛玻璃），在宣纸系页面上同样清晰
+   字面量按项目惯例内联收口（组件 styleIsolation: isolated），取值对齐 app.wxss 的沉浸系令牌。
+   动效统一 240–360ms、cubic-bezier(.22,.61,.36,1)（ease-out 感），并尊重 prefers-reduced-motion。
+   ------------------------------------------------------------------ */
 
-.mp {
+/* ---------- 透明遮罩 ---------- */
+/* 只负责拦截点击与滚动，默认完全透明、不做视觉压暗。
+   若要视觉压暗背景，把下面的 alpha 从 0 调到 .28 即可。 */
+.mp-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9990;
+  background: rgba(16, 26, 22, 0);
+}
+
+/* 组件样式隔离下，app.wxss 里的 class 选择器不会进入组件，
+   这里本地声明一份，保证诗名走 Noto Serif SC（设计文档 §6.1）。 */
+.serif {
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+}
+
+/* ---------- 收起态：可拖拽的边缘触发器 ---------- */
+/* 位置由 left/top 内联 px 决定（组件按屏幕算好并夹在可视区内），
+   transform 只承担「展开时滑出屏幕」，两者互不干扰。 */
+.mp-tab {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9995;
+  /* 朝页面内侧留一段不可见热区，把触控宽度撑到 96rpx（≥ 44px 下限） */
+  padding: 18rpx 0 18rpx 16rpx;
+  /* left/top 也参与过渡 —— 松手吸附的那一下要滑过去，而不是瞬移 */
+  transition: left .3s cubic-bezier(.22, .61, .36, 1),
+              top .3s cubic-bezier(.22, .61, .36, 1),
+              transform .32s cubic-bezier(.22, .61, .36, 1),
+              opacity .22s ease;
+}
+
+/* 贴左边缘：热区与圆角整体镜像到左侧 */
+.mp-tab.is-left {
+  padding: 18rpx 16rpx 18rpx 0;
+}
+
+/* 拖动中：完全跟手，不能有过渡 */
+.mp-tab.is-dragging {
+  transition: none;
+}
+
+/* 展开时朝自己所在的侧边滑出屏幕（两个方向都要，否则会横穿整个页面） */
+.mp-tab.is-out {
+  opacity: 0;
+}
+.mp-tab.is-right.is-out { transform: translate(135%, 0); }
+.mp-tab.is-left.is-out  { transform: translate(-135%, 0); }
+
+/* 拖动中抬一点投影，给「正在移动」的反馈 */
+.mp-tab.is-dragging .mp-tab-body {
+  box-shadow: -8rpx 0 34rpx rgba(20, 30, 26, .44);
+}
+.mp-tab.is-dragging.is-left .mp-tab-body {
+  box-shadow: 8rpx 0 34rpx rgba(20, 30, 26, .44);
+}
+
+.mp-tab-body {
+  position: relative;
+  width: 80rpx;
+  height: 132rpx;
+  box-sizing: border-box;
+  border-radius: 26rpx 0 0 26rpx;
+  background: rgba(26, 40, 34, .94);
+  border: 1rpx solid rgba(255, 255, 255, .14);
+  border-right: none;
+  box-shadow: -8rpx 0 24rpx rgba(20, 30, 26, .26);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: mp-pop-in .34s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+/* 贴左边缘时圆角、描边、投影整体镜像 */
+.mp-tab.is-left .mp-tab-body {
+  border-radius: 0 26rpx 26rpx 0;
+  border: 1rpx solid rgba(255, 255, 255, .14);
+  border-left: none;
+  box-shadow: 8rpx 0 24rpx rgba(20, 30, 26, .26);
+}
+
+/* 收起态出现时的入场：只做缩放淡入，不带方向 ——
+   带方向的话，拖动越中线翻转 is-left 会让 animation 重启、看着像重新弹一次 */
+@keyframes mp-pop-in {
+  from { opacity: 0; transform: scale(.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* 竖向进度条：贴着触发器朝页面内侧的那条内缘（贴左时镜像到右侧） */
+.mp-tab-track {
+  position: absolute;
+  left: 8rpx;
+  top: 16rpx;
+  bottom: 16rpx;
+  width: 5rpx;
+  border-radius: 3rpx;
+  background: rgba(255, 255, 255, .13);
+  overflow: hidden;
+}
+
+.mp-tab.is-left .mp-tab-track {
+  left: auto;
+  right: 8rpx;
+}
+
+.mp-tab-prog {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-radius: 3rpx;
+  background: #c9975a;
+  transition: height .2s linear;
+}
+
+/* ---------- 展开态：底部面板 ---------- */
+.mp-sheet {
   position: fixed;
   left: 24rpx;
   right: 24rpx;
   z-index: 9999;
   box-sizing: border-box;
-  border-radius: 28rpx;
-  background: rgba(26, 40, 34, .94);
+  max-width: 760rpx;          /* 平板/大屏居中，不拉成通栏 */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 28rpx 22rpx;
+  border-radius: 32rpx;
+  background: rgba(26, 40, 34, .96);
   border: 1rpx solid rgba(255, 255, 255, .14);
-  box-shadow: 0 10rpx 28rpx rgba(20, 30, 26, .28);
+  box-shadow: 0 -10rpx 44rpx rgba(14, 24, 20, .34);
   color: #f0e8d8;
-  animation: mp-in .24s ease both;
+  /* 收起：整块下移自身两倍高度，确保完全移出视口（与 bottom 偏移量无关） */
+  transform: translateY(200%);
+  opacity: 0;
+  transition: transform .36s cubic-bezier(.22, .61, .36, 1),
+              opacity .2s ease;
+  will-change: transform;
 }
 
-@keyframes mp-in {
-  from { opacity: 0; transform: translateY(24rpx); }
-  to { opacity: 1; transform: translateY(0); }
+.mp-sheet.is-open {
+  transform: translateY(0);
+  opacity: 1;
 }
 
-/* ---------- 收起态 ---------- */
-.mp-bar {
-  display: flex;
-  align-items: center;
-  min-height: 104rpx;
-  padding: 12rpx 16rpx;
-  box-sizing: border-box;
-}
-
-.mp-bar-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  padding-right: 12rpx;
-}
-
-.mp-disc {
-  flex: none;
-  width: 52rpx;
-  height: 52rpx;
-  border-radius: 50%;
-  border: 2rpx solid rgba(201, 151, 90, .75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mp-disc-hole {
-  width: 14rpx;
-  height: 14rpx;
-  border-radius: 50%;
-  background: #c9975a;
-}
-
-.mp-disc.is-on {
-  animation: mp-spin 3.2s linear infinite;
-}
-
-@keyframes mp-spin {
-  from { transform: rotate(0); }
-  to { transform: rotate(360deg); }
-}
-
-.mp-bar-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2rpx;
-}
-
-.mp-bar-title {
-  font-size: 26rpx;
-  color: #f0e8d8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mp-bar-sub {
-  font-size: 20rpx;
-  color: rgba(200, 220, 210, .7);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mp-bar-ctrl {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-}
-
-/* ---------- 展开态 ---------- */
-.mp-panel {
-  padding: 22rpx 24rpx 18rpx;
-  box-sizing: border-box;
+.mp-grip {
+  width: 72rpx;
+  height: 6rpx;
+  margin: 14rpx auto 4rpx;
+  border-radius: 3rpx;
+  background: rgba(240, 232, 216, .26);
 }
 
 .mp-head {
   display: flex;
   align-items: flex-start;
+  padding-top: 14rpx;
 }
 
 .mp-head-info {
@@ -116,7 +176,7 @@
 
 .mp-title {
   font-size: 30rpx;
-  color: #f0e8d8;
+  color: #f5ede0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,7 +189,7 @@
 
 .mp-prog-wrap {
   position: relative;
-  margin-top: 26rpx;
+  margin-top: 22rpx;
   padding: 16rpx 0;
 }
 
@@ -160,7 +220,7 @@
 .mp-times {
   display: flex;
   justify-content: space-between;
-  margin-top: 4rpx;
+  margin-top: 2rpx;
 }
 
 .mp-time {
@@ -172,12 +232,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 14rpx;
+  margin-top: 12rpx;
 }
 
 .mp-loop {
   flex: none;
-  width: 96rpx;
+  min-width: 88rpx;
 }
 
 .mp-loop-text {
@@ -185,7 +245,34 @@
   color: #c9975a;
 }
 
-/* ---------- 按钮与图形 ---------- */
+/* ---------- 唱片与按钮 ---------- */
+.mp-disc {
+  flex: none;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 2rpx solid rgba(201, 151, 90, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-disc-hole {
+  width: 13rpx;
+  height: 13rpx;
+  border-radius: 50%;
+  background: #c9975a;
+}
+
+.mp-disc.is-on {
+  animation: mp-spin 3.2s linear infinite;
+}
+
+@keyframes mp-spin {
+  from { transform: rotate(0); }
+  to   { transform: rotate(360deg); }
+}
+
 .mp-btn {
   flex: none;
   display: flex;
@@ -238,7 +325,6 @@
   border-top: 3rpx solid rgba(240, 232, 216, .85);
 }
 
-.mp-chev--up { transform: rotate(45deg) translate(3rpx, 3rpx); }
 .mp-chev--down { transform: rotate(-135deg) translate(3rpx, 3rpx); }
 
 .mp-x {
@@ -260,7 +346,24 @@
   transform: rotate(90deg);
 }
 
+/* ---------- 小屏自适应：收紧内边距与控件间距，避免挤爆 ---------- */
+@media (max-width: 340px) {
+  .mp-sheet { padding: 0 22rpx 18rpx; }
+  .mp-btn--ghost { width: 64rpx; height: 64rpx; }
+  .mp-btn--lg { width: 88rpx; height: 88rpx; }
+  .mp-loop { min-width: 76rpx; }
+  .mp-loop-text { font-size: 20rpx; }
+}
+
+/* ---------- 降低动效偏好 ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .mp { animation: none; }
-  .mp-disc.is-on { animation: none; }
+  .mp-tab,
+  .mp-sheet,
+  .mp-tab-prog {
+    transition: none;
+  }
+  .mp-tab-body,
+  .mp-disc.is-on {
+    animation: none;
+  }
 }

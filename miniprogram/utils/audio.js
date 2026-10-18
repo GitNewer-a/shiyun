@@ -38,21 +38,45 @@ function ensureDir() {
 
 function resolveSrc(raw) {
   if (!raw) return '';
+  // 云存储 fileID：跨网络地址，不需要也不能拷贝到用户目录，直接交给播放器。
+  // InnerAudioContext 原生支持 cloud:// 前缀，SDK 内部会换临时链接（基础库 2.2.3+，项目为 3.17.2）。
+  if (raw.indexOf('cloud://') === 0) return raw;
   if (/^(https?:)?\/\//.test(raw) || raw.indexOf('wxfile://') === 0) return raw;
-  if (!ensureDir()) return raw;
+  if (!ensureDir()) {
+    warnOnce('nodir', '[诗韵] 用户目录不可用，改用包内音频路径', raw);
+    return raw;
+  }
   const dest = AUDIO_DIR + '/' + raw.split('/').pop();
+  const fs = wx.getFileSystemManager();
   try {
-    const fs = wx.getFileSystemManager();
-    try {
-      fs.accessSync(dest);
-      return dest;
-    } catch (e) {}
+    const st = fs.statSync(dest);
+    // ⚠️ 只认「有内容」的缓存：0 字节说明上次是失败留下的壳，必须重拷
+    if (st && st.size > 0) return dest;
+  } catch (e) {}
+
+  // 包内源文件是否存在，先探一次 —— 直接 copyFileSync 抛错时只有原生报错，查不动
+  try {
+    fs.accessSync(raw);
+  } catch (e) {
+    warnOnce('missing:' + raw, '[诗韵] 代码包里没有音频文件：' + raw, e);
+    return raw;
+  }
+
+  try {
     fs.copyFileSync(raw, dest);
     return dest;
   } catch (e) {
-    console.warn('[诗韵] 音频拷贝到用户目录失败，回退包内路径', raw, e);
+    warnOnce('copy:' + raw, '[诗韵] 音频拷贝到用户目录失败，回退包内路径', raw, e);
     return raw;
   }
+}
+
+/** 同一类告警只打一次，避免连播时刷屏（真机 console 会限流，日志一多反而看不到关键信息） */
+const warned = {};
+function warnOnce(key) {
+  if (warned[key]) return;
+  warned[key] = true;
+  console.warn.apply(console, Array.prototype.slice.call(arguments, 1));
 }
 
 /**
@@ -112,20 +136,28 @@ function createPlayer() {
       ctx.play();
       return;
     }
-    // 顺序 / 随机
-    const idx = POEMS.findIndex(function (p) { return p.id === currentId; });
+    // 顺序 / 随机。
+    // ⚠️ 必须在「可播放序列」里走，与页面/悬浮条的上下一首保持一致 ——
+    // 否则一旦有诗词没音频，自动连播会跳到一个播不了的条目上，声音就断了。
+    const ids = playableIds();
+    if (!ids.length) return;
+    const idx = ids.indexOf(currentId);
     let next;
     if (loopMode === 'order') {
-      next = (idx + 1) % POEMS.length;
+      next = idx < 0 ? 0 : (idx + 1) % ids.length;
     } else {
-      next = Math.floor(Math.random() * POEMS.length);
+      next = Math.floor(Math.random() * ids.length);
     }
-    loadAndPlay(POEMS[next].id);
+    loadAndPlay(ids[next]);
   }
 
-  function loadAndPlay(id) {
-    currentId = id;
-    if (!hasAudio(POEMS.find(function (p) { return p.id === id; }))) {
+  /**
+   * @param {string} id 诗词 id
+   * @param {boolean} expandAfter 起播后是否展开悬浮播放器（页面内播放入口用）
+   */
+  function loadAndPlay(id, expandAfter) {
+    const poem = POEMS.find(function (p) { return p.id === id; });
+    if (!hasAudio(poem)) {
       // 无音频：停掉当前、清空 src 与当前曲目，避免下次 toggle 误播上一首，
       // 也避免悬浮条出现一个根本播不了的条目
       if (ctx) {
@@ -133,14 +165,23 @@ function createPlayer() {
         ctx.src = '';
       }
       currentId = '';
-      setPlaying(false);
+      playing = false;
       emitState();
       return;
     }
+    currentId = id;
     buildCtx();
     ctx.play();
     started = true;
-    setPlaying(true);
+    // ⚠️ 这里必须「无条件」广播，不能图省事走 setPlaying(true)。
+    // 切歌时 playing 本来往往就是 true，而 setPlaying 有「值没变就不广播」的守卫，
+    // 会被直接吃掉 → currentId 已变却没人收到通知，悬浮条的诗名/作者就停在上一首
+    //（音频却已经换了）。这是「切歌后播放器信息不更新」的根因。
+    playing = true;
+    // 页面入口发起的播放要「亮出来」给人看。在广播前改好展开态，
+    // 这一次 emitState 就同时带上新曲目与新展开态，不会出现「先展开空面板再填内容」。
+    if (expandAfter) expanded = true;
+    emitState();
     db.addBrowseHistory(id);
   }
 
@@ -172,8 +213,13 @@ function unbind(arr, fn) {
 }
 
   return {
-    play: function (id) {
-      loadAndPlay(id);
+    /**
+     * 播放指定诗词。
+     * opts.expand = true 时同步展开悬浮播放器 —— 供**页面内的播放入口**使用；
+     * 悬浮条内部的上下一首、详情页切诗走默认（保持用户当前的展开/收起意愿）。
+     */
+    play: function (id, opts) {
+      loadAndPlay(id, !!(opts && opts.expand));
     },
     resume: function () {
       if (ctx && ctx.src && !playing) {
@@ -191,16 +237,20 @@ function unbind(arr, fn) {
      * 播放/暂停切换。
      * ctx 还没建（从未播过）、或 src 为空、或要切到另一首时，都先加载再播，
      * 否则只会空转——这是详情页播放按钮点不动的根因。
+     * opts.expand 同 play()：续播路径不走 loadAndPlay，需在这里单独展开。
      * 返回切换后是否处于播放中。
      */
-    toggle: function (id) {
+    toggle: function (id, opts) {
       const target = id || currentId;
       if (!target) return false;
+      const expand = !!(opts && opts.expand);
       if (!ctx || !ctx.src || (id && id !== currentId)) {
-        loadAndPlay(target);
+        loadAndPlay(target, expand);
         return playing;
       }
       if (playing) this.pause(); else this.resume();
+      // 只在「确实在播」时展开：点了暂停不该弹面板出来打扰
+      if (expand && playing) setExpanded(true);
       return playing;
     },
     seek: function (progressPct) {

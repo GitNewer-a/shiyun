@@ -10,6 +10,16 @@ function authorOptions() {
   return ['全部'].concat(set);
 }
 
+/** 学段 / 体裁选项同样由数据推导：库里没有的类别不会出现在筛选栏，
+    免得点了「宋词」「高中」这类空桶却什么也筛不出来 */
+function optionsOf(field) {
+  const set = [];
+  POEMS.forEach(function (p) {
+    if (set.indexOf(p[field]) === -1) set.push(p[field]);
+  });
+  return ['全部'].concat(set);
+}
+
 /** 配图兜底：按 id 生成稳定的远山渐变，保证同一首诗每次同色 */
 const COVERS = [
   'linear-gradient(160deg, #2c4b59 0%, #243f4f 100%)',
@@ -28,8 +38,8 @@ function coverOf(poem) {
 Page({
   data: {
     groups: [
-      { key: 'stage', label: '学段', options: ['全部', '小学', '初中', '高中'], value: '全部' },
-      { key: 'genre', label: '体裁', options: ['全部', '唐诗', '宋词', '宋诗', '元曲'], value: '全部' },
+      { key: 'stage', label: '学段', options: optionsOf('stage'), value: '全部' },
+      { key: 'genre', label: '体裁', options: optionsOf('genre'), value: '全部' },
       { key: 'author', label: '作者', options: authorOptions(), value: '全部' }
     ],
     list: []

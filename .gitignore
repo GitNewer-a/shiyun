@@ -16,3 +16,7 @@ Thumbs.db
 
 # Config with sensitive info
 *.local.json
+project.private.config.json
+
+# Local scratch tools (临时脚本与产物，不入版本库)
+tools/音频转文字/

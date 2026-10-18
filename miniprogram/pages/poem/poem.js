@@ -83,6 +83,8 @@ Page({
   onLoad(options) {
     const id = (options && options.id) || 'p001';
     const poem = getPoemById(id) || getPoemById('p001');
+    // 本页当前「跟随」的曲目，供 _followTrack 判断单例是不是在替本页续播
+    this._lastPoemId = '';
     let safeAreaBottom = 0;
     try {
       const info = wx.getSystemInfoSync();
@@ -155,6 +157,8 @@ Page({
 
     this._subs.push(this.player.onState(function (data) {
       that.setData({ playing: data.playing, loopMode: data.loopMode });
+      // 曲目也可能被单例自己换掉（自动连播、悬浮条里的上下首），正文要跟着换
+      that._followTrack(data.poemId);
     }));
 
     this.setData({ hasAudio: this.player.hasAudio(poem) });
@@ -232,6 +236,25 @@ Page({
     this._switchToPoem(ids[next]);
   },
 
+  /**
+   * 跟着播放器换正文。
+   *
+   * 自动连播（上一首放完 → 下一首）与悬浮条里的上下首都是**单例自己发起**的，
+   * 页面不知道，于是会出现「音频已经是下一首、正文还停在上一首」。
+   *
+   * 「本页是否在跟随」用上一次广播的曲目 == 本页当前曲目 来判定：
+   * 只有播放器原本就停在**本页这首诗**上，才认为它是在替本页续播；
+   * 否则（比如用户在首页播着另一首、再点进本页看某首诗）一律不动，
+   * 免得把用户主动打开的那首诗顶掉。
+   */
+  _followTrack(poemId) {
+    const prev = this._lastPoemId;
+    this._lastPoemId = poemId || '';
+    if (!poemId || poemId === this.data.id) return;
+    if (prev !== this.data.id) return;
+    this._switchToPoem(poemId);
+  },
+
   _switchToPoem(id) {
     const target = getPoemById(id);
     if (!target) return;
@@ -240,6 +263,7 @@ Page({
     this.setData({
       id: id,
       poem: target,
+      fav: db.isFavorite(id),
       audioProgress: 0,
       audioTime: '00:00',
       audioEnd: '00:00',
@@ -254,6 +278,8 @@ Page({
     });
     db.addBrowseHistory(id);
     wx.setNavigationBarTitle({ title: target.title });
+    // 显式记下来：本页现在跟的就是这一首，后续单例续播才不会丢方向
+    this._lastPoemId = id;
     this.player.play(id);
   },
 

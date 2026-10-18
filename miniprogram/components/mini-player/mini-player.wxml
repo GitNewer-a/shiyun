@@ -1,48 +1,70 @@
-<view wx:if="{{visible}}"
-      class="mp {{expanded ? 'mp--open' : ''}}"
-      style="bottom:{{bottom}}rpx"
-      catchtap="noop"
-      aria-role="region"
-      aria-label="悬浮播放器">
+<!-- 全局悬浮朗读播放器
+     收起态：贴页面右侧边缘、垂直居中，仅露出一小条触发器
+     展开态：底部面板 + 全屏透明遮罩（拦截页面点击、阻止背景滚动），层级最高
+     ------------------------------------------------------------------ -->
+<view wx:if="{{visible}}">
 
-  <!-- 收起态：一行胶囊 -->
-  <view wx:if="{{!expanded}}" class="mp-bar">
-    <view class="mp-bar-main" catchtap="onExpand">
+  <!-- 透明遮罩：只用于拦截点击与滚动，不做视觉压暗。
+       catchtouchmove 阻止背景页面滚动；点击任意位置即收起播放器。 -->
+  <view wx:if="{{expanded}}"
+        class="mp-mask"
+        catchtap="onCollapse"
+        catchtouchmove="noop"
+        aria-role="button"
+        aria-label="收起播放器"></view>
+
+  <!-- 收起态：可拖拽的边缘触发器。
+       拖得动、松手就近吸附到左/右侧边，纵向停在拖到的位置（存本地，跨页跨次启动都记得）。
+       位置用 left/top 内联 px 控制；transform 只留给「展开时滑出屏幕」这一件事。
+       suppressTab：页面内点播放、需要展开时，首个渲染帧先把它藏起来，
+       否则会和 shell 的入场动画叠加，看见「边缘闪一下」。下一帧就恢复，无过渡。 -->
+  <view wx:if="{{!suppressTab}}"
+        class="mp-tab {{expanded ? 'is-out' : ''}} {{dragging ? 'is-dragging' : ''}} {{dockSide === 'left' ? 'is-left' : 'is-right'}}"
+        style="left:{{tabLeft}}px; top:{{tabTop}}px"
+        catchtap="onExpand"
+        catchtouchstart="onTabTouchStart"
+        catchtouchmove="onTabTouchMove"
+        catchtouchend="onTabTouchEnd"
+        catchtouchcancel="onTabTouchCancel"
+        aria-role="button"
+        aria-hidden="{{expanded}}"
+        aria-label="朗读播放器，拖动可换位置，点击展开">
+    <view class="mp-tab-body">
+      <view class="mp-tab-track">
+        <view class="mp-tab-prog" style="height:{{progress}}%"></view>
+      </view>
       <view class="mp-disc {{playing ? 'is-on' : ''}}">
-        <view class="mp-disc-hole" />
-      </view>
-      <view class="mp-bar-text">
-        <text class="mp-bar-title serif">《{{title}}》</text>
-        <text class="mp-bar-sub">{{author}} · {{dynasty}}</text>
-      </view>
-    </view>
-    <view class="mp-bar-ctrl">
-      <view class="mp-btn mp-btn--play" catchtap="onToggle" aria-label="{{playing ? '暂停' : '播放'}}">
-        <view class="{{playing ? 'mp-ico-pause' : 'mp-ico-play'}}" />
-      </view>
-      <view class="mp-btn mp-btn--ghost" catchtap="onExpand" aria-label="展开播放器">
-        <view class="mp-chev mp-chev--up" />
+        <view class="mp-disc-hole"></view>
       </view>
     </view>
   </view>
 
-  <!-- 展开态 -->
-  <view wx:else class="mp-panel">
+  <!-- 展开态：底部面板，z-index 最高 -->
+  <view class="mp-sheet {{expanded ? 'is-open' : ''}}"
+        style="bottom:{{bottom}}rpx"
+        catchtap="noop"
+        catchtouchmove="noop"
+        aria-role="region"
+        aria-hidden="{{!expanded}}"
+        aria-label="朗读播放器">
+
+    <view class="mp-grip"></view>
+
     <view class="mp-head">
       <view class="mp-head-info" catchtap="onGoPoem">
         <text class="mp-title serif">《{{title}}》</text>
         <text class="mp-sub">{{author}} · {{dynasty}}</text>
       </view>
-      <view class="mp-btn mp-btn--ghost" catchtap="onClose" aria-label="关闭播放器">
-        <view class="mp-x" />
+      <view class="mp-btn mp-btn--ghost" catchtap="onClose" aria-label="关闭播放器并停止朗读">
+        <view class="mp-x"></view>
       </view>
     </view>
 
-    <view class="mp-prog-wrap" catchtap="onSeek" aria-label="拖动进度">
+    <view class="mp-prog-wrap" catchtap="onSeek" aria-label="点击跳转播放进度">
       <view class="mp-prog-track">
-        <view class="mp-prog-fill" style="width:{{progress}}%" />
+        <view class="mp-prog-fill" style="width:{{progress}}%"></view>
       </view>
-      <view class="mp-prog-knob" style="left:{{progress}}%" />
+      <view class="mp-prog-knob" style="left:{{progress}}%"></view>
     </view>
     <view class="mp-times">
       <text class="mp-time">{{timeText}}</text>
@@ -57,13 +79,13 @@
         <image src="/assets/poem/skip-prev.svg" class="mp-ico" mode="aspectFit" />
       </view>
       <view class="mp-btn mp-btn--play mp-btn--lg" catchtap="onToggle" aria-label="{{playing ? '暂停' : '播放'}}">
-        <view class="{{playing ? 'mp-ico-pause' : 'mp-ico-play'}}" />
+        <view class="{{playing ? 'mp-ico-pause' : 'mp-ico-play'}}"></view>
       </view>
       <view class="mp-btn mp-btn--ghost" catchtap="onNext" aria-label="下一首">
         <image src="/assets/poem/skip-next.svg" class="mp-ico" mode="aspectFit" />
       </view>
       <view class="mp-btn mp-btn--ghost" catchtap="onCollapse" aria-label="收起播放器">
-        <view class="mp-chev mp-chev--down" />
+        <view class="mp-chev mp-chev--down"></view>
       </view>
     </view>
   </view>

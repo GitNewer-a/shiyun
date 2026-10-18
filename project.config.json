@@ -2,7 +2,7 @@
   "description": "诗韵 · 古典诗词学习小程序",
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
-  "appid": "touristappid",
+  "appid": "wxa7f9c909bb1883fc",
   "projectname": "shiyun",
   "compileType": "miniprogram",
   "libVersion": "3.5.0",
@@ -30,7 +30,21 @@
     "minifyWXML": true,
     "showShadowRootInWxmlPanel": true,
     "useCompilerPlugins": false,
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "localPlugins": false,
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
-  "condition": {}
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {}
 }
