@@ -142,10 +142,18 @@ const SEEK_GUARD_TAIL_MS = 1500;
 
 /**
  * 暂停之后多久内收到的 onPlay 视为「系统补发的多余起播」（ms）。
- * 真机日志 #22→#23：通知中心按暂停，0.4 秒后系统自己发了一个 onPlay，
- * 声音响了两秒才停回去 —— 用户看到的就是「按钮闪一下播放再闪回暂停」。
+ *
+ * ⚠️ 这个窗口**只能短**，而且**只能拦这一个窗口内的** —— 因为「用户在通知中心 /
+ * 锁屏点播放」和「系统自己补发一次 play」在 BAM 里是**同一个 onPlay**，
+ * 系统控件的播放键根本不经过我们的 resume()，那时 want 还是 false。
+ * 曾经把它写成纯状态判据（`pauseIntentAt > 0 && !want` 一律拦），
+ * 结果通知中心暂停之后**再也播不起来**：一按播放，onPlay 进来被当场 pause 回去，
+ * 界面表现就是「按钮先到播放中，然后立刻退回暂停」。
+ *
+ * 所以判据只能是时间：刚暂停那 0.5 秒内的 onPlay 按回（治回弹），
+ * 再晚来的全部当成用户的播放意图接受（治播不了）。
  */
-const SPURIOUS_RESUME_MS = 1500;
+const PAUSE_REJECT_MS = 500;
 
 /**
  * 播放器单例。
@@ -373,21 +381,37 @@ function createPlayer() {
 
     bgm.onPlay(function () {
       trace('onPlay');
-      // ⚠️ 这里**不设 want**。曾经在这里写 `want = true`（想照顾系统自动续播），
-      // 结果迟到的 onPlay 会把「用户刚按的暂停」改回「要继续播」，假 ended 借机把声音拉起来。
-      // want 只认 api 层（play / resume / pause / close）和 restoreWant()，来源清楚才可控。
 
-      // ⚠️ 通知中心 / 锁屏按暂停之后，iOS 常常**自己补发一个 play**。
-      // 真机日志（2026-10-27 #22→#23）：onPause 之后 0.4 秒就来 onPlay，
-      // 声音一直响到 40.8 秒才被停回去 —— 用户看到的就是「按钮闪一下播放再闪回暂停」。
-      // 那一刻我们所有会调 play() 的路径都被 want=0 挡着，所以这声音只能是系统起的。
-      // 拦截要点：**连 playing 一起不改**。一旦改成 true 就会广播出去，
-      // 界面必然闪那一下；这里直接按暂停处理，界面从头到尾停在暂停态。
-      if (!want && pauseIntentAt > 0 && Date.now() - pauseIntentAt < SPURIOUS_RESUME_MS) {
-        trace('onPlay->reject', 'sincePause=' + Math.round(Date.now() - pauseIntentAt));
+      // ⚠️ 这一段是整个播放器最容易改错的地方，动之前先把三种 onPlay 分清：
+      //
+      //   A. 我们自己发起（api.play / api.resume / loadAndPlay / seek 后接回来）
+      //      —— 调 bgm.play() 之前 want 已置 true、pauseIntentAt 已清零。
+      //   B. 用户在**通知中心 / 锁屏**按播放 —— 走系统的播放键，**不经过任何 api**，
+      //      进来时 want 仍是 false。这一条必须当作用户意图接受，否则「暂停后播不起来」。
+      //   C. iOS 在暂停之后**自己补发**的 play（真机日志 #22→#23，0.4 秒后）
+      //      —— 这一条要压回去，否则「按钮回弹、声音自己响」。
+      //
+      // B 和 C 在 BAM 里是**同一个事件、同一组状态**，唯一的区别是时间：
+      // C 紧贴暂停（亚秒级），B 是人看过屏幕后的一次点击。所以判据只能是
+      // 「暂停后 500ms 内」这个短窗，窗口外一律当成 B 接受。
+      //
+      // ⚠️ 曾经的写法是纯状态判据 `pauseIntentAt > 0 && !want` 一律压回，
+      // 结果把 B 也拦了 —— 通知中心暂停之后再也播不起来，按钮亮一下就被按回去。
+      // 别再改回状态判据。
+      const sincePause = pauseIntentAt > 0 ? Date.now() - pauseIntentAt : -1;
+      if (!want && sincePause >= 0 && sincePause < PAUSE_REJECT_MS) {
+        trace('onPlay->reject(just-paused)', 'sincePause=' + Math.round(sincePause));
         playing = false;
         try { bgm.pause(); } catch (e) {}
         return;
+      }
+
+      // 走到这里：要么是我们自己要播（A），要么是用户从系统控件按下播放（B）。
+      // B 必须把意图补上，否则自动连播、假 ended 续播这些按 want 判断的分支都会断。
+      if (!want) {
+        trace('onPlay->adopt', 'sincePause=' + Math.round(sincePause));
+        want = true;
+        pauseIntentAt = 0;
       }
 
       syncPlaying(true);
@@ -881,9 +905,9 @@ function createPlayer() {
         loadAndPlay(target, expand);
         return playing;
       }
-      if (playing) this.pause(); else this.resume();
+      if (this.isPlaying()) this.pause(); else this.resume();
       // 只在「确实在播」时展开：点了暂停不该弹面板出来打扰
-      if (expand && playing) setExpanded(true);
+      if (expand && this.isPlaying()) setExpanded(true);
       return playing;
     },
     seek: function (progressPct) {
