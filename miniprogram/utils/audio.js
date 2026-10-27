@@ -156,6 +156,18 @@ const SEEK_GUARD_TAIL_MS = 1500;
 const PAUSE_REJECT_MS = 500;
 
 /**
+ * 「系统自己起的播」要观察多久才承认（ms）。
+ *
+ * 真机上的现象是：暂停之后系统可能补发**一轮** play → pause（不只是一次 play），
+ * 这一轮有时在 0.4 秒，有时在 4 秒开外。所以「暂停后 N 毫秒内」这种窗口治不了它。
+ * 但这一轮的特征很好认：**起了又自己停**。所以晚来的 onPlay 不立刻点亮按钮，
+ * 先压 700ms 看它稳不稳 —— 期间来了 onPause 就整个丢掉（按钮一次都不亮），
+ * 还在播才当用户意图接受。
+ * 代价：用户在系统控件上按播放，按钮会晚 0.7 秒点亮（声音是立即响的）。
+ */
+const PLAY_CONFIRM_MS = 700;
+
+/**
  * 播放器单例。
  * 用法：
  *   const a = getAudioPlayer();
@@ -237,9 +249,18 @@ function createPlayer() {
 
   /**
    * 最近一次「确认的暂停」时刻（0 = 没有）。
-   * 用来挡系统补发的那一下 onPlay：暂停后 1.5 秒内收到的 onPlay 一律当作多余起播。
+   * 用来挡系统补发的那一下 onPlay：暂停后 500ms 内收到的 onPlay 当作多余起播直接压回。
    */
   let pauseIntentAt = 0;
+
+  /**
+   * 「晚来的 onPlay 是否真的在播」的观察定时器（0 = 没有）与代数号。
+   * 晚来的 onPlay 先压 700ms（PLAY_CONFIRM_MS）再看结果：
+   * 期间来了 onPause 就把代数号 +1，回调自己作废 —— 系统的 play→pause 抖动
+   * 因此一次都不会点亮按钮；真的在播才补上 want 并广播。
+   */
+  let playConfirmTimer = 0;
+  let playConfirmSeq = 0;
 
   /**
    * 最近一次「我们自己调 bgm.pause()」的时刻。
@@ -300,6 +321,35 @@ function createPlayer() {
     if (playing === actual) return;
     playing = actual;
     emitState();
+  }
+
+  /**
+   * 晚来的 onPlay：先不点亮，压 700ms 看它稳不稳。
+   * 系统的「play → pause」抖动会在窗口内自己停回去，那里的 onPause 会把代数号 +1，
+   * 本次回调随之作废 —— 用户一次都不该看到按钮亮起。
+   * 真的还在播才补上 want（否则自动连播、假 ended 续播这些按 want 判断的分支会断）。
+   */
+  function armPlayConfirm(sincePause) {
+    if (playConfirmTimer) clearTimeout(playConfirmTimer);
+    const gen = ++playConfirmSeq;
+    trace('play->confirm-wait', 'sincePause=' + Math.round(sincePause));
+    playConfirmTimer = setTimeout(function () {
+      playConfirmTimer = 0;
+      if (gen !== playConfirmSeq) return;          // 期间来过 onPause → 抖动，丢弃
+      if (!bgm || !currentId) return;
+      if (bgm.paused) { trace('play->confirm-drop', 'paused=1'); return; }
+      trace('play->confirm-adopt');
+      want = true;
+      pauseIntentAt = 0;
+      syncPlaying(true);
+    }, PLAY_CONFIRM_MS);
+  }
+
+  /** 撤销上面那个观察窗口（任何一次真正的暂停 / 换曲 / 关闭都要撤） */
+  function cancelPlayConfirm() {
+    if (!playConfirmTimer && !playConfirmSeq) return;
+    playConfirmSeq++;                              // 让已在排队的回调失效
+    if (playConfirmTimer) { clearTimeout(playConfirmTimer); playConfirmTimer = 0; }
   }
 
   /** 回推进度。onTimeUpdate / seek / onSeeked 三处共用，口径必须一致 */
@@ -388,30 +438,27 @@ function createPlayer() {
       //      —— 调 bgm.play() 之前 want 已置 true、pauseIntentAt 已清零。
       //   B. 用户在**通知中心 / 锁屏**按播放 —— 走系统的播放键，**不经过任何 api**，
       //      进来时 want 仍是 false。这一条必须当作用户意图接受，否则「暂停后播不起来」。
-      //   C. iOS 在暂停之后**自己补发**的 play（真机日志 #22→#23，0.4 秒后）
-      //      —— 这一条要压回去，否则「按钮回弹、声音自己响」。
+      //   C. iOS 在暂停之后自己起的一轮 play → pause（真机日志 #22 onPause → #23 onPlay，
+      //      更晚的一次在 4 秒开外）—— 这一条要吞掉，否则「按钮回弹」。
       //
-      // B 和 C 在 BAM 里是**同一个事件、同一组状态**，唯一的区别是时间：
-      // C 紧贴暂停（亚秒级），B 是人看过屏幕后的一次点击。所以判据只能是
-      // 「暂停后 500ms 内」这个短窗，窗口外一律当成 B 接受。
+      // B 和 C 在 BAM 里是**同一个事件、同一组状态**（want 都是 false），
+      // 但它们的结果不同：C 会自己再停回去，B 不会。所以判据是**结果**，不是时间：
+      //   · 暂停后 500ms 内的：直接压回，连 playing 都不改（亚秒级回弹，没必要等）；
+      //   · 更晚的：先不点亮，压 700ms 看它稳不稳 —— 期间来 onPause 就整个作废（C），
+      //     还在播才当 B 接受。
       //
-      // ⚠️ 曾经的写法是纯状态判据 `pauseIntentAt > 0 && !want` 一律压回，
-      // 结果把 B 也拦了 —— 通知中心暂停之后再也播不起来，按钮亮一下就被按回去。
-      // 别再改回状态判据。
+      // ⚠️ 别改回纯状态判据（`pauseIntentAt > 0 && !want` 一律压回）：
+      // 那会把 B 也拦了，通知中心暂停之后再也播不起来（按钮亮一下立刻退回暂停）。
       const sincePause = pauseIntentAt > 0 ? Date.now() - pauseIntentAt : -1;
-      if (!want && sincePause >= 0 && sincePause < PAUSE_REJECT_MS) {
-        trace('onPlay->reject(just-paused)', 'sincePause=' + Math.round(sincePause));
-        playing = false;
-        try { bgm.pause(); } catch (e) {}
-        return;
-      }
-
-      // 走到这里：要么是我们自己要播（A），要么是用户从系统控件按下播放（B）。
-      // B 必须把意图补上，否则自动连播、假 ended 续播这些按 want 判断的分支都会断。
       if (!want) {
-        trace('onPlay->adopt', 'sincePause=' + Math.round(sincePause));
-        want = true;
-        pauseIntentAt = 0;
+        if (sincePause >= 0 && sincePause < PAUSE_REJECT_MS) {
+          trace('onPlay->reject(just-paused)', 'sincePause=' + Math.round(sincePause));
+          playing = false;
+          try { bgm.pause(); } catch (e) {}
+          return;
+        }
+        armPlayConfirm(sincePause);
+        return;
       }
 
       syncPlaying(true);
@@ -419,6 +466,9 @@ function createPlayer() {
 
     bgm.onPause(function () {
       trace('onPause');
+      // 系统「play → pause」抖动里的那一下 pause：把还没兑现的观察窗口一起撤掉，
+      // 按钮就从始至终没亮过（见 armPlayConfirm）。
+      cancelPlayConfirm();
       syncPlaying(false);
 
       // 「这次暂停是用户不想听了，还是 seek 造成的中间态？」—— 这是整个播放器
@@ -459,6 +509,7 @@ function createPlayer() {
 
     bgm.onStop(function () {
       trace('onStop');
+      cancelPlayConfirm();
       // 控制中心 / 通知栏点了「停止」：语义等同关闭本次播放。
       // ⚠️ stop 之后 play() 无效（必须重设 src），所以这里直接清空曲目，
       // 让下一次播放走 loadAndPlay 而不是空转的 play()。
@@ -750,6 +801,7 @@ function createPlayer() {
     pausedAt = 0;
     pauseIntentAt = 0;
     apiPauseAt = 0;
+    cancelPlayConfirm();
     emitState();
   }
 
@@ -769,6 +821,8 @@ function createPlayer() {
 
     // 上一首的假 ended 续播定时器要作废，否则它会在新曲目上按旧现场补一次 play()
     if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
+    // 上一首还没兑现的「onPlay 观察窗口」同理：它属于旧曲目，兑现了会点亮新曲目的按钮
+    cancelPlayConfirm();
 
     bindOnce();
     currentId = id;
@@ -861,6 +915,7 @@ function createPlayer() {
       if (!bgm || playing) return;
       if (!currentId) return;
       trace('api.resume');
+      cancelPlayConfirm();          // 我们自己要播了，不需要再观察
       want = true;
       pauseIntentAt = 0;
       apiPauseAt = 0;
@@ -876,6 +931,7 @@ function createPlayer() {
       // 「点暂停没反应」，紧接着再来一个假 ended 就变成「从头播」。
       // 真正的暂停永远执行，状态广播按变化来。
       trace('api.pause');
+      cancelPlayConfirm();          // 暂停优先：还没兑现的系统起播观察作废
       want = false;
       pausedAt = Date.now();
       pauseIntentAt = pausedAt;
@@ -977,6 +1033,7 @@ function createPlayer() {
       pauseIntentAt = 0;
       apiPauseAt = 0;
       if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
+      cancelPlayConfirm();
       // 状态可能本来就没变（例如已是暂停），必须强制广播一次让悬浮条收起
       emitState();
     },
