@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>记忆训练 · 优化原型方案</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f8f4ea;
+    --paper-card: #fffdf8;
+    --paper-sunken: #ece7da;
+    --ink: #243447;
+    --ink-card: #243f4f;
+    --ink-2: #7e8785;
+    --ink-3: #959b94;
+    --cinnabar: #c94a4a;
+    --gold: #c9975a;
+    --line: rgba(36,52,71,.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { padding: 46px 34px 88px; background: #efeae0; font-family: "Noto Sans SC", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .serif { font-family: "Noto Serif SC", "Songti SC", serif; }
+
+  .head { max-width: 1320px; margin: 0 auto 34px; }
+  .head h1 { font-family: "Noto Serif SC", serif; font-size: 27px; font-weight: 700; letter-spacing: .5px; }
+  .head p { margin-top: 9px; font-size: 13.5px; line-height: 1.85; color: #7a7568; max-width: 860px; }
+  .head .warn { margin-top: 14px; padding: 13px 17px; border-radius: 11px; background: #fdf3f2; border-left: 3px solid var(--cinnabar); font-size: 12.5px; line-height: 1.8; color: #6e5e5c; }
+  .head .warn b { color: #a93c3c; }
+
+  .stage { display: flex; gap: 30px; justify-content: center; align-items: flex-start; flex-wrap: wrap; max-width: 1320px; margin: 0 auto; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .col-tag { margin-bottom: 13px; text-align: center; }
+  .col-tag .t { display: inline-block; padding: 4px 13px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
+  .t.cur { background: #ded8ca; color: #6b6558; }
+  .t.new { background: var(--cinnabar); color: #fff8ec; }
+  .t.new2 { background: var(--gl, #c9975a); color: #fff8ec; }
+  .col-tag .s { margin-top: 6px; font-size: 11px; color: #8b8577; }
+
+  /* 手机框 */
+  .phone { position: relative; width: 393px; height: 852px; border-radius: 42px; background: var(--paper); overflow: hidden; box-shadow: 0 22px 56px rgba(60,52,36,.17), 0 1px 0 rgba(255,255,255,.7) inset; }
+  .sbar { display: flex; justify-content: space-between; align-items: center; height: 42px; padding: 0 25px; font-size: 12.5px; font-weight: 600; }
+  .nav { display: flex; justify-content: center; align-items: center; height: 42px; position: relative; font-family: "Noto Serif SC", serif; font-size: 15.5px; font-weight: 600; letter-spacing: 1.5px; }
+  .nav .cap { position: absolute; right: 11px; top: 5px; display: flex; align-items: center; gap: 9px; width: 86px; height: 31px; padding: 0 11px; border: .5px solid rgba(0,0,0,.08); border-radius: 15px; background: rgba(255,255,255,.55); }
+  .nav .cap .d { display: flex; gap: 3px; } .nav .cap .d i { width: 4px; height: 4px; border-radius: 50%; background: #333; }
+  .nav .cap .c { width: 14px; height: 14px; border: 1.5px solid #333; border-radius: 50%; }
+
+  .screen { height: calc(852px - 84px); overflow: hidden; padding: 0 21px; }
+  .screen::after { content: ''; display: block; height: 30px; }
+
+  /* ============ 现状（recite） ============ */
+  .old-page { background: #F7F5EF; margin: 0 -21px; padding: 8px 21px 20px; min-height: 100%; }
+  .old-intro h3 { font-size: 23px; font-weight: 600; letter-spacing: 2px; color: #252A27; }
+  .old-intro p { margin-top: 6px; font-size: 14px; letter-spacing: 1px; color: #747D79; }
+  .old-tabs { display: flex; gap: 8px; margin: 16px 0 14px; }
+  .old-tab { padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid #E2E6E4; font-size: 13px; color: #747D79; }
+  .old-tab.on { background: #3F7568; border-color: #3F7568; color: #fff; font-weight: 500; box-shadow: 0 3px 8px rgba(63,117,104,.22); }
+  .old-card { background: #fff; border-radius: 18px; padding: 18px 16px 16px; box-shadow: 0 4px 14px rgba(37,42,39,.05); }
+  .old-top { display: flex; justify-content: space-between; align-items: center; }
+  .old-tagpill { padding: 4px 10px; border-radius: 999px; background: #E6EFEA; color: #3F7568; font-size: 10.5px; }
+  .old-hint { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #8A928E; }
+  .old-ptitle { margin-top: 12px; font-family: "Noto Serif SC", serif; font-size: 22px; font-weight: 700; letter-spacing: 2px; color: #252A27; }
+  .old-pmeta { margin-top: 3px; font-size: 11px; color: #8A928E; }
+  .old-guide { display: flex; gap: 6px; margin-top: 13px; padding: 9px 11px; border-radius: 9px; background: #F7F5EF; font-size: 11.5px; color: #6C7672; line-height: 1.6; }
+  .old-paper { margin-top: 13px; height: 168px; border-radius: 12px; border: 1px solid #E8EBE9; background: repeating-linear-gradient(#fff, #fff 27px, #F0F2F1 27px, #F0F2F1 28px); }
+  .old-paper .ph { padding: 10px 12px; font-size: 11.5px; color: #B6BCB9; }
+  .old-cta { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+  .old-cnt { font-size: 11px; color: #949C98; }
+  .old-btn { display: flex; align-items: center; gap: 5px; padding: 9px 19px; border-radius: 999px; background: #3F7568; color: #fff; font-size: 12.5px; font-weight: 500; }
+  .old-sec { display: flex; justify-content: space-between; align-items: baseline; margin: 20px 0 10px; }
+  .old-sec h4 { font-size: 14.5px; font-weight: 600; color: #252A27; }
+  .old-more { font-size: 11px; color: #949C98; }
+  .old-recent { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-radius: 13px; background: #fff; margin-bottom: 8px; border: 1px solid #EDEFEE; }
+  .old-rn { font-family: "Noto Serif SC", serif; font-size: 13.5px; font-weight: 600; color: #252A27; }
+  .old-rm { margin-top: 2px; font-size: 10.5px; color: #8A928E; }
+  .old-badge { display: flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 999px; background: #E6EFEA; color: #3F7568; font-size: 9.5px; }
+  .old-acc { margin-top: 3px; text-align: right; font-size: 10px; color: #A0A8A4; }
+
+  /* ============ 新方案（记忆训练主页） ============ */
+  .sec-h { display: flex; align-items: baseline; justify-content: space-between; margin: 18px 0 11px; }
+  .sec-h .t { font-family: "Noto Serif SC", serif; font-size: 17px; font-weight: 700; color: #1a2520; }
+  .sec-h .m { font-size: 11.5px; color: var(--ink-3); }
+
+  .mem-hero { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border-radius: 16px; background: var(--paper-card); border: .5px solid var(--line); }
+  .mem-ring { position: relative; width: 56px; height: 56px; flex: none; border-radius: 50%; background: conic-gradient(var(--cinnabar) 0% 36%, #ece6d9 36% 100%); display: flex; align-items: center; justify-content: center; }
+  .mem-ring i { width: 43px; height: 43px; border-radius: 50%; background: var(--paper-card); display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 13px; font-weight: 700; color: var(--ink); }
+  .mem-hero .txt { flex: 1; }
+  .mem-hero .txt h4 { font-size: 13.5px; font-weight: 700; }
+  .mem-hero .txt p { margin-top: 3px; font-size: 11px; color: var(--ink-3); line-height: 1.55; }
+  .mem-hero .right { text-align: right; }
+  .mem-hero .right b { font-family: "Noto Serif SC", serif; font-size: 19px; font-weight: 700; color: var(--cinnabar); }
+  .mem-hero .right span { display: block; font-size: 9.5px; color: var(--ink-3); margin-top: 1px; }
+
+  /* 两张题型卡 */
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .type-card { position: relative; padding: 14px 13px 15px; border-radius: 16px; background: var(--paper-card); border: .5px solid var(--line); }
+  .type-card .ico { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: #f3ece0; margin-bottom: 10px; }
+  .type-card .ico svg { width: 19px; height: 19px; }
+  .type-card h5 { font-size: 13.5px; font-weight: 700; }
+  .type-card p { margin-top: 3px; font-size: 10.5px; line-height: 1.6; color: var(--ink-3); min-height: 33px; }
+  .type-card .st { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 10px; color: var(--ink-2); }
+  .type-card .st b { color: var(--cinnabar); font-weight: 700; }
+  .type-card .st .bar { flex: 1; height: 3px; border-radius: 3px; background: #ece6d9; overflow: hidden; }
+  .type-card .st .bar i { display: block; height: 100%; background: var(--cinnabar); }
+  .type-card .go { position: absolute; top: 14px; right: 13px; width: 22px; height: 22px; border-radius: 50%; background: rgba(36,52,71,.05); display: flex; align-items: center; justify-content: center; }
+
+  /* 继续上次 */
+  .resume-card { display: flex; align-items: center; gap: 11px; padding: 12px; border-radius: 16px; background: var(--paper-card); border: .5px solid var(--line); }
+  .resume-card .cover { display: flex; align-items: center; justify-content: center; width: 40px; height: 46px; flex: none; border-radius: 10px; background: #f3ece0; border: .5px solid var(--line); }
+  .resume-card .cover svg { width: 20px; height: 20px; }
+  .resume-card .body { flex: 1; min-width: 0; }
+  .resume-card .sub { font-size: 10px; color: var(--ink-3); }
+  .resume-card .ti { margin-top: 1px; font-family: "Noto Serif SC", serif; font-size: 14px; font-weight: 700; }
+  .resume-card .mini-bar { margin-top: 6px; height: 3px; border-radius: 3px; background: #ece6d9; overflow: hidden; }
+  .resume-card .mini-bar i { display: block; height: 100%; background: var(--cinnabar); }
+  .resume-card .resume-btn { flex: none; padding: 7px 13px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 11px; font-weight: 500; }
+
+  /* 最近 */
+  .rec-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: var(--paper-card); border: .5px solid var(--line); margin-bottom: 8px; }
+  .rec-item .rn { flex: 1; min-width: 0; }
+  .rec-item .rn b { font-family: "Noto Serif SC", serif; font-size: 12.5px; font-weight: 700; }
+  .rec-item .rn span { font-size: 10px; color: var(--ink-3); }
+  .rec-item .chips { display: flex; gap: 4px; margin-top: 5px; }
+  .chip { padding: 1px 6px; border-radius: 999px; font-size: 9px; }
+  .chip.w { background: #f0e6e4; color: #A06050; }
+  .chip.b { background: #e6ecf1; color: #3D5A73; }
+  .rec-item .acc { text-align: right; flex: none; }
+  .rec-item .acc b { font-family: "Noto Serif SC", serif; font-size: 15px; font-weight: 700; }
+  .rec-item .acc b.hi { color: #4f7a5d; }
+  .rec-item .acc b.mid { color: var(--gold); }
+  .rec-item .acc span { display: block; font-size: 9px; color: var(--ink-3); }
+
+  /* ============ 第三屏：默写界面（改良） ============ */
+  .q-head { display: flex; align-items: center; gap: 9px; margin-bottom: 13px; }
+  .q-back { width: 26px; height: 26px; border-radius: 50%; background: var(--paper-card); border: .5px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .q-prog { flex: 1; height: 4px; border-radius: 4px; background: #ece6d9; overflow: hidden; }
+  .q-prog i { display: block; height: 100%; background: var(--cinnabar); }
+  .q-idx { font-size: 10.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  .q-card { padding: 16px; border-radius: 16px; background: var(--paper-card); border: .5px solid var(--line); }
+  .q-meta { display: flex; justify-content: space-between; align-items: center; }
+  .q-meta .lt { font-size: 10.5px; color: var(--ink-3); }
+  .q-hint-btn { display: flex; align-items: center; gap: 3px; padding: 3px 9px; border-radius: 999px; border: .5px solid var(--line); font-size: 10px; color: var(--ink-2); }
+  .q-title { margin-top: 11px; font-family: "Noto Serif SC", serif; font-size: 20px; font-weight: 700; letter-spacing: 1.5px; text-align: center; }
+  .q-author { margin-top: 3px; font-size: 10.5px; color: var(--ink-3); text-align: center; }
+
+  .q-lines { margin-top: 15px; }
+  .q-line { display: flex; align-items: center; gap: 8px; margin-bottom: 11px; }
+  .q-line .n { width: 14px; flex: none; font-size: 9.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .q-chars { flex: 1; display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+  .qh { font-family: "Noto Serif SC", serif; font-size: 17px; letter-spacing: 1px; }
+  .qs { width: 24px; height: 26px; border-radius: 4px; border: 1px dashed #cfc7b5; background: #fbf8f0; display: flex; align-items: center; justify-content: center; }
+  .qs.filled { border: 1px solid var(--cinnabar); background: #fdf3f2; font-family: "Noto Serif SC", serif; font-size: 15px; color: var(--cinnabar); }
+  .qs.wrong { border: 1px solid var(--cinnabar); background: #fdf3f2; font-family: "Noto Serif SC", serif; font-size: 15px; color: var(--cinnabar); text-decoration: underline wavy var(--cinnabar); }
+  .qs.right { border: 1px solid #7ea88d; background: #eef5f0; font-family: "Noto Serif SC", serif; font-size: 15px; color: #3d6b4f; }
+
+  .q-foot { display: flex; align-items: center; gap: 8px; margin-top: 15px; padding-top: 13px; border-top: .5px dashed #e2dccd; }
+  .q-tip { flex: 1; font-size: 10.5px; color: var(--ink-3); line-height: 1.5; }
+  .q-submit { padding: 8px 17px; border-radius: 999px; background: var(--cinnabar); color: #fff8ec; font-size: 12px; font-weight: 500; }
+
+  /* 反馈条 */
+  .fb { display: flex; align-items: center; gap: 9px; padding: 11px 13px; border-radius: 13px; background: #eef5f0; border: .5px solid rgba(126,168,141,.35); margin-top: 11px; }
+  .fb .fbi { width: 22px; height: 22px; border-radius: 50%; background: #7ea88d; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; flex: none; }
+  .fb .fbt { flex: 1; }
+  .fb .fbt b { font-size: 12px; color: #3d6b4f; }
+  .fb .fbt p { font-size: 10px; color: #6b8574; margin-top: 1px; }
+  .fb .fba { font-size: 10.5px; color: #3d6b4f; font-weight: 500; }
+
+  /* ============ 全文默写 · 输入态 ============ */
+  .wt-lines { margin-top: 16px; }
+  .wt-row { display: flex; align-items: center; gap: 7px; padding: 7px 0; border-bottom: .5px solid #f0ebdf; }
+  .wt-row.is-active { background: #fcf9f2; border-radius: 6px; margin: 0 -6px; padding: 7px 6px; }
+  .wt-n { width: 13px; flex: none; font-size: 9.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  /* 首字作为记忆锚点：给出来，降低起步门槛 */
+  .wt-anchor { flex: none; width: 22px; text-align: center; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .wt-input { flex: 1; font-family: "Noto Serif SC", serif; font-size: 15px; letter-spacing: .5px; }
+  .wt-input.filled { color: var(--ink); border-bottom: 1.5px solid var(--cinnabar); padding-bottom: 1px; }
+  .wt-input.empty { color: #c4bdae; }
+  .wt-caret { display: inline-block; width: 1.5px; height: 16px; background: var(--cinnabar); vertical-align: -3px; margin-left: 1px; }
+
+  .wt-assist { display: flex; gap: 8px; margin-top: 11px; }
+  .assist-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px; border-radius: 12px; background: var(--paper-card); border: .5px solid var(--line); font-size: 10px; color: var(--ink-2); }
+  .assist-ico { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: #f3ece0; }
+  .assist-ico svg { width: 15px; height: 15px; }
+
+  .wt-whole { padding: 13px; border-radius: 15px; background: var(--paper-card); border: .5px solid var(--line); }
+  .wt-whole-paper { padding: 4px 2px; background: repeating-linear-gradient(to bottom, transparent 0, transparent 21px, #f0ebdf 21px, #f0ebdf 21.7px); }
+  .wl { display: block; font-size: 13px; line-height: 22px; color: var(--ink); letter-spacing: .5px; }
+  .wl.active { color: var(--cinnabar); }
+  .wt-whole-tip { margin-top: 9px; font-size: 10px; color: var(--ink-3); line-height: 1.6; }
+
+  /* ============ 全文默写 · 判定态 ============ */
+  .score-hero { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border-radius: 16px; background: var(--paper-card); border: .5px solid var(--line); }
+  .score-ring { width: 58px; height: 58px; flex: none; border-radius: 50%; background: conic-gradient(#4f7a5d 0% 87%, #ece6d9 87% 100%); display: flex; align-items: center; justify-content: center; }
+  .score-ring i { width: 44px; height: 44px; border-radius: 50%; background: var(--paper-card); display: flex; align-items: center; justify-content: center; font-style: normal; font-family: "Noto Serif SC", serif; font-size: 17px; font-weight: 700; color: #3d6b4f; }
+  .score-ring i i { width: auto; height: auto; background: none; font-size: 9px; font-style: normal; margin-left: 1px; }
+  .score-txt h4 { font-size: 13.5px; font-weight: 700; }
+  .score-txt p { margin-top: 4px; font-size: 10.5px; color: var(--ink-3); line-height: 1.55; }
+
+  .rv-lines { margin-top: 13px; }
+  .rv-row { display: flex; align-items: center; gap: 7px; padding: 6px 0; border-bottom: .5px solid #f4f0e6; }
+  .rv-row:last-child { border-bottom: none; }
+  .rv-n { width: 13px; flex: none; font-size: 9.5px; color: var(--ink-3); }
+  .rv-chars { flex: 1; display: flex; gap: 3px; flex-wrap: wrap; }
+  .rc { font-family: "Noto Serif SC", serif; font-size: 15px; width: 20px; text-align: center; }
+  .rc.ok { color: var(--ink); }
+  .rc.bad { color: var(--cinnabar); text-decoration: underline wavy var(--cinnabar); text-underline-offset: 3px; }
+  .rc.gapc { color: #b9b3a4; }
+
+  .rv-legend { display: flex; align-items: center; gap: 11px; margin-top: 12px; padding-top: 11px; border-top: .5px dashed #ece6d9; font-size: 9.5px; color: var(--ink-2); }
+  .rv-legend span { display: flex; align-items: center; gap: 4px; }
+  .rv-legend .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot.ok { background: #7ea88d; }
+  .dot.bad { background: var(--cinnabar); }
+  .dot.gap { background: #c4bdae; }
+  .rv-legend-tip { margin-left: auto; color: var(--ink-3); }
+
+  .fix-list { display: flex; flex-direction: column; gap: 7px; }
+  .fix-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 13px; border-radius: 12px; background: var(--paper-card); border: .5px solid var(--line); }
+  .fix-pos { font-size: 10px; color: var(--ink-3); }
+  .fix-pair { display: flex; align-items: center; gap: 6px; font-family: "Noto Serif SC", serif; }
+  .fix-pair b { font-size: 16px; font-weight: 700; }
+  .fix-pair b.bad { color: var(--cinnabar); text-decoration: underline wavy var(--cinnabar); text-underline-offset: 3px; }
+  .fix-pair b.good { color: #3d6b4f; }
+  .fix-pair b.gap { color: #c4bdae; }
+  .fix-pair i { font-style: normal; font-size: 11px; color: var(--ink-3); font-family: "Noto Sans SC", sans-serif; }
+  .fix-note { font-family: "Noto Sans SC", sans-serif; font-size: 9px; color: var(--ink-3); padding: 1px 5px; border-radius: 999px; background: #f3ece0; }
+
+  .rv-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .rv-btn { flex: 1; text-align: center; padding: 10px 0; border-radius: 999px; font-size: 12.5px; font-weight: 500; }
+  .rv-btn.ghost { background: transparent; border: .5px solid rgba(36,52,71,.14); color: var(--ink-2); }
+  .rv-btn.solid { background: var(--cinnabar); color: #fff8ec; }
+
+  /* 说明区 */
+  .notes { max-width: 1320px; margin: 66px auto 0; }
+  .notes h2 { font-family: "Noto Serif SC", serif; font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 15px; }
+  .note { padding: 17px 19px; border-radius: 13px; background: #fbf8f0; border: 1px solid rgba(36,52,71,.07); }
+  .note h3 { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; }
+  .note h3 em { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 5px; background: var(--cinnabar); color: #fff; font-size: 9.5px; font-weight: 700; }
+  .note p { font-size: 12px; line-height: 1.85; color: #6e6a5e; }
+  .note code { padding: 1px 5px; border-radius: 3px; background: #ece7da; font-size: 10.5px; color: #8a5a3a; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>记忆训练 · 优化原型</h1>
+  <p>先说清现状：「记忆训练」不是一个独立页面，它只是首页四宫格与 <code>/learn</code> 上的入口标签，两者都直接跳 <code>/pages/recite/recite</code>，进去就是默写答题界面。所以优化分两层——<b>补一个真正的入口页</b>，以及<b>改良答题页本身</b>。</p>
+  <div class="warn">
+    <b>现状最严重的问题不是布局，是配色断裂：</b>recite 页用的是 <code>#F7F5EF / #3F7568 / #C9A45C</code> 这套独立墨绿色板，与全站宣纸系 <code>#F8F4EA / #243447 / #C94A4A</code> 完全无关。从首页点进来，页面色调会整体变一次，像换了另一个 App。这是本次优化的第一优先项。
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- ========== 屏幕 1：现状 ========== -->
+  <div class="col">
+    <div class="col-tag">
+      <span class="t cur">现状</span>
+      <div class="s">recite 页直给答题界面</div>
+    </div>
+    <div class="phone">
+      <div class="sbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+      <div class="nav">默写<span class="cap"><span class="d"><i></i><i></i><i></i></span><span class="c"></span></span></div>
+      <div class="screen">
+        <div class="old-page">
+          <div class="old-intro">
+            <h3>一首诗，一段记忆</h3>
+            <p>让诗词走进你的心里</p>
+          </div>
+          <div class="old-tabs">
+            <span class="old-tab on">全文默写</span>
+            <span class="old-tab">填空默写</span>
+          </div>
+          <div class="old-card">
+            <div class="old-top">
+              <span class="old-tagpill">唐诗 · 思乡</span>
+              <span class="old-hint">提示 ◯</span>
+            </div>
+            <div class="old-ptitle">静夜思</div>
+            <div class="old-pmeta">李白 · [唐]</div>
+            <div class="old-guide"><span>✎</span><span>请根据记忆，默写下这首诗的全文。</span></div>
+            <div class="old-paper"><div class="ph">请输入诗的全文，每行限20字...</div></div>
+            <div class="old-cta">
+              <span class="old-cnt">已默写 0 次</span>
+              <span class="old-btn">✎ 开始默写</span>
+            </div>
+          </div>
+          <div class="old-sec"><h4>最近练习</h4><span class="old-more">查看更多 ›</span></div>
+          <div class="old-recent">
+            <div><div class="old-rn">春晓</div><div class="old-rm">孟浩然 · [唐]</div></div>
+            <div><div class="old-badge">✓ 已完成</div><div class="old-acc">正确率 100%</div></div>
+          </div>
+          <div class="old-recent">
+            <div><div class="old-rn">静夜思</div><div class="old-rm">李白 · [唐]</div></div>
+            <div><div class="old-badge">✓ 已完成</div><div class="old-acc">正确率 92%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏幕 2：新入口页 ========== -->
+  <div class="col">
+    <div class="col-tag">
+      <span class="t new">方案 A · 新增入口页</span>
+      <div class="s">/pages/memory（记忆训练主页）</div>
+    </div>
+    <div class="phone">
+      <div class="sbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+      <div class="nav">记忆训练<span class="cap"><span class="d"><i></i><i></i><i></i></span><span class="c"></span></span></div>
+      <div class="screen">
+
+        <!-- 掌握概况 -->
+        <div class="mem-hero">
+          <div class="mem-ring"><i>36%</i></div>
+          <div class="txt">
+            <h4>已掌握 14 / 40 首</h4>
+            <p>还差 6 首升到「小成」</p>
+          </div>
+          <div class="right"><b>6</b><span>天连续</span></div>
+        </div>
+
+        <!-- 训练方式 -->
+        <div class="sec-h"><span class="t">选择训练方式</span></div>
+        <div class="type-grid">
+          <div class="type-card">
+            <div class="go"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="2.4" width="11" height="11"><path d="M9 5l7 7-7 7"/></svg></div>
+            <div class="ico">
+              <svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg>
+            </div>
+            <h5>全文默写</h5>
+            <p>凭记忆写下整首，最考验熟练度</p>
+            <div class="st"><span><b>9</b>/40</span><span class="bar"><i style="width:22%"></i></span></div>
+          </div>
+          <div class="type-card">
+            <div class="go"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="2.4" width="11" height="11"><path d="M9 5l7 7-7 7"/></svg></div>
+            <div class="ico">
+              <svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h2M10 6.8h2M6 9.6h6M6 12.4h2M10 12.4h2"/></svg>
+            </div>
+            <h5>填空默写</h5>
+            <p>按上下句补空，适合刚开始背</p>
+            <div class="st"><span><b>18</b>/40</span><span class="bar"><i style="width:45%"></i></span></div>
+          </div>
+        </div>
+
+        <!-- 继续上次 -->
+        <div class="sec-h"><span class="t">继续上次</span></div>
+        <div class="resume-card">
+          <div class="cover">
+            <svg viewBox="0 0 18 18" fill="none" stroke="#8A7B5F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg>
+          </div>
+          <div class="body">
+            <div class="sub">李白 · 唐 · 填空默写</div>
+            <div class="ti">静夜思</div>
+            <div class="mini-bar"><i style="width:40%"></i></div>
+          </div>
+          <div class="resume-btn">继续</div>
+        </div>
+
+        <!-- 最近 -->
+        <div class="sec-h"><span class="t">最近练习</span><span class="m">全部 ›</span></div>
+        <div class="rec-item">
+          <div class="rn">
+            <b>春晓</b> <span>孟浩然</span>
+            <div class="chips"><span class="chip w">全文</span><span class="chip b">填空</span></div>
+          </div>
+          <div class="acc"><b class="hi">100</b><span>正确率 %</span></div>
+        </div>
+        <div class="rec-item">
+          <div class="rn">
+            <b>静夜思</b> <span>李白</span>
+            <div class="chips"><span class="chip b">填空</span></div>
+          </div>
+          <div class="acc"><b class="mid">82</b><span>正确率 %</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏幕 3：改良答题页 ========== -->
+  <div class="col">
+    <div class="col-tag">
+      <span class="t new2" style="background:#3D5A73">方案 B · 改良答题页</span>
+      <div class="s">宣纸系配色 + 逐字判定</div>
+    </div>
+    <div class="phone">
+      <div class="sbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+      <div class="nav">填空默写<span class="cap"><span class="d"><i></i><i></i><i></i></span><span class="c"></span></span></div>
+      <div class="screen">
+
+        <div class="q-head">
+          <div class="q-back"><svg viewBox="0 0 24 24" fill="none" stroke="#243447" stroke-width="2.4" width="12" height="12"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="q-prog"><i style="width:30%"></i></div>
+          <span class="q-idx">3 / 10</span>
+        </div>
+
+        <div class="q-card">
+          <div class="q-meta">
+            <span class="lt">唐诗 · 思乡</span>
+            <span class="q-hint-btn">提示</span>
+          </div>
+          <div class="q-title">静夜思</div>
+          <div class="q-author">李白 · 唐</div>
+
+          <div class="q-lines">
+            <div class="q-line">
+              <span class="n">1</span>
+              <div class="q-chars">
+                <span class="qh">床</span><span class="qh">前</span><span class="qh">明</span><span class="qh">月</span><span class="qh">光</span><span class="qh">，</span>
+              </div>
+            </div>
+            <div class="q-line">
+              <span class="n">2</span>
+              <div class="q-chars">
+                <span class="qh">疑</span><span class="qs filled">是</span><span class="qh">地</span><span class="qs filled">上</span><span class="qh">霜</span><span class="qh">。</span>
+              </div>
+            </div>
+            <div class="q-line">
+              <span class="n">3</span>
+              <div class="q-chars">
+                <span class="qh">举</span><span class="qs filled">头</span><span class="qh">望</span><span class="qs">?</span><span class="qh">月</span><span class="qh">，</span>
+              </div>
+            </div>
+            <div class="q-line">
+              <span class="n">4</span>
+              <div class="q-chars">
+                <span class="qh">低</span><span class="qs">?</span><span class="qh">思</span><span class="qs">?</span><span class="qh">乡</span><span class="qh">。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="q-foot">
+            <span class="q-tip">空格各填一字，共 6 空</span>
+            <span class="q-submit">提交</span>
+          </div>
+        </div>
+
+        <!-- 判定反馈 -->
+        <div class="fb">
+          <div class="fbi">✓</div>
+          <div class="fbt"><b>答对 4 / 6 字</b><p>第 3 句的「明」写错了，其余都对</p></div>
+          <span class="fba">重答 ›</span>
+        </div>
+
+        <!-- 错字对照 -->
+        <div class="sec-h"><span class="t" style="font-size:14px">需要再看的字</span></div>
+        <div class="q-card" style="padding:13px">
+          <div class="q-line" style="margin-bottom:8px">
+            <span class="n">3</span>
+            <div class="q-chars">
+              <span class="qh">举头望</span><span class="qs wrong">明</span><span class="qh">月</span>
+              <span style="margin-left:7px;font-size:10px;color:#c94a4a">你写成「朗」</span>
+            </div>
+          </div>
+          <div class="q-line" style="margin-bottom:0">
+            <span class="n">4</span>
+            <div class="q-chars">
+              <span class="qh">低头思故乡</span>
+              <span style="margin-left:7px;font-size:10px;color:#959b94">未作答</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏幕 4：全文默写（输入态） ========== -->
+  <div class="col">
+    <div class="col-tag">
+      <span class="t" style="background:#3D5A73;color:#fff8ec">方案 C · 全文默写</span>
+      <div class="s">输入态 · 逐句作答题</div>
+    </div>
+    <div class="phone">
+      <div class="sbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+      <div class="nav">全文默写<span class="cap"><span class="d"><i></i><i></i><i></i></span><span class="c"></span></span></div>
+      <div class="screen">
+
+        <div class="q-head">
+          <div class="q-back"><svg viewBox="0 0 24 24" fill="none" stroke="#243447" stroke-width="2.4" width="12" height="12"><path d="M15 5l-7 7 7 7"/></svg></div>
+          <div class="q-prog"><i style="width:30%"></i></div>
+          <span class="q-idx">3 / 10</span>
+        </div>
+
+        <div class="q-card">
+          <div class="q-meta">
+            <span class="lt">唐诗 · 思乡</span>
+            <span class="q-hint-btn">提示</span>
+          </div>
+          <div class="q-title">静夜思</div>
+          <div class="q-author">李白 · 唐</div>
+
+          <!-- 逐句答题：每句一个输入行，首字已给出作锚点 -->
+          <div class="wt-lines">
+            <div class="wt-row">
+              <span class="wt-n">1</span>
+              <span class="wt-anchor serif">床</span>
+              <span class="wt-input filled">前明月光，</span>
+            </div>
+            <div class="wt-row is-active">
+              <span class="wt-n">2</span>
+              <span class="wt-anchor serif">疑</span>
+              <span class="wt-input empty">是地上霜。<span class="wt-caret"></span></span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-n">3</span>
+              <span class="wt-anchor serif">举</span>
+              <span class="wt-input empty">＿ ＿ ＿ ＿ ＿，</span>
+            </div>
+            <div class="wt-row">
+              <span class="wt-n">4</span>
+              <span class="wt-anchor serif">低</span>
+              <span class="wt-input empty">＿ ＿ ＿ ＿ ＿。</span>
+            </div>
+          </div>
+
+          <div class="q-foot">
+            <span class="q-tip">已填 1 / 4 句 · 长按可粘贴整段</span>
+            <span class="q-submit">提交</span>
+          </div>
+        </div>
+
+        <!-- 输入辅助 -->
+        <div class="wt-assist">
+          <div class="assist-item">
+            <div class="assist-ico"><svg viewBox="0 0 18 18" fill="none" stroke="#8A7B5F" stroke-width="1.5" stroke-linecap="round"><path d="M4 5h10M4 9h10M4 13h6"/></svg></div>
+            <span>整段粘贴</span>
+          </div>
+          <div class="assist-item">
+            <div class="assist-ico"><svg viewBox="0 0 18 18" fill="none" stroke="#8A7B5F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><path d="M9 6v3.5l2 1.5"/></svg></div>
+            <span>按句跳转</span>
+          </div>
+          <div class="assist-item">
+            <div class="assist-ico"><svg viewBox="0 0 18 18" fill="none" stroke="#8A7B5F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v8M6 8l3 3 3-3M4 14h10"/></svg></div>
+            <span>保存草稿</span>
+          </div>
+        </div>
+
+        <!-- 整段模式示意 -->
+        <div class="sec-h"><span class="t" style="font-size:13.5px">或切到整段默写</span></div>
+        <div class="wt-whole">
+          <div class="wt-whole-paper">
+            <span class="wl serif">床前明月光，疑是地上霜。</span>
+            <span class="wl serif active">举头望明月，低头思故乡。</span>
+          </div>
+          <p class="wt-whole-tip">整段模式适合默写很熟的人，一次写完不打断</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 屏幕 5：全文默写（判定态） ========== -->
+  <div class="col">
+    <div class="col-tag">
+      <span class="t" style="background:#4f7a5d;color:#fff8ec">方案 C · 判定态</span>
+      <div class="s">逐句标红 + 正确的字变绿</div>
+    </div>
+    <div class="phone">
+      <div class="sbar"><span>9:41</span><span>●●● ⌁ ▮</span></div>
+      <div class="nav">默写结果<span class="cap"><span class="d"><i></i><i></i><i></i></span><span class="c"></span></span></div>
+      <div class="screen">
+
+        <!-- 得分概览 -->
+        <div class="score-hero">
+          <div class="score-ring"><i>87<i>%</i></i></div>
+          <div class="score-txt">
+            <h4>这一遍对了 21 / 24 字</h4>
+            <p>比上次提高 9%，再练一次就能进「熟」</p>
+          </div>
+        </div>
+
+        <div class="q-card" style="margin-top:12px">
+          <div class="q-meta">
+            <span class="lt">静夜思 · 第 3 遍</span>
+            <span class="q-hint-btn">再练</span>
+          </div>
+
+          <!-- 逐字对照 -->
+          <div class="rv-lines">
+            <div class="rv-row">
+              <span class="rv-n">1</span>
+              <div class="rv-chars">
+                <span class="rc ok">床</span><span class="rc ok">前</span><span class="rc ok">明</span><span class="rc ok">月</span><span class="rc ok">光</span><span class="rc ok">，</span>
+              </div>
+            </div>
+            <div class="rv-row">
+              <span class="rv-n">2</span>
+              <div class="rv-chars">
+                <span class="rc ok">疑</span><span class="rc ok">是</span><span class="rc ok">地</span><span class="rc bad">下</span><span class="rc ok">霜</span><span class="rc ok">。</span>
+              </div>
+            </div>
+            <div class="rv-row">
+              <span class="rv-n">3</span>
+              <div class="rv-chars">
+                <span class="rc ok">举</span><span class="rc ok">头</span><span class="rc ok">望</span><span class="rc ok">明</span><span class="rc ok">月</span><span class="rc ok">，</span>
+              </div>
+            </div>
+            <div class="rv-row">
+              <span class="rv-n">4</span>
+              <div class="rv-chars">
+                <span class="rc ok">低</span><span class="rc ok">头</span><span class="rc ok">思</span><span class="rc bad">故</span><span class="rc ok">乡</span><span class="rc ok">。</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rv-legend">
+            <span><i class="dot ok"></i>对</span>
+            <span><i class="dot bad"></i>错</span>
+            <span><i class="dot gap"></i>漏</span>
+            <span class="rv-legend-tip">点错误的字可看正确答案</span>
+          </div>
+        </div>
+
+        <!-- 逐字订正列表 -->
+        <div class="sec-h"><span class="t" style="font-size:13.5px">需要订正的 3 个字</span></div>
+        <div class="fix-list">
+          <div class="fix-item">
+            <span class="fix-pos">第 2 句 · 4 字</span>
+            <span class="fix-pair"><b class="bad">下</b><i>→</i><b class="good">上</b></span>
+          </div>
+          <div class="fix-item">
+            <span class="fix-pos">第 4 句 · 4 字</span>
+            <span class="fix-pair"><b class="bad">故</b><i>→</i><b class="good">故</b><span class="fix-note">笔误</span></span>
+          </div>
+          <div class="fix-item">
+            <span class="fix-pos">第 4 句 · 5 字</span>
+            <span class="fix-pair"><b class="gap">—</b><i>→</i><b class="good">乡</b><span class="fix-note">漏字</span></span>
+          </div>
+        </div>
+
+        <div class="rv-actions">
+          <div class="rv-btn ghost">看原文</div>
+          <div class="rv-btn solid">再默一遍</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<section class="notes">
+  <h2>方案说明</h2>
+  <div class="grid">
+
+    <div class="note">
+      <h3><em>1</em>配色改回宣纸系（最高优先）</h3>
+      <p>recite 现存样式用 <code>#F7F5EF / #3F7568 / #C9A45C</code>，是一套自成体系的墨绿叶板。改为全站令牌：背景 <code>--paper</code>、卡片 <code>--paper-card</code>、强调 <code>--cinnabar</code>、正文 <code>--ink</code>。改完从首页点进来不再有「换 App」的观感。</p>
+    </div>
+
+    <div class="note">
+      <h3><em>2</em>补一个真正的入口页</h3>
+      <p>现在点「记忆训练」直接掉进答题框，用户不知道能练什么、练到哪了。新增 <code>/pages/memory</code>：顶部掌握概况（环形进度 + 连续天数），中间两张题型卡（各自带进度），下面「继续上次」与「最近练习」。首页与 <code>/learn</code> 的入口都改指这里。</p>
+    </div>
+
+    <div class="note">
+      <h3><em>3</em>答题页从「一整张白纸」改成「逐句填空」</h3>
+      <p>现状全文默写是一个 168px 的空 textarea，用户要连续输入 20+ 字且无任何即时反馈，提交后只有一句 toast。改为按句分行的字符格：每行带序号，空格用虚线框表示，填了变实线朱砂框。这是把「默写」从作文题变成填空题，认知负担低一个量级。</p>
+    </div>
+
+    <div class="note">
+      <h3><em>4</em>判定结果就地展示</h3>
+      <p>现在判对判错靠 <code>wx.showToast</code>，一闪就没，错误位置在哪完全不知道。改为卡内反馈条 + 错字对照区：正确字变绿、错字朱砂色带波浪下划线并显示「你写成 X」、未答显示「未作答」。这是记忆训练最该有的价值——<b>知道错在哪</b>。</p>
+    </div>
+
+    <div class="note">
+      <h3><em>5</em>顶部加进度条</h3>
+      <p>现状没有「练到第几题」的概念，一次只面对一首诗。加 <code>3 / 10</code> 进度条后，训练有了终点感，也便于后续扩展成「10 题一组的复习队列」。这一条依赖产品侧先定「一次练一首还是练一组」。</p>
+    </div>
+
+    <div class="note">
+      <h3><em>6</em>去掉装饰性字符</h3>
+      <p>现有 wxml 里有 <code>✎</code> 铅笔、<code>◯</code> 灯泡（还用两个 div 拼出来）、<code>✓</code> 对勾，都是字符拼贴，违反「全站零 emoji / 描边即系统」铁律。改为描边 SVG 图标。</p>
+    </div>
+
+    <div class="note" style="border-left:3px solid #3D5A73">
+      <h3><em style="background:#3D5A73">7</em>全文默写：从「一张白纸」改成「逐句作答」</h3>
+      <p>这是全文默写最核心的改动。现状是 520rpx 高的空 <code>textarea</code>，四个问题：<b>①</b>用户不知道从哪下手，第一笔最难；<b>②</b>整片区域没有行位引导，只能靠背景横线猜；<b>③</b>写完无法定位是第几句；<b>④</b>横线与文字靠 <code>line-height:52rpx</code> 配 <code>padding</code> 硬对齐，换机型/字号必错位。<br>改为<b>逐句一个输入行，首字作为锚点已给出</b>——这既降低起步门槛，又天然建立「第几句」的结构。第一屏里可以看到第 1 句已填、第 2 句正在输入（朱砂光标）、第 3/4 句是占位下划线。</p>
+    </div>
+
+    <div class="note" style="border-left:3px solid #3D5A73">
+      <h3><em style="background:#3D5A73">8</em>保住「整段写」的快路径</h3>
+      <p>逐句作答对新手友好，但熟练用户会觉得被切碎。所以第一屏下方保留「或切到整段默写」：一张带横线的纸，可以一次写完不断行。两种模式共用同一套判定逻辑，只是输入形态不同。<b>不要直接用逐句替换掉整段</b>——那会把老用户的效率打回去。</p>
+    </div>
+
+    <div class="note" style="border-left:3px solid #4f7a5d">
+      <h3><em style="background:#4f7a5d">9</em>判定态：逐字标色</h3>
+      <p>第二屏是全文默写的判定结果。现状只有一个 toast，什么都看不见。改为：<b>整诗逐字铺开</b>，对的字正常墨色、错的字朱砂色 + 波浪下划线、漏的字灰色；上方给百分比环形与「21 / 24 字」；下方「需要订正的 3 个字」按「第几句·第几字 → 你写的/正确的」列出，并区分<b>笔误</b>与<b>漏字</b>。</p>
+    </div>
+
+    <div class="note" style="border-left:3px solid #4f7a5d">
+      <h3><em style="background:#4f7a5d">10</em>为什么错字要用波浪线而不是删除线</h3>
+      <p>删除线会让字「消失」，而记忆训练恰恰需要用户<b>看清自己写了什么</b>。波浪下划线是校对的通用语义，既能标出错误又保留原字形，配合下方「你写的 → 正确的」对照，形成可自纠的闭环。</p>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

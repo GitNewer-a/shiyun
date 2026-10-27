@@ -7,6 +7,7 @@
     "pages/growth/growth",
     "pages/poem/poem",
     "pages/recite/recite",
+    "pages/memory/memory",
     "pages/profile/profile",
     "pages/progress/progress",
     "pages/favorites/favorites",
@@ -35,6 +36,7 @@
     ]
   },
   "style": "v2",
+  "requiredBackgroundModes": ["audio"],
   "usingComponents": {
     "mini-player": "/components/mini-player/mini-player"
   },

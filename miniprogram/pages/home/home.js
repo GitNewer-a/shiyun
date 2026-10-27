@@ -6,14 +6,16 @@ Page({
   data: {
     dailyPoem: {},
     categories: [
-      { name: '诗词学习', action: 'poem', color: '#e4eaf0', icon: '/assets/figma-home/icon-6.svg' },
-      { name: '记忆训练', action: 'recite', color: '#f0e8e4', icon: '/assets/figma-home/icon-10.svg' },
-      { name: '诗词库', action: 'browse', color: '#edf0de', icon: '/assets/figma-home/icon-2.svg' },
-      { name: '学习计划', action: 'learn', color: '#ede8f0', icon: '/assets/figma-home/icon-1.svg' }
+      // 图标槽底色收敛为「三墨蓝 + 一藤黄」，避免四色各自为政；
+      // 仅「学习计划」保留暖色强调，与学习页的图标色系保持一致。
+      // 图标本体也须用对应色版本（-ink 后缀）：<image> 引入的 SVG 不继承 color。
+      { name: '诗词学习', action: 'poem', color: '#e6ecf1', icon: '/assets/figma-home/icon-6-ink.svg' },
+      { name: '记忆训练', action: 'recite', color: '#e6ecf1', icon: '/assets/figma-home/icon-10-ink.svg' },
+      { name: '诗词库', action: 'browse', color: '#e6ecf1', icon: '/assets/figma-home/icon-2-ink.svg' },
+      { name: '学习计划', action: 'learn', color: '#f1e6d8', icon: '/assets/figma-home/icon-1-ink.svg' }
     ],
     resume: {
       id: '',
-      mark: '诗',
       title: '',
       author: '',
       dynasty: '',
@@ -55,7 +57,6 @@ Page({
     this.setData({
       resume: {
         id: target.id,
-        mark: target.title.charAt(0),
         title: target.title,
         author: target.author,
         dynasty: target.dynasty,
@@ -105,7 +106,8 @@ Page({
     const action = e.currentTarget.dataset.action;
     if (action === 'poem') this.goDaily();
     else if (action === 'recite') {
-      wx.navigateTo({ url: '/pages/recite/recite?id=' + this.data.dailyPoem.id + '&type=recite' });
+      // 记忆训练不再是「直接进答题框」，先到入口页选题型与诗
+      wx.navigateTo({ url: '/pages/memory/memory' });
     } else if (action === 'browse') {
       wx.switchTab({ url: '/pages/browse/browse' });
     } else if (action === 'learn') {
@@ -119,12 +121,19 @@ Page({
       wx.showToast({ title: '暂无标准朗读', icon: 'none', duration: 1200 });
       return;
     }
-    // expand：页面里点播放是用户主动发起，播放器要展开到台前给人看，
-    // 不能只缩在右边缘（那样点了没反馈，无法暂停/切歌/看进度）
+    /*
+     * 这里**不再带 expand**（2026-10-26 改）。
+     * 原先是 play(id, {expand:true})，起播后立刻把悬浮播放器面板掀起来 ——
+     * 但「标准朗读」正好在首页底部，面板一展开就把刚点的那一行整个盖住，
+     * 按钮从三角切成双竖条的过程压根看不见，看着就像「点了没反应」。
+     * 现在改成原地播／停：按钮自己是完整的控制（点一下播、再点一下停），
+     * 要看进度、切歌、拖进度条，点右侧边缘的唱片触发器展开面板即可。
+     * 若想恢复「点了就弹面板」，把下面的调用改成带 { expand: true } 即可。
+     */
     if (this.player.getCurrentId() === id) {
-      this.player.toggle(id, { expand: true });
+      this.player.toggle(id);
     } else {
-      this.player.play(id, { expand: true });
+      this.player.play(id);
     }
   }
 });

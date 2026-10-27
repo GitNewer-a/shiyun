@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="vWtoZpBhTumI0bHdNcTLMP">
+<head data-page-node-id="YJClAOa018MJs5i2Cvuu1x">
+<meta charset="UTF-8" data-page-node-id="wMdDJRcu0FFVnpAthmMrJC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="PPny9o48EadEhAmmmtckDn">
+<title>诗韵 · 首页卡片风格调整效果图</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" data-page-node-id="vuv0EKTFNdtZz1CsWWhxW1">
+<style>
+  :root {
+    --paper: #f8f4ea;
+    --paper-card: #fffdf8;
+    --paper-sunken: #ece7da;
+    --ink: #243447;
+    --ink-card: #243f4f;
+    --ink-2: #7e8785;
+    --ink-3: #959b94;
+    --cinnabar: #c94a4a;
+    --gold: #c9975a;
+    --line: rgba(36, 52, 71, 0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    padding: 48px 32px 80px;
+    background: #efeae0;
+    font-family: "Noto Sans SC", -apple-system, "PingFang SC", sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  .serif { font-family: "Noto Serif SC", "Songti SC", serif; }
+
+  header.page-head { max-width: 1120px; margin: 0 auto 44px; }
+  .page-head h1 { font-family: "Noto Serif SC", serif; font-size: 28px; font-weight: 700; letter-spacing: 1px; }
+  .page-head p { margin-top: 10px; font-size: 14px; line-height: 1.8; color: #7a7568; max-width: 720px; }
+
+  .stage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 56px;
+    flex-wrap: wrap;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+  .col { display: flex; flex-direction: column; align-items: center; }
+
+  .col-label { margin-bottom: 16px; text-align: center; }
+  .col-label .tag {
+    display: inline-block; padding: 5px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 500; letter-spacing: .5px;
+  }
+  .col-label .tag.old { background: #ded8ca; color: #6b6558; }
+  .col-label .tag.new { background: var(--cinnabar); color: #fff8ec; }
+  .col-label .sub { margin-top: 8px; font-size: 12px; color: #8b8577; line-height: 1.6; }
+
+  /* ---------- 手机框 ---------- */
+  .phone {
+    position: relative;
+    width: 393px; height: 852px;
+    border-radius: 44px;
+    background: var(--paper);
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(60, 52, 36, .18), 0 2px 0 rgba(255,255,255,.7) inset;
+  }
+  .statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 44px; padding: 0 26px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+  }
+  .navbar {
+    display: flex; justify-content: center; align-items: center;
+    height: 44px; position: relative;
+  }
+  .navbar .title { font-family: "Noto Serif SC", serif; font-size: 16px; font-weight: 600; letter-spacing: 2px; }
+  .navbar .capsule {
+    position: absolute; right: 12px; top: 6px;
+    display: flex; align-items: center; gap: 10px;
+    width: 87px; height: 32px; padding: 0 12px;
+    border: .5px solid rgba(0,0,0,.08); border-radius: 16px;
+    background: rgba(255,255,255,.6);
+  }
+  .navbar .capsule .dots { display: flex; gap: 3px; }
+  .navbar .capsule .dots i { width: 4px; height: 4px; border-radius: 50%; background: #333; }
+  .navbar .capsule .circ { width: 15px; height: 15px; border: 1.5px solid #333; border-radius: 50%; }
+
+  .screen { height: calc(852px - 88px); overflow: hidden; position: relative; }
+  .scroll { padding: 0 21px 24px; }
+
+  /* ---------- 搜索 ---------- */
+  .search {
+    display: flex; align-items: center;
+    height: 38px; padding: 0 14px; border-radius: 12px;
+    background: var(--paper-sunken);
+  }
+  .search svg { width: 15px; height: 15px; margin-right: 7px; flex: none; }
+  .search span { font-size: 11.5px; color: #909594; }
+  .search.new { background: #f2eddf; border: .5px solid rgba(36,52,71,.05); }
+
+  /* ---------- 今日一诗 ---------- */
+  .daily {
+    position: relative; height: 213px; margin-top: 17px; overflow: hidden;
+    border-radius: 22px; background: #243f4f;
+  }
+  .daily.old { box-shadow: 0 11px 23px rgba(36,52,71,.18); }
+  .daily.old .moon {
+    position: absolute; top: 48px; right: 45px;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(225,197,143,.8);
+  }
+  .daily.old .hill { position: absolute; bottom: -82px; border-radius: 50% 50% 0 0; }
+  .daily.old .hill.back { right: -51px; width: 272px; height: 169px; background: #57747a; transform: rotate(22deg); }
+  .daily.old .hill.front { left: -50px; width: 262px; height: 154px; background: #355664; transform: rotate(-15deg); }
+
+  /* 新版：去月亮，换描边装饰 */
+  .daily.new { box-shadow: 0 10px 26px rgba(36,52,71,.14); }
+  .daily.new .deco { position: absolute; top: 22px; right: 22px; width: 62px; height: 62px; opacity: .5; }
+  .daily.new .hill-a { position: absolute; bottom: -96px; right: -58px; width: 268px; height: 176px; border-radius: 50% 50% 0 0; background: #57747a; transform: rotate(20deg); }
+  .daily.new .hill-b { position: absolute; bottom: -104px; left: -66px; width: 258px; height: 160px; border-radius: 50% 50% 0 0; background: #355664; transform: rotate(-13deg); }
+
+  .daily-body { position: relative; display: flex; flex-direction: column; padding: 20px 19px; }
+  .daily-tag {
+    align-self: flex-start; padding: 0 11px; height: 24px; line-height: 24px;
+    background: var(--cinnabar); color: #fff8ec;
+    font-size: 10.5px; letter-spacing: 1px;
+  }
+  .daily-author { margin-top: 11px; font-size: 10.5px; color: #c7d0cf; }
+  .daily-title { margin-top: 3px; font-size: 23px; font-weight: 700; letter-spacing: 3px; color: var(--paper); }
+  .daily-lines { margin-top: 8px; }
+  .daily-line { display: block; font-size: 13.5px; line-height: 1.72; color: var(--paper); }
+  .daily-cta {
+    display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+    margin-top: 5px; padding: 0 14px; height: 30px; border-radius: 15px;
+    background: var(--paper); color: var(--ink); font-size: 11.5px; font-weight: 500;
+  }
+  .daily-cta svg { width: 12px; height: 12px; }
+
+  /* ---------- 四宫格 ---------- */
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
+  .cat {
+    display: flex; flex-direction: column; align-items: center;
+    height: 85px; padding: 12px 4px 9px; border-radius: 15px;
+  }
+  .cat.old { background: var(--paper-card); box-shadow: 0 4px 5px rgba(70,65,51,.06); }
+  .cat.new { background: var(--paper-card); border: .5px solid var(--line); }
+  .cat-mark { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; }
+  .cat.old .cat-mark.m1 { background: #e4eaf0; } .cat.old .cat-mark.m2 { background: #f0e8e4; }
+  .cat.old .cat-mark.m3 { background: #edf0de; } .cat.old .cat-mark.m4 { background: #ede8f0; }
+  .cat.new .cat-mark { background: #e6ecf1; }
+  .cat.new .cat-mark.accent { background: #f1e6d8; }
+  .cat-mark svg { width: 19px; height: 19px; }
+  .cat-name { margin-top: 6px; font-size: 11.5px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+
+  /* ---------- 区块标题 ---------- */
+  .sec-head { display: flex; align-items: center; justify-content: space-between; height: 43px; padding-top: 10px; }
+  .sec-title { font-size: 17px; font-weight: 700; color: #1a2520; }
+  .sec-more { font-size: 11.5px; color: var(--ink-3); }
+
+  /* ---------- 继续学习 ---------- */
+  .resume { display: flex; align-items: center; gap: 11px; min-height: 66px; padding: 12px; border-radius: 16px; }
+  .resume.old { background: var(--paper-sunken); }
+  .resume.new { background: var(--paper-card); border: .5px solid var(--line); }
+  .resume-cover {
+    display: flex; align-items: center; justify-content: center;
+    width: 38px; height: 44px; flex: none;
+  }
+  .resume.old .resume-cover { background: var(--cinnabar); color: #fff9ed; font-size: 16px; }
+  .resume.new .resume-cover { border-radius: 10px; background: #f3ece0; border: .5px solid rgba(36,52,71,.06); }
+  .resume.new .resume-cover svg { width: 20px; height: 20px; }
+  .resume-main { flex: 1; min-width: 0; }
+  .resume-sub { display: block; font-size: 10.5px; color: #838885; }
+  .resume-title { display: block; margin-top: 1px; font-size: 14.5px; font-weight: 700; color: var(--ink); }
+  .resume-bar { height: 3px; margin-top: 6px; border-radius: 3px; background: #ded9cf; overflow: hidden; }
+  .resume.new .resume-bar { background: #ece6d9; }
+  .resume-bar-fill { height: 100%; background: var(--cinnabar); }
+  .resume-tip { display: block; margin-top: 3px; font-size: 10.5px; color: #858983; }
+  .resume-tip b { color: var(--cinnabar); }
+  .resume-go {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; flex: none; border-radius: 50%;
+  }
+  .resume.old .resume-go { background: var(--ink); }
+  .resume.new .resume-go { background: rgba(36,52,71,.06); }
+  .resume-go svg { width: 13px; height: 13px; }
+
+  /* ---------- 标准朗读 ---------- */
+  .hot { display: flex; flex-direction: column; gap: 8px; }
+  .hot-item { display: flex; align-items: center; min-height: 67px; padding: 9px 11px; border-radius: 16px; }
+  .hot-item.old { background: var(--paper-card); box-shadow: 0 4px 5px rgba(70,65,51,.04); border-radius: 15px; }
+  .hot-item.new { background: var(--paper-card); border: .5px solid var(--line); }
+  .hot-main { flex: 1; min-width: 0; }
+  .hot-title-row { display: flex; align-items: baseline; }
+  .hot-title { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+  .hot-author { font-size: 10.5px; color: var(--ink-3); }
+  .hot-count { display: flex; align-items: center; gap: 4px; margin-top: 3px; font-size: 10.5px; }
+  .hot.old .hot-count { color: #c4756e; }
+  .hot.new .hot-count { color: var(--ink-3); }
+  .hot-count svg { width: 11px; height: 11px; }
+  .hot-play {
+    display: flex; align-items: center; justify-content: center;
+    width: 31px; height: 31px; flex: none; border-radius: 50%;
+  }
+  .hot.old .hot-play { background: var(--ink-card); }
+  .hot.new .hot-play { background: var(--ink-card); }
+  .hot-play svg { width: 13px; height: 13px; }
+
+  /* ---------- tabbar ---------- */
+  .tabbar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 52px;
+    display: flex; align-items: flex-start; padding-top: 6px;
+    background: rgba(255,253,248,.94);
+    border-top: .5px solid rgba(36,52,71,.07);
+    backdrop-filter: blur(20px);
+  }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .tab svg { width: 20px; height: 20px; }
+  .tab span { font-size: 9.5px; color: var(--ink-3); }
+  .tab.on span { color: var(--cinnabar); }
+
+  /* ---------- 说明区 ---------- */
+  .notes { max-width: 1120px; margin: 64px auto 0; }
+  .notes h2 { font-family: "Noto Serif SC", serif; font-size: 20px; font-weight: 700; margin-bottom: 20px; letter-spacing: .5px; }
+  .note-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .note {
+    padding: 18px 20px; border-radius: 14px; background: #fbf8f0;
+    border: 1px solid rgba(36,52,71,.07);
+  }
+  .note h3 { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .note h3 em { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 5px; background: var(--cinnabar); color: #fff; font-size: 10px; font-weight: 700; }
+  .note p { font-size: 12.5px; line-height: 1.85; color: #6e6a5e; }
+  .note code { padding: 1px 5px; border-radius: 3px; background: #ece7da; font-size: 11px; color: #8a5a3a; }
+</style>
+</head>
+<body data-page-node-id="MK7w9nuMp0BQgTuR40b8CY">
+
+<header class="page-head" data-page-node-id="TmSwaouKMMbd3SIrjUCvJB">
+  <h1 data-page-node-id="1qgSIdSSKZE1KXBFdixcXC">首页卡片风格调整 · 效果图</h1>
+  <p data-page-node-id="tifZecL4qhyjdvULc6EIgr">按方案 A（统一卡片规格）+ 方案 B（收敛「今日一诗」装饰）出图。左侧为现状，右侧为调整后。以下所有尺寸均按 393×852 基准机型等比还原，可直接对照 rpx 换算。</p>
+</header>
+
+<div class="stage" data-page-node-id="TjvyHmi2GLABz1ycxRYuB6">
+
+  <!-- ============ 现状 ============ -->
+  <div class="col" data-page-node-id="gavRwG7wESwZwXjRKUPPm2">
+    <div class="col-label" data-page-node-id="zeRkxPpfWrqaBI5eIGRRjB">
+      <span class="tag old" data-page-node-id="almi53f4dW7BPaX6XDbk0x">现状</span>
+      <div class="sub" data-page-node-id="YcKago7jfDDswbNxvuU9kt">三套视觉语言并存</div>
+    </div>
+    <div class="phone" data-page-node-id="IsBrM8HD6i36rCAviPaJwe">
+      <div class="statusbar" data-page-node-id="Gmh2IFG0Nf1iR2NZ7cgG6z"><span data-page-node-id="7H9DRP5itesaLAfXdv67XI">9:41</span><span data-page-node-id="ds5wEsDGe8boakM2VnJe6r">●●● ⌁ ▮</span></div>
+      <div class="navbar" data-page-node-id="RQ0CbYCznMwa5pfnIUrpXH">
+        <span class="title" data-page-node-id="9nYj0w1jFVScLHkgiq1oX9">诗韵</span>
+        <span class="capsule" data-page-node-id="2BQIMT49eUaRBGPwdOALrE"><span class="dots" data-page-node-id="NFHUsaP4iYjGNj8ag7fE49"><i data-page-node-id="S8TOzKNlNb9ZFQmxPGXljV"></i><i data-page-node-id="oIwfHfoiBIXLPeoe3YyIXr"></i><i data-page-node-id="s5UEzpbMKewJbfRina4AXV"></i></span><span class="circ" data-page-node-id="qqkNYAb6nrJCltESIGuj5i"></span></span>
+      </div>
+      <div class="screen" data-page-node-id="90daICne3hu8BoiCyusWUH">
+        <div class="scroll" data-page-node-id="guEybtVTXveOwdU9qJzyg3">
+          <div class="search" data-page-node-id="ZQUJ2fH7IrHrcoiJ8Q4DsY">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#909594" stroke-width="2" data-page-node-id="juvGz7IWGzbJtAaQv2IjpD"><circle cx="11" cy="11" r="7" data-page-node-id="0ErglCoDxEqyWgqgRQZkqG"/><path d="M16.5 16.5 21 21" data-page-node-id="uX1srAxqfvuOrLUF4JmYxQ"/></svg>
+            <span data-page-node-id="cSVp73D6fD3VrND2QDpakF">搜索诗人、诗词</span>
+          </div>
+
+          <div class="daily old" data-page-node-id="ido2aTFCcD4IAMZTWKuG9F">
+            <div class="moon" data-page-node-id="8pZzK0wH4TYjYKszvBWjHS"></div>
+            <div class="hill back" data-page-node-id="yIAOupJCBQwR4hiqkhxo14"></div>
+            <div class="hill front" data-page-node-id="rliUqtD42PgTntNZTSqE7O"></div>
+            <div class="daily-body" data-page-node-id="vRapg62vbjmxt2ZPabbUWs">
+              <div class="daily-tag" data-page-node-id="LP2ToD2aFiIbVZFt7k2rtT">今日一诗</div>
+              <div class="daily-author" data-page-node-id="2UFkBGM0tHFQsLUsfaARdG">杜牧 · 唐</div>
+              <div class="daily-title serif" data-page-node-id="RsvKyDM6JWGhntJCAS4Mww">江南春</div>
+              <div class="daily-lines" data-page-node-id="KTX0gpSYJOpo7wfIP0JeGk">
+                <span class="daily-line serif" data-page-node-id="SDIbRHxMtpiVzHZBVChIR7">千里莺啼绿映红，，水村山郭酒旗风。。</span>
+                <span class="daily-line serif" data-page-node-id="yoNaoFMKWPW8hRT2JkHBXD">南朝四百八十寺，，多少楼台烟雨中。。</span>
+              </div>
+              <div class="daily-cta" data-page-node-id="Mn6rDDDL7b6A6qmwnzeVA0">开始学习
+                <svg viewBox="0 0 24 24" fill="none" stroke="#243447" stroke-width="2.4" data-page-node-id="MxvkYXkQnNR8UHjfL6lAi2"><path d="M5 12h13M13 6l6 6-6 6" data-page-node-id="1KGqaQSTqi0YXk4cCRae82"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="cats" data-page-node-id="JdC8S5HoRL2M4oHZswZZsT">
+            <div class="cat old" data-page-node-id="2kNNMyPyyQN2DpbEsxwRDI"><div class="cat-mark m1" data-page-node-id="EGgf5yR7wDig0omvAu8yC0"><svg viewBox="0 0 24 24" fill="none" stroke="#3D5A73" stroke-width="1.7" data-page-node-id="YyHNQBPGmOAW8sOgTpepmE"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" data-page-node-id="S3R0j9ptNWKVooEzB82BxD"/><path d="M20 5h-3a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h4z" data-page-node-id="5jdwSMN2LIKYuSIQBNYrBt"/></svg></div><span class="cat-name" data-page-node-id="M9DpFcGD7lMmvZFpuJhabj">诗词学习</span></div>
+            <div class="cat old" data-page-node-id="zlcvbQyvo00tcBiQGPLVSO"><div class="cat-mark m2" data-page-node-id="8pDclWEzcrnEiJyMjLS5UO"><svg viewBox="0 0 24 24" fill="none" stroke="#A06A5A" stroke-width="1.7" data-page-node-id="fFnrGZxarmEvqYqoV3zAW2"><rect x="4" y="4" width="16" height="16" rx="2" data-page-node-id="zYm5FHdocvP49llg4H6n5L"/><path d="M8 9h8M8 13h8M8 17h5" data-page-node-id="ogWpgsbsSVYrtpIHET6Poo"/></svg></div><span class="cat-name" data-page-node-id="0RzsB26IwPAkHdykoAoDdG">记忆训练</span></div>
+            <div class="cat old" data-page-node-id="SNskhfEY1pAGFFHOOOZVeE"><div class="cat-mark m3" data-page-node-id="VnBxmHdBQAcVzhKDk4tLtN"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A4A" stroke-width="1.7" data-page-node-id="b6uVdFQunqmc3Cdg5b2nAk"><path d="M12 6c-2-1.5-4.5-2-7-2v14c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2z" data-page-node-id="ekmINDFa6St2YbJVXE299g"/><path d="M12 6v14" data-page-node-id="JK9DaT1MzcWdxumvqgIMzD"/></svg></div><span class="cat-name" data-page-node-id="rWM5EFQju9vFUTYbhl5j1g">诗词库</span></div>
+            <div class="cat old" data-page-node-id="BmDVWrk0q4U8jAeo9T2Emm"><div class="cat-mark m4" data-page-node-id="BoFKaO9nftkjkuBZiE2mGJ"><svg viewBox="0 0 24 24" fill="none" stroke="#7A6A85" stroke-width="1.7" data-page-node-id="a5pwCyIpW6xEw5pNs4sL8Z"><rect x="4" y="5" width="16" height="15" rx="2" data-page-node-id="149Vd8DibVXEsRWaz0zTCv"/><path d="M8 3v4M16 3v4M4 10h16" data-page-node-id="AR5rI8f8uU1JVOYe3ZdUpq"/></svg></div><span class="cat-name" data-page-node-id="3Hw9MOYNiLQ6JviQs3kk18">学习计划</span></div>
+          </div>
+
+          <div class="sec-head" data-page-node-id="vHoDqdbo0dGAeVF3KxsRh5"><span class="sec-title serif" data-page-node-id="AwSH8kxlNWkKZmExafx501">继续学习</span></div>
+          <div class="resume old" data-page-node-id="nasQeu2IjVupBOCc59KRxE">
+            <div class="resume-cover serif" data-page-node-id="571PrginEZZUTE4YuwAYhn">静</div>
+            <div class="resume-main" data-page-node-id="DFcnHcTGwBHzu9FjFWfBlX">
+              <span class="resume-sub" data-page-node-id="XQ9x6zDQNHEhPzLgipAnoW">李白 · 唐 · 第 1 课</span>
+              <span class="resume-title serif" data-page-node-id="WEiXAkaagKQvjhaDuKFqub">《静夜思》</span>
+              <div class="resume-bar" data-page-node-id="CpPuHKDlEpo1tgxbUGv7Op"><div class="resume-bar-fill" style="width:0%" data-page-node-id="wvh4suuCjlSB4fH6gxUupi"></div></div>
+              <span class="resume-tip" data-page-node-id="AiBH77xTYT0LLbMzpxT5D8">学习进度 <b data-page-node-id="NX3jtk6iISStb699ABHxIn">0%</b></span>
+            </div>
+            <div class="resume-go" data-page-node-id="9AuWNGJYiklPyeYVZLfsN6"><svg viewBox="0 0 24 24" fill="none" stroke="#f8f4ea" stroke-width="2.6" data-page-node-id="tele1qq0rMW4xcPmoavOSi"><path d="M9 5l7 7-7 7" data-page-node-id="VVF6FKqKUU6ocUo1D2Wp8Y"/></svg></div>
+          </div>
+
+          <div class="sec-head" data-page-node-id="g1YM91c5AcJC7ehr6yhK0m"><span class="sec-title serif" data-page-node-id="lTPFgCFe8FKaMe5Y3jE5XH">标准朗读</span></div>
+          <div class="hot old" data-page-node-id="QBCdQYoRm2xuK7ZnKxsHap">
+            <div class="hot-item old" data-page-node-id="szrbz0IoamiLKjIoKOJodl">
+              <div class="hot-main" data-page-node-id="qk9WR0LCElJEpwHMsSuX8C">
+                <div class="hot-title-row" data-page-node-id="dcYsQdpsJxRn0Og4sCZkx0"><span class="hot-title serif" data-page-node-id="SqPeNAjG2X015f98MTXt4S">《静夜思》</span><span class="hot-author" data-page-node-id="wcl6VhFwoBiqQ5GDGSFiiA"> · 李白</span></div>
+                <div class="hot-count" data-page-node-id="l2vzfc53TYNrnPil7hou69"><svg viewBox="0 0 24 24" fill="#c4756e" data-page-node-id="Vfqpoqo3ESyvPCAgQNxJ1L"><path d="M12 21s-8-4.8-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.2-8 10-8 10z" data-page-node-id="Oha78WDcSzTGFs5VcCTOPC"/></svg><span data-page-node-id="H1NDnzCeUJhZB1qu7QBtJu">1.2万</span></div>
+              </div>
+              <div class="hot-play" data-page-node-id="ecqKBJi6DYcrBUHjzdHBLt"><svg viewBox="0 0 24 24" fill="#f8f4ea" data-page-node-id="CenbH5b21ZlbRORwPH49Ha"><path d="M8 5l11 7-11 7z" data-page-node-id="6t73Yddla1U33zynmjM396"/></svg></div>
+            </div>
+            <div class="hot-item old" data-page-node-id="O5CFPcCLB0hRSGXOz9nmAJ">
+              <div class="hot-main" data-page-node-id="IfrcGIGkE7Sw9T4bFHCsGJ">
+                <div class="hot-title-row" data-page-node-id="18RfWMyNIqeSX244r36JDd"><span class="hot-title serif" data-page-node-id="Q56yxZDiMPP8Whg0TlkILq">《春晓》</span><span class="hot-author" data-page-node-id="visPvcAX7EdzbwtSIcDZ2f"> · 孟浩然</span></div>
+                <div class="hot-count" data-page-node-id="I1JuGb3FcmzLBNce1cTk0U"><svg viewBox="0 0 24 24" fill="#c4756e" data-page-node-id="9uC1TDBIkXErLQnx9QH5Hd"><path d="M12 21s-8-4.8-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 11c0 5.2-8 10-8 10z" data-page-node-id="X3iVzbtmTRSKJDu6lFrgmE"/></svg><span data-page-node-id="ZlFs5CxpYJHHUH7PLLjtWk">8,462</span></div>
+              </div>
+              <div class="hot-play" data-page-node-id="VW0FXQZYmMNIPuNwu4QcJw"><svg viewBox="0 0 24 24" fill="#f8f4ea" data-page-node-id="Hes3yrK6nCCQeQ6PZbDncw"><path d="M8 5l11 7-11 7z" data-page-node-id="VGMHtyJAMeVG8HPJZyUe88"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar" data-page-node-id="RJEFQj1nqzHyZI2lwVCsDm">
+        <div class="tab on" data-page-node-id="UF6BEYFpKTGQGr96048SIP"><svg viewBox="0 0 24 24" fill="none" stroke="#c94a4a" stroke-width="1.8" data-page-node-id="lDemKSmt9jeOkzjeDf9OBH"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" data-page-node-id="56VnLZENxM3UGVVUixY4gQ"/></svg><span data-page-node-id="888iaX19MmlUlivOP6YESm">首页</span></div>
+        <div class="tab" data-page-node-id="HEEzD8AEr18sx9ixk5yDld"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="Z77I78w3ybohAeuiBvjA8U"><path d="M12 6c-2-1.5-4.5-2-7-2v14c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2z" data-page-node-id="m1VKblZI1TzEgLyahjuOyz"/></svg><span data-page-node-id="AIMDEMUpaOqeqzWwW1RDhC">诗词库</span></div>
+        <div class="tab" data-page-node-id="FD1Lz2JilLpCA21HVLG0MA"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="Gc3ZQRBJKbyV4y0WbVYId9"><path d="M12 21s-7-4-7-9a7 7 0 0 1 14 0c0 5-7 9-7 9z" data-page-node-id="v9SFQPZhzAlX5IBBItRfXx"/><circle cx="12" cy="11" r="2.5" data-page-node-id="gX7SncYieFKwWtNNnpA3XL"/></svg><span data-page-node-id="BrzTxWms3KGKxNE8ZiwfVP">学习</span></div>
+        <div class="tab" data-page-node-id="HJMU8DyFVTrC9GzjNjn7jf"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="3YPhuwntLzNe4WFGqjNDoW"><circle cx="12" cy="8" r="3.5" data-page-node-id="XFsHIA41dqhDF6daDy9NWY"/><path d="M5 20a7 7 0 0 1 14 0" data-page-node-id="RC7qjKWd9W4icB7Y4QSNn0"/></svg><span data-page-node-id="52AgrCGYbvXCBCDc1kC9et">我的</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 调整后 ============ -->
+  <div class="col" data-page-node-id="ek2DOqBkGz89ofZ0QuoMnd">
+    <div class="col-label" data-page-node-id="HMxf29TRCYkg9CvhMbzoJt">
+      <span class="tag new" data-page-node-id="Ojdan35LkPuM9mxjXMXnkP">调整后（已实现）</span>
+      <div class="sub" data-page-node-id="wx5ZOFk9JuAITUkRO2eK5E">同一张纸的三个层次</div>
+    </div>
+    <div class="phone" data-page-node-id="vWt0sALDZGqd99bhHTH47p">
+      <div class="statusbar" data-page-node-id="sFtRAsi6EFCznuCHRhEiMC"><span data-page-node-id="WzmmfpuJ9dOVps0BwMQFC8">9:41</span><span data-page-node-id="rnzSmik1eDeiWfhGDe0p3A">●●● ⌁ ▮</span></div>
+      <div class="navbar" data-page-node-id="ldrxTG0Fg1leihPFOWtujI">
+        <span class="title" data-page-node-id="sTe3FFO4PDAPcUM7HkoGDs">诗韵</span>
+        <span class="capsule" data-page-node-id="IeaocMFCprUSlGBzd4XEXL"><span class="dots" data-page-node-id="Lvqct8wFrQlGF2B9VcSiOI"><i data-page-node-id="ELVt08Vcr8SAFADk2dhF0C"></i><i data-page-node-id="1iTZwHc2wASkhE12aIDOEO"></i><i data-page-node-id="F521YXozlk3HR0wqypkN3s"></i></span><span class="circ" data-page-node-id="cj7AQA3HKT3QgNOZylwjhj"></span></span>
+      </div>
+      <div class="screen" data-page-node-id="txAExzWgHjX8WOuPgTZauo">
+        <div class="scroll" data-page-node-id="LtXAlEIjJpH4IDB2MHMfZW">
+          <div class="search new" data-page-node-id="jGQ1yivWhD7rD0K9ER1AcE">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#909594" stroke-width="2" data-page-node-id="Z67GR565JjWaLvDu9EJ5bl"><circle cx="11" cy="11" r="7" data-page-node-id="sbwVBC4GIAQ7jReYvfxBor"/><path d="M16.5 16.5 21 21" data-page-node-id="OFABlSiAov8wCOeZTciAGm"/></svg>
+            <span data-page-node-id="khE4JzhUB9XNZiqURwfnkl">搜索诗人、诗词</span>
+          </div>
+
+          <div class="daily new" data-page-node-id="uCZO4dUjZzeu1LjlRRidsI">
+            <!-- 描边卷轴装饰，替代实心圆月亮 -->
+            <svg class="deco" viewBox="0 0 64 64" fill="none" stroke="#d5e4dc" stroke-width="1.4" stroke-linecap="round" data-page-node-id="fHWxhu2cL1s2KnIMot0vYD">
+              <path d="M14 20h36M14 44h36" data-page-node-id="C14B2ptd5Z27o8E8VhcfY3"/>
+              <path d="M18 20c0 3 2 4 4 4s4-1 4-4-2-4-4-4-4 1-4 4zM38 20c0 3 2 4 4 4s4-1 4-4-2-4-4-4-4 1-4 4z" data-page-node-id="Ol9EpCEcJQhy1aBq8Z5aQZ"/>
+              <path d="M18 44c0 3 2 4 4 4s4-1 4-4-2-4-4-4-4 1-4 4zM38 44c0 3 2 4 4 4s4-1 4-4-2-4-4-4-4 1-4 4z" data-page-node-id="1FUGnr4FSBgRUhH2TIV5VL"/>
+              <path d="M26 20v24M38 20v24" data-page-node-id="FNt6p5984q7fgbUcPzbOmG"/>
+            </svg>
+            <div class="hill-a" data-page-node-id="gevO20kCrz1SNOZRKZrHJ9"></div>
+            <div class="hill-b" data-page-node-id="8YAxRRhUTqIK7AtYxmNMG7"></div>
+            <div class="daily-body" data-page-node-id="mvaO8z1wvDy71aHouO4hXn">
+              <div class="daily-tag" data-page-node-id="EcYHJ4a7zvelFeEt2snULx">今日一诗</div>
+              <div class="daily-author" data-page-node-id="K4GiAO9WpzOhmJbHf9Y5Qo">杜牧 · 唐</div>
+              <div class="daily-title serif" data-page-node-id="Ko4p6aGKVHylSleCHtoM8h">江南春</div>
+              <div class="daily-lines" data-page-node-id="1tmdEDkqs6Z28TuqTMg4Ar">
+                <span class="daily-line serif" data-page-node-id="189byBQ0U18XtorW6gKOPJ">千里莺啼绿映红，水村山郭酒旗风。</span>
+                <span class="daily-line serif" data-page-node-id="7yVANAVejRzH0ymyyP8XPt">南朝四百八十寺，多少楼台烟雨中。</span>
+              </div>
+              <div class="daily-cta" data-page-node-id="ISEhjYoLAan1BdCpuqLx0q">开始学习
+                <svg viewBox="0 0 24 24" fill="none" stroke="#243447" stroke-width="2.4" data-page-node-id="szsA3ztiUIuYxvbR8b6NSe"><path d="M5 12h13M13 6l6 6-6 6" data-page-node-id="7uEHZvMh5mMWgWG9SCwBzA"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="cats" data-page-node-id="y5oixcLL8OxinCkGXx4xz6">
+            <div class="cat new" data-page-node-id="vmoTQJaEnEFTUspYr20IDV"><div class="cat-mark" data-page-node-id="2nW1CZxUSWIAp4BEO9Bgch"><svg viewBox="0 0 24 24" fill="none" stroke="#3D5A73" stroke-width="1.7" data-page-node-id="P5XBmqQDv561OMx0Wkx2pJ"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" data-page-node-id="CSZJFPY8vBM755TRnaRcfr"/><path d="M20 5h-3a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h4z" data-page-node-id="EKosZsmHXBw61QOfEoII1Q"/></svg></div><span class="cat-name" data-page-node-id="oRiR97SknKFQt3IjXJDL9i">诗词学习</span></div>
+            <div class="cat new" data-page-node-id="x46vVocVHVbaxZY3uRBjS5"><div class="cat-mark" data-page-node-id="8eY5AhHhXawLqhCFfTTBT7"><svg viewBox="0 0 24 24" fill="none" stroke="#3D5A73" stroke-width="1.7" data-page-node-id="Qxgyu2Xuu7rva5YFRYvECE"><rect x="4" y="4" width="16" height="16" rx="2" data-page-node-id="i3ME2ixcSzqAIoAJEB78Wq"/><path d="M8 9h8M8 13h8M8 17h5" data-page-node-id="JIJfNaAF83R2hdhsom4aJC"/></svg></div><span class="cat-name" data-page-node-id="k832DPOr7ujcBtvY9JWhyG">记忆训练</span></div>
+            <div class="cat new" data-page-node-id="mPSJZ5jiBvxFebwF8KdJDG"><div class="cat-mark" data-page-node-id="6oKBj2EEGcFlYSefALzniT"><svg viewBox="0 0 24 24" fill="none" stroke="#3D5A73" stroke-width="1.7" data-page-node-id="OUo4f7cpsfCBEUKQQKEos7"><path d="M12 6c-2-1.5-4.5-2-7-2v14c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2z" data-page-node-id="QUY0MZOkPh3CBdLsJmYsEP"/><path d="M12 6v14" data-page-node-id="oFPsymNcQbBWDLJ1eP5hSq"/></svg></div><span class="cat-name" data-page-node-id="UV9F4fKywknTjdAstZUT6M">诗词库</span></div>
+            <div class="cat new" data-page-node-id="zXruntXUwFCFZqmJGMxbca"><div class="cat-mark accent" data-page-node-id="qVcl7BJCaPSivNGARSrMze"><svg viewBox="0 0 24 24" fill="none" stroke="#A97A3E" stroke-width="1.7" data-page-node-id="AAv6zoaj4Y1jDMN0KLyJys"><rect x="4" y="5" width="16" height="15" rx="2" data-page-node-id="ZhgFlpPTqlkxbX8aZ43a2Q"/><path d="M8 3v4M16 3v4M4 10h16" data-page-node-id="1Lpb36f4KDHgmVEmBNVEbu"/></svg></div><span class="cat-name" data-page-node-id="QaO6ICwYX1Xwo5VjZEz8Ym">学习计划</span></div>
+          </div>
+
+          <div class="sec-head" data-page-node-id="b0R0EDLCKB9WbA1HtHBOFT"><span class="sec-title serif" data-page-node-id="LQIAkycrVjyaQzF3ZQs2bi">继续学习</span></div>
+          <div class="resume new" data-page-node-id="zdxt9wHONJfF7BdNG8XbYx">
+            <div class="resume-cover" data-page-node-id="wlxe7YfQlEC2zCVREUiYri">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#8A7B5F" stroke-width="1.7" data-page-node-id="BJbuA4K4PZdDLXbSq50aNn"><path d="M4 5h7a3 3 0 0 1 3 3v11a2 2 0 0 0-2-2H4z" data-page-node-id="T8G2EBfvBQoFNVd6ae8JiE"/><path d="M20 5h-3a3 3 0 0 0-3 3v11a2 2 0 0 1 2-2h4z" data-page-node-id="jS6ij9XEaiZlVFb4lGZDcK"/></svg>
+            </div>
+            <div class="resume-main" data-page-node-id="Ffxe7xUxorDGQKQEmqFQA0">
+              <span class="resume-sub" data-page-node-id="GYBwjsY6fdiniuBwlkqfdr">李白 · 唐 · 第 1 课</span>
+              <span class="resume-title serif" data-page-node-id="bktay3JJ4BrzaiLiNPwDGa">《静夜思》</span>
+              <div class="resume-bar" data-page-node-id="xbS9qYtlW3t6chSqZs6RH7"><div class="resume-bar-fill" style="width:0%" data-page-node-id="RKrHKuEUKg8qjgpE3AzWin"></div></div>
+              <span class="resume-tip" data-page-node-id="xGbmAlJFjG5vpxOlQYwqMd">学习进度 <b data-page-node-id="FNDWjkIaWH1LSmiPGNUzQE">0%</b></span>
+            </div>
+            <div class="resume-go" data-page-node-id="HGbPeJNpDvEUMwKB9pQgjn"><svg viewBox="0 0 24 24" fill="none" stroke="#243447" stroke-width="2.6" data-page-node-id="MzTRbFKz8DeS29t8nU4XmW"><path d="M9 5l7 7-7 7" data-page-node-id="zLPcZgxTj09nsRI3CAw29V"/></svg></div>
+          </div>
+
+          <div class="sec-head" data-page-node-id="JIRcFpH0ZwqQvxHL3IH4Wz"><span class="sec-title serif" data-page-node-id="78JNSuCxWGS8d0TqhpRat6">标准朗读</span><span class="sec-more" data-page-node-id="MmsuEsaIOr7FglhTYEGNlG">全部 40 首 ›</span></div>
+          <div class="hot new" data-page-node-id="hmOQnasrIBRoOebuUU3oLd">
+            <div class="hot-item new" data-page-node-id="Tyq92eeWVwBn0FObiEclHU">
+              <div class="hot-main" data-page-node-id="TiflOJk3UQtYW5yOUm10VJ">
+                <div class="hot-title-row" data-page-node-id="OAN6ZGZ2FcpT4Cbnp1WpGR"><span class="hot-title serif" data-page-node-id="ZPCmORbTPOvqxDNgn6436c">《静夜思》</span><span class="hot-author" data-page-node-id="RWwu1vtEzYbjt0sOLFUDnI"> · 李白</span></div>
+                <div class="hot-count" data-page-node-id="hum5iA1bGpOkHTxxuIuzX4"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="Waw3J1folAfpMiHiEWzVDn"><path d="M8 5v14l11-7z" data-page-node-id="V4SUtHkuV6KsZDPY4W1VRW"/></svg><span data-page-node-id="SxEFeYSvtC9kewBki0kaGS">1.2万次播放</span></div>
+              </div>
+              <div class="hot-play" data-page-node-id="YpoNnmjxrpeFLNuFhpIhHX"><svg viewBox="0 0 24 24" fill="#f8f4ea" data-page-node-id="DFjbUiS9Mn1RxWMFbW3WyT"><path d="M8 5l11 7-11 7z" data-page-node-id="X7Xwqqw2htriKlbtYdrhid"/></svg></div>
+            </div>
+            <div class="hot-item new" data-page-node-id="9YI4Xz5SEstbE3XEW55MJ5">
+              <div class="hot-main" data-page-node-id="EmIy1R9tXS12U7v3PfojdL">
+                <div class="hot-title-row" data-page-node-id="XgyXvfTp8tbIfPKpH0OSH5"><span class="hot-title serif" data-page-node-id="OLOwv8MpSXPFSDyrqTXcBy">《春晓》</span><span class="hot-author" data-page-node-id="TYe81WBRChqDc36iQYUL9N"> · 孟浩然</span></div>
+                <div class="hot-count" data-page-node-id="ZkuFQK1elMaIhohwHAnK97"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="jwgayHmYA6T0ZLwbyDOtXA"><path d="M8 5v14l11-7z" data-page-node-id="pCHJJOCyrplQpkBnG9jJFa"/></svg><span data-page-node-id="gBP3EdxglbjRl8nium9TLk">8,462 次播放</span></div>
+              </div>
+              <div class="hot-play" data-page-node-id="LKuSSHe96j56qvnL2gL1w5"><svg viewBox="0 0 24 24" fill="#f8f4ea" data-page-node-id="lnEPmYOFDMztXmV0Fr9NYp"><path d="M8 5l11 7-11 7z" data-page-node-id="9R92sEr2gbsyu0MBZlvAjC"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar" data-page-node-id="auCwuMQgaA2P8ZrvNbUHxB">
+        <div class="tab on" data-page-node-id="o1lnqHMXE9mWLXzDBffX2m"><svg viewBox="0 0 24 24" fill="none" stroke="#c94a4a" stroke-width="1.8" data-page-node-id="Pl4NrsiEtXtu73HkF7RTpk"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" data-page-node-id="h2cgKoHxDDmU33ZNiWGq5E"/></svg><span data-page-node-id="hJWLFFycTs2TnnkVNLGwcQ">首页</span></div>
+        <div class="tab" data-page-node-id="aefByzq8oyGok0Lfw7dzFX"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="srBDtoac3F538EHYjrrFwc"><path d="M12 6c-2-1.5-4.5-2-7-2v14c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V4c-2.5 0-5 .5-7 2z" data-page-node-id="xWnCoiOmiDvrCC62ECbRJ3"/></svg><span data-page-node-id="AY6cYoqNQSLYe9HFPr0e0J">诗词库</span></div>
+        <div class="tab" data-page-node-id="aflFA7bTWOIvoGZiHWB137"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="h9gHpIlOyWnlZEfI5CjD9K"><path d="M12 21s-7-4-7-9a7 7 0 0 1 14 0c0 5-7 9-7 9z" data-page-node-id="NLWG6fbHx43OINfTX88XDW"/><circle cx="12" cy="11" r="2.5" data-page-node-id="iSH4lKJPjH5AV7PyDIln35"/></svg><span data-page-node-id="zd9mctix3m5lFgrWH9mlQp">学习</span></div>
+        <div class="tab" data-page-node-id="p0XOiSQRkdrziOmZ7fJaSa"><svg viewBox="0 0 24 24" fill="none" stroke="#959b94" stroke-width="1.8" data-page-node-id="Vf6ni59xTpwD60TIHpxTB4"><circle cx="12" cy="8" r="3.5" data-page-node-id="OSOlosIshmzXprAGFd25I4"/><path d="M5 20a7 7 0 0 1 14 0" data-page-node-id="rRE9UXE5fxGxbJLTwisGOo"/></svg><span data-page-node-id="7WSC40kpizIiSywSapvYxa">我的</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<section class="notes" data-page-node-id="1kR6N8HJbbHkNPy9bEMbI0">
+  <h2 data-page-node-id="pZtkqptAfFLH0YOz3Cuuat">改了什么（以下均已写入代码）</h2>
+  <div class="note-grid" data-page-node-id="ppBbvX8ksiAXwLhCzRgj5H">
+    <div class="note" data-page-node-id="N1VbsZni71k9NCw6tB3EmA">
+      <h3 data-page-node-id="X1pAYK3CZWG6XrgWGoWMIE"><em data-page-node-id="baeJJCCdTcNg94Oy1o6oX1">A</em>圆角收敛成两档</h3>
+      <p data-page-node-id="rt7bG44AehEv1aLb6MUGSK">今日一诗 <code data-page-node-id="axqnKHAq7JaKRcGvepSnII">42rpx → 44rpx</code>（大卡档），其余全部条卡统一 <code data-page-node-id="opuYzSmw37Vs8eAGSAhvdL">32rpx</code>。原来四宫格 28、继续学习 32、朗读卡 28 三种混用，收成一套后页面立刻"对齐"了。</p>
+    </div>
+    <div class="note" data-page-node-id="Sy9NwcZ6fsYLLZLN98SJT0">
+      <h3 data-page-node-id="MVOnqOv03S95vLOsW5WEni"><em data-page-node-id="G0trw0sjtsONnzqGW3epnz">A</em>底色改成同纸三层</h3>
+      <p data-page-node-id="FnRtHzLBmLLJcESBKBXYfm">继续学习从 <code data-page-node-id="CXAqDyyiHwMbv0MmNeDhox">paper-sunken</code>（凹陷灰）改为 <code data-page-node-id="xAc3AR6HG6goNh66Y2wt2E">paper-card</code>，与朗读卡同底色。现在层次是：背景纸 <code data-page-node-id="1qAirqFchsneOf9MCozDfH">#F8F4EA</code> → 卡片纸 <code data-page-node-id="D6BdpihJJnbUwY9SUhPBpv">#FFFDF8</code> → 沉底搜索框 <code data-page-node-id="XRaquRyxJ37M9FD0j36JI5">#F2EDDF</code>，全部是"纸"的不同明度。</p>
+    </div>
+    <div class="note" data-page-node-id="B5l7GCOPUW9Q05b57oA7wj">
+      <h3 data-page-node-id="Kf1CpIJaC3GhEn0ScxwVlv"><em data-page-node-id="mIOiy8QwSUG1H3H8qzU4F6">A</em>阴影只留给主角</h3>
+      <p data-page-node-id="q8WA20qmhD6D5lmBNCx6sj">条卡全部去阴影，改用 <code data-page-node-id="tMq52mDyP5pQcjPVihnNwr">0.5px rgba(36,52,71,.06)</code> 极浅描边区分边界。只有今日一诗保留一层 <code data-page-node-id="FZEKPUc8AO2GrBPaDGS7mn">0 10px 26px</code> 柔光投影——它本来就是主角，全页唯一有"浮起感"的元素。</p>
+    </div>
+    <div class="note" data-page-node-id="tVKcJqq3N8MmJVAyv37Zld">
+      <h3 data-page-node-id="1wpZFt4XCVmy9yQmREkcnK"><em data-page-node-id="HSPo4IDowVfNbdkxYUrCvN">B</em>月亮换成描边装饰</h3>
+      <p data-page-node-id="6Nj9OKHeLKXEQzyL49kr5w">删掉右上角 88rpx 实心金色圆，换成卷轴线稿（<code data-page-node-id="BNFR41rMBPi4xmSgJs3qzS">#D5E4DC</code>，60% 不透明）。符合「描边是系统」铁律，也让被遮挡的诗句区域完整让出来。</p>
+    </div>
+    <div class="note" data-page-node-id="5Nkkfw1zfZNLOnMtkE4I6z">
+      <h3 data-page-node-id="U1AgPCP33QQt4OprKqD0qq"><em data-page-node-id="OOCGmOcO8KGK2WUYj9qrKe">B</em>诗句标点修正</h3>
+      <p data-page-node-id="ChjrfVlqvUinUIlcKcUOHT">原文渲染出 <code data-page-node-id="NGms5IYYTGpUriLaRBH6V8">。。</code> 双句号，因为模板里写死了 <code data-page-node-id="FiTC3Saz6yBKQHrZ9Ouxau">。</code> 而数据里已带标点。改图里已修正为单句号，代码需同步改 <code data-page-node-id="MOP5J9QuPk6sF2zDoGeIAg">home.wxml</code> 第 15、16 行。</p>
+    </div>
+    <div class="note" data-page-node-id="q2alq2AUrIP1yaAS8Cj0s4">
+      <h3 data-page-node-id="5IsnlbwLgl5J4HGXOsdEw8"><em data-page-node-id="y5PwFODISTqvK9vKxkU0SB">C</em>朱砂方块换成图标</h3>
+      <p data-page-node-id="jREm4SzhAb9GyZ4vuitpBO">继续学习左侧那个朱砂小方块原本放的是诗名首字「静」，容易被误读成印章。改成描边书卷图标 + 浅底圆槽，右侧箭头也从实心深色改为浅底，整条卡的"点击感"更轻。</p>
+    </div>
+    <div class="note" data-page-node-id="GXVTuwqBQBDQaLPQ25wvEa">
+      <h3 data-page-node-id="d1b1a1GiKCvnKPkv76GeGB"><em data-page-node-id="6FN45EcFWn3XwuAjwL81lb">C</em>播放量降噪</h3>
+      <p data-page-node-id="rTLwrMEHAFyBgUI0CQvhHt"><code data-page-node-id="pAGgVPn1DKBUTAi7Rp1zMl">1.2万</code> 的朱砂红心是页面第二个红色焦点，和「0%」「今日一诗」抢注意力。改为灰色描边播放图标 + 「次播放」文案，红色只保留给真正的强调项。</p>
+    </div>
+    <div class="note" data-page-node-id="bw2ARKU4FVtKz0nG1CesX1">
+      <h3 data-page-node-id="lj8o4GcgTZ9AYs5TcidM8B"><em data-page-node-id="ZmpCOLI2V5Bs5hZDTuLI7x">D</em>四宫格图标收敛</h3>
+      <p data-page-node-id="lfQYetDonFy2vDaKSLQe9T">原来四个图标四种颜色（蓝/棕/绿/紫），与学习页三色图标体系打架。收敛为三个墨蓝 + 一个藤黄，仅「学习计划」保留强调色做区分。</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

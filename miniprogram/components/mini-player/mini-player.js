@@ -373,8 +373,10 @@ Component({
         .select('.mp-prog-wrap')
         .boundingClientRect(function (rect) {
           if (!rect || !rect.width) return;
+          // ⚠️ e.detail.x 是页面坐标，必须减去进度条左边缘，否则点击位置整体偏移
+          // （面板有内边距，偏移能有 5% 上下 —— 听感就是「跳到了别处」）。
           const x = (e.detail && e.detail.x) || 0;
-          const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+          const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
           that.player.seek(pct);
         })
         .exec();

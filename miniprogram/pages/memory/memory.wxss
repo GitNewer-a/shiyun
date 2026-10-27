@@ -1,0 +1,346 @@
+/* 记忆训练 · 入口页
+   配色严格走全站宣纸系令牌，不在本文件引入任何独立色板。
+   圆角两档：卡片 --r-md(32rpx)，圆槽/小块 20rpx。
+   —— 全局零字符符号铁律：不用 ✓ ✕ › 等字符做图标，箭头一律引 SVG。 */
+
+.mem-page { position: relative; min-height: 100vh; padding: 20rpx 40rpx 188rpx; background: var(--paper); overflow: hidden; }
+
+/* ---------- 掌握概况 ---------- */
+.mem-hero { position: relative; z-index: 1; display: flex; align-items: center; gap: 22rpx; margin-top: 20rpx; padding: 26rpx 28rpx; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.mem-ring { display: flex; align-items: center; justify-content: center; width: 108rpx; height: 108rpx; flex: none; border-radius: 50%; }
+.mem-ring-inner { display: flex; align-items: center; justify-content: center; width: 82rpx; height: 82rpx; border-radius: 50%; background: var(--paper-card); }
+.mem-ring-pct { font-family: "Noto Serif SC", "Songti SC", serif; font-size: 26rpx; font-weight: bold; color: var(--ink); }
+.mem-hero-body { flex: 1; min-width: 0; }
+.mem-hero-title { display: block; color: var(--ink); font-size: 26rpx; font-weight: bold; }
+.mem-hero-sub { display: block; margin-top: 8rpx; color: var(--ink-3); font-size: 20rpx; line-height: 1.5; }
+.mem-hero-right { flex: none; text-align: right; }
+.mem-streak-num { display: block; font-family: "Noto Serif SC", "Songti SC", serif; color: var(--cinnabar); font-size: 38rpx; font-weight: bold; line-height: 1.1; }
+.mem-streak-label { display: block; margin-top: 2rpx; color: var(--ink-3); font-size: 18rpx; }
+
+/* ---------- 区块标题 ---------- */
+.sec-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 82rpx; padding: 20rpx 2rpx 0; box-sizing: border-box; }
+/* 「最近练习 / 全部」这一行左右分布，右侧留出点击区 */
+.sec-head--row { padding-right: 0; }
+.sec-title { color: var(--ink); font-size: 32rpx; font-weight: bold; }
+.sec-more { color: var(--ink-3); font-size: 22rpx; padding: 8rpx 0 8rpx 16rpx; }
+
+/* ---------- 题型卡 ---------- */
+.type-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 16rpx; }
+.type-card { position: relative; padding: 26rpx 24rpx 22rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.type-go { position: absolute; top: 22rpx; right: 22rpx; display: flex; align-items: center; justify-content: center; width: 42rpx; height: 42rpx; border-radius: 21rpx; background: rgba(36, 52, 71, .05); }
+.type-go image { width: 22rpx; height: 22rpx; }
+.type-ico { display: flex; align-items: center; justify-content: center; width: 68rpx; height: 68rpx; border-radius: 20rpx; }
+.type-ico image { width: 38rpx; height: 38rpx; }
+.type-name { display: block; margin-top: 16rpx; color: var(--ink); font-size: 26rpx; font-weight: bold; }
+.type-desc { display: block; margin-top: 6rpx; color: var(--ink-3); font-size: 20rpx; line-height: 1.55; min-height: 62rpx; }
+.type-stat { display: flex; align-items: center; gap: 8rpx; margin-top: 10rpx; }
+.type-done { color: var(--cinnabar); font-size: 20rpx; font-weight: bold; }
+.type-total { color: var(--ink-3); font-size: 20rpx; }
+.type-bar { flex: 1; height: 6rpx; margin-left: 4rpx; overflow: hidden; border-radius: 6rpx; background: #ece6d9; }
+.type-bar-fill { height: 100%; background: var(--cinnabar); }
+
+/* ---------- 继续上次 ---------- */
+.resume { position: relative; z-index: 1; display: flex; align-items: center; gap: 20rpx; padding: 24rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.resume-cover { display: flex; align-items: center; justify-content: center; width: 76rpx; height: 88rpx; flex: none; border-radius: 20rpx; background: #f3ece0; border: 1rpx solid var(--line-faint); }
+.resume-cover image { width: 40rpx; height: 40rpx; }
+.resume-body { flex: 1; min-width: 0; }
+.resume-sub { display: block; color: var(--ink-3); font-size: 20rpx; }
+.resume-title { display: block; margin-top: 2rpx; color: var(--ink); font-size: 28rpx; font-weight: bold; }
+.resume-bar { height: 6rpx; margin-top: 12rpx; overflow: hidden; border-radius: 6rpx; background: #ece6d9; }
+.resume-bar-fill { height: 100%; background: var(--cinnabar); }
+.resume-btn { flex: none; padding: 0 24rpx; height: 56rpx; border-radius: 28rpx; background: var(--ink); color: var(--paper); font-size: 22rpx; line-height: 56rpx; }
+
+/* ---------- 最近练习 ---------- */
+.rec-item { position: relative; z-index: 1; display: flex; align-items: center; gap: 16rpx; margin-bottom: 16rpx; padding: 20rpx 24rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.rec-body { flex: 1; min-width: 0; }
+.rec-title-row { display: flex; align-items: baseline; gap: 8rpx; }
+.rec-title { color: var(--ink); font-size: 26rpx; font-weight: bold; }
+.rec-author { color: var(--ink-3); font-size: 20rpx; }
+.rec-chip { display: inline-block; margin-top: 8rpx; padding: 2rpx 12rpx; border-radius: 999rpx; font-size: 18rpx; }
+.rec-chip.is-write { background: #f0e6e4; color: #a06050; }
+.rec-chip.is-blank { background: #e8eef2; color: #3d5a73; }
+.rec-acc { flex: none; text-align: right; }
+.rec-acc-num { display: block; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 32rpx; font-weight: bold; line-height: 1.1; }
+.rec-acc-num.is-hi { color: var(--bamboo); }
+.rec-acc-num.is-mid { color: var(--gold); }
+.rec-acc-label { display: block; margin-top: 2rpx; color: var(--ink-3); font-size: 18rpx; }
+
+.mem-empty { position: relative; z-index: 1; padding: 40rpx 24rpx; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); text-align: center; }
+.mem-empty-text { color: var(--ink-3); font-size: 22rpx; }
+
+/* ================= 选诗面板 ================= */
+
+/* 遮罩：层级低于面板，高于页面。用 wx:if 控制存在性 */
+.pk-mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 9990;
+  background: rgba(36, 52, 71, .32);
+}
+
+/* 面板：未展开时整体推到视口外。用倍率而非 calc，与 bottom 偏移量解耦。
+   visibility 一并切换 —— 只靠 transform 时，面板虽在屏外却仍可被读屏软件和
+   部分机型的手指命中测试到，收起态必须是「真正不存在」。 */
+.pk-sheet {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: 0;
+  z-index: 9999;
+  max-width: 760rpx;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 16rpx 0 0;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--paper-card);
+  transform: translateY(160%);
+  visibility: hidden;
+  transition: transform .34s cubic-bezier(.22, .61, .36, 1), visibility 0s linear .34s;
+  /* 底部让位由 JS 量屏后内联给（px 单位，见 memory.js:measureSheet）：
+     tabBar 是固定的 50px，rpx 却随屏宽缩放，写 rpx 在大屏上会盖不住、小屏上会空一大块。
+     这里只留兜底值，真机一律以内联 padding-bottom 为准。 */
+  padding-bottom: 100px;
+}
+
+.pk-sheet.is-open {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform .34s cubic-bezier(.22, .61, .36, 1), visibility 0s linear 0s;
+}
+
+.pk-grip {
+  width: 64rpx; height: 6rpx;
+  margin: 0 auto 16rpx;
+  border-radius: 3rpx;
+  background: var(--paper-sunken);
+}
+
+.pk-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 32rpx;
+}
+
+.pk-head-left { flex: 1; min-width: 0; }
+
+.pk-title {
+  display: block;
+  color: var(--ink);
+  font-size: 30rpx;
+  font-weight: bold;
+  letter-spacing: .04em;
+}
+
+.pk-sub {
+  display: block;
+  margin-top: 6rpx;
+  color: var(--ink-3);
+  font-size: 20rpx;
+}
+
+/* 关闭按钮：两根斜条拼成 ✕，不用字符 */
+.pk-close {
+  position: relative;
+  flex: none;
+  width: 56rpx; height: 56rpx;
+  margin: -8rpx -8rpx 0 0;
+  border-radius: 28rpx;
+  background: rgba(36, 52, 71, .05);
+}
+
+.pk-close-bar {
+  position: absolute;
+  left: 18rpx; top: 27rpx;
+  width: 20rpx; height: 2rpx;
+  border-radius: 1rpx;
+  background: var(--ink-2);
+}
+
+.pk-close-bar.a { transform: rotate(45deg); }
+.pk-close-bar.b { transform: rotate(-45deg); }
+
+/* 筛选片 */
+.pk-filters {
+  width: 100%;
+  margin-top: 20rpx;
+  white-space: nowrap;
+}
+
+.pk-filter-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 0 32rpx 4rpx;
+}
+
+.pk-filter {
+  flex: none;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--paper-sunken);
+  color: var(--ink-2);
+  font-size: 22rpx;
+  line-height: 1.2;
+  transition: background .16s ease, color .16s ease;
+}
+
+.pk-filter.is-active {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: bold;
+}
+
+/* 建议条 */
+.pk-tip {
+  margin: 16rpx 32rpx 0;
+  padding: 14rpx 20rpx;
+  border-radius: 16rpx;
+  background: var(--paper-sunken);
+}
+
+/* 矮屏（横屏/分屏）：折叠建议条，把高度让给列表 */
+.pk-tip.is-tight {
+  display: none;
+}
+
+.pk-tip-text {
+  color: var(--ink-2);
+  font-size: 20rpx;
+  line-height: 1.6;
+}
+
+/* 列表：高度由 JS 按屏高内联给（listStyle，px 单位），这里只给兜底值 */
+.pk-list {
+  height: 260px;
+  margin-top: 16rpx;
+  padding: 0 32rpx;
+  box-sizing: border-box;
+}
+
+.pk-item {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 12rpx;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  border: 1rpx solid var(--line-faint);
+}
+
+/* 排序第一的那张给朱砂描边，告诉用户「从这首开始」 */
+.pk-item.is-first {
+  background: var(--paper-card);
+  border-color: rgba(201, 74, 74, .24);
+}
+
+.pk-item.is-met {
+  opacity: .72;
+}
+
+/* 左侧徽章：新 / 分数 */
+.pk-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background: var(--paper-sunken);
+  color: var(--ink-2);
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 22rpx;
+  font-weight: bold;
+}
+
+.pk-badge.is-new {
+  background: rgba(201, 74, 74, .10);
+  color: var(--cinnabar);
+  font-family: inherit;
+  font-size: 20rpx;
+  font-weight: normal;
+}
+
+.pk-body { flex: 1; min-width: 0; }
+
+.pk-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.pk-name {
+  color: var(--ink);
+  font-size: 26rpx;
+  font-weight: bold;
+  letter-spacing: .06em;
+}
+
+.pk-resume {
+  padding: 1rpx 10rpx;
+  border-radius: 999rpx;
+  background: rgba(201, 151, 90, .14);
+  color: var(--gold);
+  font-size: 17rpx;
+}
+
+.pk-meta {
+  display: block;
+  margin-top: 4rpx;
+  color: var(--ink-3);
+  font-size: 19rpx;
+  line-height: 1.4;
+}
+
+.pk-bar {
+  height: 4rpx;
+  margin-top: 8rpx;
+  overflow: hidden;
+  border-radius: 4rpx;
+  background: var(--paper-sunken);
+}
+
+.pk-bar-fill {
+  height: 100%;
+  border-radius: 4rpx;
+}
+
+/* 分数语气色与判定态圆环同源：竹青=过关、藤黄=半通、朱砂=生疏 */
+.pk-bar-fill.tone-hi { background: var(--bamboo); }
+.pk-bar-fill.tone-mid { background: var(--gold); }
+.pk-bar-fill.tone-low { background: var(--cinnabar); }
+
+.pk-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 72rpx;
+  height: 48rpx;
+  padding: 0 16rpx;
+  border-radius: 24rpx;
+  color: var(--cinnabar);
+  font-size: 20rpx;
+}
+
+.pk-go image { width: 20rpx; height: 20rpx; }
+
+.pk-empty {
+  padding: 80rpx 0;
+  text-align: center;
+}
+
+.pk-empty-text { display: block; color: var(--ink-3); font-size: 24rpx; }
+.pk-empty-sub { display: block; margin-top: 8rpx; color: var(--ink-4); font-size: 20rpx; }
+
+.pk-foot-pad { height: 40rpx; }
+
+.bottom-pad { height: 120rpx; }
+
+.is-hover { opacity: .62; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pk-sheet { transition: none; }
+}

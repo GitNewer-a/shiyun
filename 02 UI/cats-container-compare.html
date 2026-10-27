@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>四宫格 · 图标容器取舍</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { padding: 44px 40px 72px; background: #efeae0; font-family: "Noto Sans SC", sans-serif; color: #243447; }
+  h1 { font-size: 21px; margin-bottom: 8px; letter-spacing: .3px; }
+  p.desc { font-size: 13px; color: #7a7568; margin-bottom: 32px; max-width: 760px; line-height: 1.75; }
+
+  .stage { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+
+  /* 手机条带：只截取四宫格区域，不做整屏 */
+  .strip {
+    width: 393px; padding: 26px 21px 30px;
+    background: #f8f4ea; border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(60,52,36,.12);
+  }
+  .strip .label { font-size: 11px; font-weight: 700; letter-spacing: .4px; margin-bottom: 4px; }
+  .strip .label .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10px; margin-left: 6px; }
+  .badge.a { background: #c94a4a; color: #fff8ec; }
+  .badge.b { background: #c9975a; color: #fff8ec; }
+  .badge.c { background: #6b7a4a; color: #fff8ec; }
+  .strip .note { font-size: 11px; color: #8b8577; margin-bottom: 16px; line-height: 1.5; }
+
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cat { display: flex; flex-direction: column; align-items: center; height: 85px; padding: 12px 4px 9px; border-radius: 15px; background: #fffdf8; border: .5px solid rgba(36,52,71,.06); }
+  .mark { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 10px; background: #e6ecf1; }
+  .mark.accent { background: #f1e6d8; }
+  .mark svg { width: 19px; height: 19px; }
+  .name { margin-top: 6px; font-size: 11.5px; font-weight: 500; }
+
+  /* 方案A：保留容器框（现状） */
+
+  /* 方案B：去掉图标容器，图标直接落卡上 */
+  .b .mark { width: 38px; height: 38px; border-radius: 0; background: transparent; }
+  .b .mark svg { width: 27px; height: 27px; }
+  .b .name { margin-top: 8px; }
+
+  /* 方案C：无卡、无容器，纯图标+文字 */
+  .c .cat { background: transparent; border: none; }
+  .c .mark { width: 42px; height: 42px; border-radius: 0; background: transparent; }
+  .c .mark svg { width: 30px; height: 30px; }
+  .c .name { margin-top: 8px; }
+
+  /* 对比表 */
+  table { border-collapse: collapse; margin-top: 44px; font-size: 12.5px; width: 100%; max-width: 900px; background: #fbf8f0; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid rgba(36,52,71,.07); }
+  th { font-weight: 700; font-size: 12px; background: #f2ede1; }
+  td:first-child { font-weight: 500; color: #6e6a5e; width: 120px; }
+  tr:last-child td { border-bottom: none; }
+  .good { color: #4f7a5d; font-weight: 500; }
+  .bad { color: #a93c3c; font-weight: 500; }
+
+  .verdict { margin-top: 32px; max-width: 900px; padding: 20px 24px; border-radius: 14px; background: #fbf8f0; border-left: 3px solid #c94a4a; }
+  .verdict h3 { font-size: 13px; margin-bottom: 8px; }
+  .verdict p { font-size: 12.5px; line-height: 1.85; color: #6e6a5e; }
+</style>
+</head>
+<body>
+
+<h1>四宫格：图标容器要不要留</h1>
+<p class="desc">三种做法并排对比。判断依据不是「哪个更好看」，而是这一行入口在首页里的**权重**——它们是主入口还是次级入口，决定了该用多重的视觉。</p>
+
+<div class="stage">
+
+  <!-- A -->
+  <div class="strip">
+    <div class="label">A · 保留容器框<span class="badge a">现状</span></div>
+    <div class="note">色块底 + 36px 卡片，两层容器</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="strip b">
+    <div class="label">B · 只去图标底<span class="badge b">推荐</span></div>
+    <div class="note">卡片保留，图标放大直接落在卡上</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="strip c">
+    <div class="label">C · 卡和底都去<span class="badge c">激进</span></div>
+    <div class="note">纯图标 + 文字，靠留白分组</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+</div>
+
+<table>
+  <tr><th>维度</th><th>A 保留容器框（现状）</th><th>B 只去图标底</th><th>C 卡和底都去</th></tr>
+  <tr><td>视觉层级</td><td>两层容器（卡 + 色块），入口分量最重</td><td class="good">一层容器（卡），图标自己说话</td><td>零容器，最轻，靠留白</td></tr>
+  <tr><td>与全站铁律</td><td class="bad">与「描边是系统、印章是内容」冲突：色块底已在逼近"印章"语感</td><td class="good">纯描边，最贴铁律</td><td class="good">纯描边</td></tr>
+  <tr><td>点击热区</td><td>卡 162rpx 高，明确</td><td class="good">卡 162rpx 高，明确</td><td class="bad">无卡边界，热区靠猜，易点空</td></tr>
+  <tr><td>图标辨识度</td><td class="bad">36rpx 小图标塞在 72rpx 色块里，实际视觉太小</td><td class="good">图标可放大到 54rpx，线条更清楚</td><td class="good">最大，60rpx</td></tr>
+  <tr><td>和下方条卡的关系</td><td class="bad">四宫格靠色块抢眼，压过「继续学习」</td><td class="good">与条卡同为「卡片纸」材质，层级顺</td><td>四宫格失去卡片感，与条卡脱节</td></tr>
+  <tr><td>改动成本</td><td>—</td><td class="good">改 3 行 CSS</td><td>需重排留白节奏</td></tr>
+</table>
+
+<div class="verdict">
+  <h3>我的判断：选 B</h3>
+  <p>四宫格是**功能入口**，不是内容展示位，它需要「可点」的边界感（所以卡片该留），但不需要在卡片里再嵌一个色块——那层色块既缩小了图标的实际视觉面积，又让「学习计划」的藤黄沦为一个孤零零的色点。<br>
+  去掉图标底之后，四个图标统一用墨蓝描边直接落在浅卡上，图标本身可以放大到 54rpx 左右，辨识度反而提升；同时四宫格与下方「继续学习」「标准朗读」同为「卡片纸 + 极浅描边」的材质，页面层级就彻底统一了。<br>
+  C 的问题在于失去了点击热区边界，四宫格会退化成一行"标签"，反而不像入口。</p>
+</div>
+
+</body>
+</html>

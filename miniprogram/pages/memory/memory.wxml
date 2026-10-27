@@ -1,0 +1,164 @@
+<view class="mem-page">
+  <view class="paper-grain" />
+
+  <!-- 掌握概况 -->
+  <view class="mem-hero">
+    <view class="mem-ring" style="{{ringStyle}}">
+      <view class="mem-ring-inner"><text class="mem-ring-pct">{{percent}}%</text></view>
+    </view>
+    <view class="mem-hero-body">
+      <text class="mem-hero-title">已掌握 {{mastered}} / {{total}} 首</text>
+      <text class="mem-hero-sub">距「{{nextLevel}}」还需掌握 {{remain}} 首</text>
+    </view>
+    <view class="mem-hero-right">
+      <text class="mem-streak-num">{{streak}}</text>
+      <text class="mem-streak-label">天连续</text>
+    </view>
+  </view>
+
+  <!-- 训练方式：点了先选诗，不直接进答题 -->
+  <view class="sec-head"><text class="sec-title serif">选择训练方式</text></view>
+  <view class="type-grid">
+    <view
+      class="type-card"
+      wx:for="{{types}}"
+      wx:key="id"
+      data-type="{{item.id}}"
+      bindtap="openPicker"
+      aria-label="{{item.name}}，已完成 {{item.done}} 首，点击选择要练的诗"
+    >
+      <view class="type-go"><image src="/assets/memory/ic-arrow.svg" mode="aspectFit" /></view>
+      <view class="type-ico" style="background:{{item.bg}}"><image src="{{item.icon}}" mode="aspectFit" /></view>
+      <text class="type-name">{{item.name}}</text>
+      <text class="type-desc">{{item.desc}}</text>
+      <view class="type-stat">
+        <text class="type-done">{{item.done}}</text><text class="type-total">/{{item.total}}</text>
+        <view class="type-bar"><view class="type-bar-fill" style="width:{{item.percent}}%" /></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 继续上次 -->
+  <block wx:if="{{resume}}">
+    <view class="sec-head"><text class="sec-title serif">继续上次</text></view>
+    <view class="resume" bindtap="goResume" aria-label="继续 {{resume.title}} 的{{resume.typeName}}">
+      <view class="resume-cover"><image src="/assets/memory/ic-scroll.svg" mode="aspectFit" /></view>
+      <view class="resume-body">
+        <text class="resume-sub">{{resume.author}} · {{resume.dynasty}} · {{resume.typeName}}</text>
+        <text class="resume-title serif">{{resume.title}}</text>
+        <view class="resume-bar"><view class="resume-bar-fill" style="width:{{resume.percent}}%" /></view>
+      </view>
+      <view class="resume-btn">{{resume.resumeText}}</view>
+    </view>
+  </block>
+
+  <!-- 最近练习 -->
+  <view class="sec-head sec-head--row">
+    <text class="sec-title serif">最近练习</text>
+    <text class="sec-more" bindtap="goAll">全部 ›</text>
+  </view>
+
+  <view class="mem-empty" wx:if="{{recent.length === 0}}">
+    <text class="mem-empty-text">还没有练习记录，选一种方式开始吧</text>
+  </view>
+
+  <view
+    class="rec-item"
+    wx:for="{{recent}}"
+    wx:key="key"
+    data-id="{{item.poemId}}"
+    data-type="{{item.type}}"
+    bindtap="goRecent"
+  >
+    <view class="rec-body">
+      <view class="rec-title-row">
+        <text class="rec-title serif">{{item.title}}</text>
+        <text class="rec-author">{{item.author}}</text>
+      </view>
+      <view class="rec-chip {{item.type === 'blank' ? 'is-blank' : 'is-write'}}">{{item.typeName}}</view>
+    </view>
+    <view class="rec-acc">
+      <text class="rec-acc-num {{item.score >= 80 ? 'is-hi' : 'is-mid'}}">{{item.score}}</text>
+      <text class="rec-acc-label">正确率 %</text>
+    </view>
+  </view>
+
+  <view class="bottom-pad" />
+</view>
+
+<!-- ================= 选诗面板 =================
+     遮罩用 wx:if 而非 pointer-events：收起时它压根不存在，不可能拦截点击。
+     点遮罩关闭 → 面板本体 catchtap 阻断冒泡（防点列表时误关）。
+     遮罩 catchtouchmove 阻止背景滚动穿透。
+     sheetStyle 的 padding-bottom 由 JS 量屏给出：原生 tabBar 高度机型间不同，
+     写死 rpx 会导致「有的机型压住、有的机型空一大块」。 -->
+<view wx:if="{{pickerOpen}}" class="pk-mask" bindtap="closePicker" catchtouchmove="noop" aria-label="关闭选诗面板" />
+
+<view class="pk-sheet {{pickerOpen ? 'is-open' : ''}}" style="{{sheetStyle}}" catchtap="noop">
+  <view class="pk-grip" />
+  <view class="pk-head">
+    <view class="pk-head-left">
+      <text class="pk-title">选一首练「{{pickerTypeName}}」</text>
+      <text class="pk-sub">{{pickerDoneCount}} / {{total}} 首已掌握</text>
+    </view>
+    <view class="pk-close" bindtap="closePicker" hover-class="is-hover" aria-label="关闭">
+      <view class="pk-close-bar a" /><view class="pk-close-bar b" />
+    </view>
+  </view>
+
+  <scroll-view class="pk-filters" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="pk-filter-wrap">
+      <view
+        wx:for="{{filters}}"
+        wx:key="id"
+        class="pk-filter {{activeFilter === item.id ? 'is-active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onFilter"
+      >{{item.name}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="pk-tip {{tight ? 'is-tight' : ''}}" wx:if="{{pickerTip}}">
+    <text class="pk-tip-text">{{pickerTip}}</text>
+  </view>
+
+  <scroll-view class="pk-list" style="{{listStyle}}" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="pk-empty" wx:if="{{pickerList.length === 0}}">
+      <text class="pk-empty-text">这一栏还没有诗</text>
+      <text class="pk-empty-sub">换个筛选条件看看</text>
+    </view>
+
+    <view
+      class="pk-item {{item.first ? 'is-first' : ''}} {{item.met ? 'is-met' : ''}}"
+      wx:for="{{pickerList}}"
+      wx:key="key"
+      data-id="{{item.id}}"
+      bindtap="pickPoem"
+      hover-class="is-hover"
+      aria-label="{{item.title}}，{{item.isNew ? '未练习' : '上次 ' + item.score + ' 分'}}"
+    >
+      <view class="pk-badge {{item.isNew ? 'is-new' : ''}}">
+        <text wx:if="{{item.isNew}}">新</text>
+        <text wx:else>{{item.score}}</text>
+      </view>
+      <view class="pk-body">
+        <view class="pk-title-row">
+          <text class="pk-name serif">{{item.title}}</text>
+          <text class="pk-resume" wx:if="{{item.isResume}}">未完成</text>
+        </view>
+        <text class="pk-meta">{{item.author}} · {{item.dynasty}} · {{item.lineCount}} 句 · {{item.isNew ? '未练习' : (item.met ? '已掌握' : '上次 ' + item.score + ' 分')}}</text>
+        <view class="pk-bar" wx:if="{{!item.isNew}}">
+          <view class="pk-bar-fill tone-{{item.tone}}" style="width:{{item.score}}%" />
+        </view>
+      </view>
+      <view class="pk-go">
+        <text wx:if="{{item.isNew}}">开始</text>
+        <image wx:else src="/assets/memory/ic-arrow.svg" mode="aspectFit" />
+      </view>
+    </view>
+
+    <view class="pk-foot-pad" />
+  </scroll-view>
+</view>
+
+<mini-player has-tab-bar />

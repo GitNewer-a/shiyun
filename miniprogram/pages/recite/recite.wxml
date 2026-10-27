@@ -1,72 +1,55 @@
-<view class="mem-page">
-  <!-- 页面介绍 -->
-  <view class="intro">
-    <text class="intro-title">一首诗，一段记忆</text>
-    <text class="intro-sub">让诗词走进你的心里</text>
+<!-- 记忆训练 · 作答页（2026-10-19 重构：方案B 改良答题页 + 方案C 判定态）
+     配色走全站宣纸系令牌；图标一律 <image> 引描边 SVG，全页零字符符号。
+     判定态不用遮罩弹层，而是把「答卷」整块换成「判卷结果」——用户仍在自己写的那张纸上。
+     对齐由 utils/judge.js 的全局序列对齐负责，输入框不需要按句排版，
+     用户随手写、随便换行都能正确判卷（漏一个字只报那一处，不会向后连坐）。 -->
+<view class="rec-page">
+  <!-- 顶部细进度条：填空模式下反馈已填比例 -->
+  <view class="rec-progress" wx:if="{{activeMode === 'blank'}}">
+    <view class="rec-progress-fill" style="width:{{blankPercent}}%" />
   </view>
 
-  <!-- 训练方式 Tab -->
-  <scroll-view class="mode-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
-    <view class="mode-tabs">
-      <view
-        wx:for="{{modes}}"
-        wx:key="id"
-        class="mode-tab {{activeMode === item.id ? 'is-active' : ''}}"
-        data-id="{{item.id}}"
-        bindtap="onSwitchMode"
-      >
-        <text>{{item.name}}</text>
+  <view class="rec-head">
+    <view class="head-tools">
+      <view class="mode-tabs">
+        <view
+          wx:for="{{modes}}"
+          wx:key="id"
+          class="mode-tab {{activeMode === item.id ? 'is-active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSwitchMode"
+        >{{item.name}}</view>
       </view>
-    </view>
-  </scroll-view>
-
-  <!-- 核心训练卡片 -->
-  <view class="train-card {{fadeClass}}">
-    <view class="card-top">
-      <view class="card-tag">
-        <text>{{poem.genre || '唐诗'}} · {{themeTag}}</text>
-      </view>
-      <view class="hint-btn" bindtap="onShowHint" hover-class="hint-btn--hover">
+      <view class="hint-btn" bindtap="onShowHint" hover-class="is-hover" aria-label="查看提示">
+        <image class="hint-ico" src="/assets/memory/ic-hint.svg" mode="aspectFit" />
         <text class="hint-label">提示</text>
-        <view class="bulb-ico">
-          <view class="bulb-head" />
-          <view class="bulb-base" />
-        </view>
       </view>
     </view>
 
-    <view class="poem-head">
-      <text class="poem-title">{{poem.title}}</text>
-      <text class="poem-meta">{{poem.author}} · [{{poem.dynasty}}]</text>
-    </view>
+    <text class="rec-title serif">{{poem.title}}</text>
+    <text class="rec-meta">{{poem.author}} · [{{poem.dynasty}}] · {{themeTag}}</text>
+  </view>
 
-    <view class="guide-row">
-      <text class="guide-pen">✎</text>
-      <text class="guide-text">{{guideText}}</text>
-    </view>
+  <!-- ============ 作答态 ============ -->
+  <block wx:if="{{!showResult}}">
+    <view class="paper">
+      <!-- 全文默写：按原句排版，视觉上分行，逻辑上是一个连续的文本流 -->
+      <textarea
+        wx:if="{{activeMode === 'write'}}"
+        class="paper-input"
+        value="{{writeText}}"
+        maxlength="{{writeLimit}}"
+        placeholder="凭记忆写下整首，不必打标点"
+        placeholder-class="paper-ph"
+        adjust-position
+        show-confirm-bar="{{false}}"
+        bindinput="onWriteInput"
+      />
 
-    <!-- ===== 全文默写 ===== -->
-    <block wx:if="{{activeMode === 'write'}}">
-      <view class="paper">
-        <view class="paper-lines" />
-        <textarea
-          class="paper-input"
-          value="{{writeText}}"
-          maxlength="400"
-          placeholder="请输入诗的全文，每行限20字..."
-          placeholder-class="paper-ph"
-          adjust-position
-          show-confirm-bar="{{false}}"
-          bindinput="onWriteInput"
-        />
-      </view>
-    </block>
-
-    <!-- ===== 填空默写 ===== -->
-    <block wx:elif="{{activeMode === 'blank'}}">
-      <view class="blank-list">
+      <!-- 填空默写 -->
+      <view wx:else class="blank-list">
         <view class="blank-line" wx:for="{{blankLines}}" wx:key="index">
-          <text class="blank-idx">{{index + 1}}</text>
+          <text class="blank-no">{{index + 1}}</text>
           <view class="blank-body">
             <block wx:for="{{item.parts}}" wx:for-item="part" wx:for-index="pi" wx:key="pi">
               <text wx:if="{{part.type === 'text'}}" class="blank-char">{{part.value}}</text>
@@ -89,47 +72,90 @@
           </view>
         </view>
       </view>
-    </block>
+    </view>
 
-    <!-- CTA -->
+    <view class="guide">
+      <text class="guide-mark">·</text>
+      <text class="guide-text">{{guideText}}</text>
+    </view>
+
     <view class="cta-row">
-      <text class="cta-count">已默写 {{practiceCount}} 次</text>
-      <view class="cta-btn" bindtap="onStartTrain" hover-class="cta-btn--hover">
-        <text class="cta-pen">✎</text>
+      <text class="cta-count" wx:if="{{activeMode === 'blank'}}">{{blankFilled}} / {{blankTotal}} 空</text>
+      <text class="cta-count" wx:else>{{writeChars}} 字</text>
+      <view class="cta-btn" bindtap="onSubmit" hover-class="is-hover">
         <text class="cta-label">{{ctaLabel}}</text>
       </view>
     </view>
-  </view>
+  </block>
 
-  <!-- 最近练习 -->
-  <view class="recent-sec">
-    <view class="recent-head">
-      <text class="recent-title">最近练习</text>
-      <view class="recent-more" bindtap="onViewMore">
-        <text>查看更多</text>
-        <text class="recent-arrow">›</text>
-      </view>
-    </view>
-    <view
-      class="recent-item"
-      wx:for="{{recentList}}"
-      wx:key="id"
-      data-id="{{item.id}}"
-      bindtap="onOpenRecent"
-    >
-      <view class="recent-body">
-        <text class="recent-name">{{item.title}}</text>
-        <text class="recent-meta">{{item.author}} · [{{item.dynasty}}]</text>
-      </view>
-      <view class="recent-right">
-        <view class="done-badge">
-          <text class="done-check">✓</text>
-          <text class="done-text">已完成</text>
+  <!-- ============ 判定态 ============ -->
+  <block wx:else>
+    <view class="rs-card">
+      <view class="rs-top">
+        <view class="rs-ring" style="{{scoreStyle}}">
+          <view class="rs-ring-inner"><text class="rs-ring-num serif">{{result.score}}</text></view>
         </view>
-        <text class="acc-text">正确率 {{item.accuracy}}%</text>
+        <view class="rs-summary">
+          <text class="rs-verdict">{{verdict}}</text>
+          <text class="rs-count">写对 {{result.correct}} / {{result.total}} 字</text>
+          <text class="rs-tip">{{verdictTip}}</text>
+        </view>
+      </view>
+
+      <!-- 全文默写：逐字展开 -->
+      <view class="rs-lines" wx:if="{{resultMode === 'write'}}">
+        <view class="rs-line" wx:for="{{result.rows}}" wx:key="line">
+          <text
+            class="rs-ch {{c.state === 'ok' ? 'is-ok' : (c.state === 'bad' ? 'is-bad' : 'is-gap')}}"
+            wx:for="{{item.chars}}"
+            wx:for-item="c"
+            wx:for-index="ci"
+            wx:key="ci"
+          >{{c.state === 'bad' ? c.input : c.ch}}</text>
+        </view>
+      </view>
+
+      <!-- 填空默写：就地判色，只高亮空格 -->
+      <view class="rs-blank" wx:else>
+        <view class="rs-line" wx:for="{{result.rows}}" wx:key="line">
+          <block wx:for="{{item.parts}}" wx:for-item="part" wx:for-index="pi" wx:key="pi">
+            <text wx:if="{{part.type === 'text'}}" class="rs-ch is-ok">{{part.value}}</text>
+            <text wx:else class="rs-ch rs-ch--slot {{part.state === 'ok' ? 'is-ok' : (part.state === 'bad' ? 'is-bad' : 'is-gap')}}">{{part.state === 'gap' ? '空' : part.value}}</text>
+          </block>
+        </view>
+      </view>
+
+      <!-- 订正清单 -->
+      <view class="fix-sec" wx:if="{{result.fixes.length || wrongCount || missingCount}}">
+        <view class="fix-head">
+          <text class="fix-title">需要订正 {{result.fixes.length || (wrongCount + missingCount)}} 处</text>
+          <text class="fix-legend">{{wrongCount}} 笔误 · {{missingCount}} 漏写</text>
+        </view>
+        <block wx:if="{{resultMode === 'write'}}">
+          <view class="fix-item" wx:for="{{result.fixes}}" wx:key="index">
+            <text class="fix-where">第{{item.line}}句 第{{item.pos}}字</text>
+            <view class="fix-body">
+              <text class="fix-should serif">{{item.expect}}</text>
+              <text class="fix-arrow" wx:if="{{item.kind === 'wrong'}}">←</text>
+              <text class="fix-got is-bad" wx:if="{{item.kind === 'wrong'}}">{{item.got}}</text>
+              <text class="fix-tag is-gap" wx:else>漏写</text>
+            </view>
+          </view>
+        </block>
+        <view class="fix-item" wx:else>
+          <text class="fix-where">已在原文上就地标色</text>
+          <view class="fix-body">
+            <text class="fix-got is-bad">朱砂</text><text class="fix-where">为写错</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="rs-actions">
+        <view class="btn-ghost" bindtap="onRetry" hover-class="is-hover">再默一遍</view>
+        <view class="btn-solid" bindtap="onViewOriginal" hover-class="is-hover">看原文</view>
       </view>
     </view>
-  </view>
+  </block>
 
   <view class="bottom-pad" />
 </view>

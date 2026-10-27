@@ -87,8 +87,12 @@ Page({
   },
 
   goRecite(e) {
-    let type = e.currentTarget.dataset.type || 'write';
-    if (type !== 'write' && type !== 'blank') type = 'write';
+    // 未指定题型时进记忆训练入口页；指定了（点的是标签）就直接进对应题型
+    const type = e.currentTarget.dataset.type;
+    if (type !== 'write' && type !== 'blank') {
+      wx.navigateTo({ url: '/pages/memory/memory' });
+      return;
+    }
     wx.navigateTo({ url: '/pages/recite/recite?type=' + type });
   },
 

@@ -1,12 +1,114 @@
-/* 首页：按 Figma 节点 5:2（393 × 852）还原，保留项目设计令牌。 */
+/* 首页：按 Figma 节点 5:2（393 × 852）还原，保留项目设计令牌。
+   ------------------------------------------------------------------
+   卡片规格（2026-10-19 收敛，见 02 UI/home-card-redesign.html）
+   · 圆角只有两档：大卡 --r-lg(40rpx) / 条卡 --r-md(32rpx)
+   · 条卡一律「卡片纸底 + 极浅描边」，不再用阴影，也不再压下陷色
+   · 阴影只留给「今日一诗」，全页唯一有浮起感的元素
+   · 纸的三层明度：背景 paper → 卡片 paper-card → 搜索框 paper-sunken
+   ------------------------------------------------------------------ */
+
 .home { position: relative; min-height: 100vh; padding: 0 40rpx 188rpx; background: var(--paper); overflow: hidden; }
+
+/* ---------- 搜索 ---------- */
 .home-search { position: relative; z-index: 1; display: flex; align-items: center; box-sizing: border-box; height: 72rpx; margin-top: 20rpx; padding: 0 26rpx; border-radius: 24rpx; background: var(--paper-sunken); }
-.home-search-ico { width: 28rpx; height: 28rpx; margin-right: 14rpx; }.home-search-txt { color: #909594; font-size: 22rpx; }
-.daily { position: relative; z-index: 1; height: 406rpx; margin-top: 32rpx; overflow: hidden; border-radius: 42rpx; background: #243f4f; box-shadow: var(--sh-card); }
-.daily-moon { position: absolute; top: 92rpx; right: 86rpx; width: 88rpx; height: 88rpx; border-radius: 50%; background: rgba(225, 197, 143, .8); }
-.daily-hill { position: absolute; bottom: -156rpx; border-radius: 50% 50% 0 0; }.daily-hill--back { right: -98rpx; width: 520rpx; height: 322rpx; background: #57747a; transform: rotate(22deg); }.daily-hill--front { left: -96rpx; width: 500rpx; height: 294rpx; background: #355664; transform: rotate(-15deg); }
-.daily-body { position: relative; display: flex; flex-direction: column; padding: 38rpx 36rpx; }.daily-tag { width: 118rpx; height: 46rpx; color: #fff8ec; background: var(--cinnabar); font-size: 20rpx; letter-spacing: 2rpx; line-height: 46rpx; text-align: center; }.daily-author { margin-top: 20rpx; color: #c7d0cf; font-size: 20rpx; }.daily-title { margin-top: 6rpx; color: var(--paper); font-size: 44rpx; font-weight: bold; letter-spacing: 6rpx; line-height: 1.25; }.daily-lines { margin-top: 14rpx; }.daily-line { display: block; color: var(--paper); font-size: 26rpx; line-height: 1.7; }.daily-cta { display: flex; align-self: flex-start; align-items: center; gap: 16rpx; height: 58rpx; margin-top: 12rpx; padding: 0 26rpx; border-radius: 30rpx; background: var(--paper); color: var(--ink); font-size: 22rpx; }.daily-cta-ico { width: 24rpx; height: 24rpx; }
-.cats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx; margin-top: 28rpx; }.cat { display: flex; flex-direction: column; align-items: center; height: 162rpx; padding: 24rpx 8rpx 18rpx; box-sizing: border-box; border-radius: 28rpx; background: var(--paper-card); box-shadow: 0 8rpx 10rpx rgba(70, 65, 51, .06); }.cat-mark { display: flex; align-items: center; justify-content: center; width: 72rpx; height: 72rpx; border-radius: 20rpx; }.cat-ico { width: 36rpx; height: 36rpx; }.cat-name { margin-top: 12rpx; color: var(--ink); font-size: 22rpx; font-weight: 500; white-space: nowrap; }
-.home-section-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 82rpx; padding: 20rpx 2rpx 0; box-sizing: border-box; }.home-section-title { color: #1a2520; font-size: 34rpx; font-weight: bold; }
-.resume { position: relative; z-index: 1; display: flex; align-items: center; gap: 22rpx; box-sizing: border-box; min-height: 126rpx; padding: 24rpx; border-radius: 32rpx; background: var(--paper-sunken); }.resume-cover { display: flex; align-items: center; justify-content: center; width: 72rpx; height: 84rpx; flex: none; background: var(--cinnabar); color: #fff9ed; font-size: 32rpx; }.resume-main { flex: 1; min-width: 0; }.resume-sub { display: block; color: #838885; font-size: 20rpx; }.resume-title { display: block; margin-top: 2rpx; color: var(--ink); font-size: 28rpx; font-weight: bold; }.resume-bar { height: 6rpx; margin-top: 12rpx; overflow: hidden; border-radius: 6rpx; background: #d8d3c9; }.resume-bar-fill { height: 100%; background: var(--cinnabar); }.resume-tip { display: block; margin-top: 6rpx; color: #858983; font-size: 20rpx; }.resume-percent { color: var(--cinnabar); font-weight: bold; }.resume-go { display: flex; align-items: center; justify-content: center; width: 50rpx; height: 50rpx; flex: none; border-radius: 25rpx; background: var(--ink); }.resume-go image { width: 26rpx; height: 26rpx; }
-.hot { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16rpx; }.hot-item { display: flex; align-items: center; min-height: 128rpx; padding: 18rpx 22rpx; box-sizing: border-box; border-radius: 28rpx; background: var(--paper-card); box-shadow: 0 8rpx 10rpx rgba(70, 65, 51, .04); }.hot-main { flex: 1; min-width: 0; }.hot-title-row { display: flex; align-items: baseline; min-width: 0; }.hot-title { color: var(--ink); font-size: 26rpx; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }.hot-author { color: var(--ink-3); font-size: 20rpx; }.hot-count { display: flex; align-items: center; gap: 8rpx; margin-top: 6rpx; color: #c4756e; font-size: 20rpx; }.hot-count image { width: 22rpx; height: 22rpx; }.hot-play { display: flex; align-items: center; justify-content: center; width: 60rpx; height: 60rpx; flex: none; border-radius: 50%; background: var(--ink-card); }.hot-play.is-playing { background: var(--cinnabar); }.hot-play-ico { width: 26rpx; height: 26rpx; }
+.home-search-ico { width: 28rpx; height: 28rpx; margin-right: 14rpx; }
+.home-search-txt { color: #909594; font-size: 22rpx; }
+
+/* ---------- 今日一诗（大卡：唯一保留阴影） ---------- */
+.daily { position: relative; z-index: 1; height: 406rpx; margin-top: 32rpx; overflow: hidden; border-radius: var(--r-lg); background: #243f4f; box-shadow: 0 20rpx 50rpx rgba(36, 52, 71, .14); }
+
+/* 装饰层：卷轴线稿。原为 88rpx 实心金圆，遮挡诗句且与全站描边语言冲突。
+   线条用 SVG 描边绘制（::before/::after 无法画圆角线框），颜色 --deco-line。 */
+.daily-deco { position: absolute; top: 42rpx; right: 42rpx; width: 118rpx; height: 118rpx; opacity: .55; }
+.daily-deco-scroll { width: 100%; height: 100%; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none' stroke='%23D5E4DC' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M14 20h36M14 44h36'/%3E%3Ccircle cx='22' cy='20' r='4'/%3E%3Ccircle cx='42' cy='20' r='4'/%3E%3Ccircle cx='22' cy='44' r='4'/%3E%3Ccircle cx='42' cy='44' r='4'/%3E%3Cpath d='M26 20v24M38 20v24'/%3E%3C/svg%3E") no-repeat center / 100% 100%; }
+
+.daily-hill { position: absolute; bottom: -156rpx; border-radius: 50% 50% 0 0; }
+.daily-hill--back { right: -98rpx; width: 520rpx; height: 322rpx; background: #57747a; transform: rotate(22deg); }
+.daily-hill--front { left: -96rpx; width: 500rpx; height: 294rpx; background: #355664; transform: rotate(-15deg); }
+
+.daily-body { position: relative; display: flex; flex-direction: column; padding: 38rpx 36rpx; }
+.daily-tag { width: 118rpx; height: 46rpx; color: #fff8ec; background: var(--cinnabar); font-size: 20rpx; letter-spacing: 2rpx; line-height: 46rpx; text-align: center; }
+.daily-author { margin-top: 20rpx; color: #c7d0cf; font-size: 20rpx; }
+.daily-title { margin-top: 6rpx; color: var(--paper); font-size: 46rpx; font-weight: bold; letter-spacing: 6rpx; line-height: 1.25; }
+.daily-lines { margin-top: 14rpx; }
+.daily-line { display: block; color: var(--paper); font-size: 26rpx; line-height: 1.7; }
+.daily-cta { display: flex; align-self: flex-start; align-items: center; gap: 16rpx; height: 58rpx; margin-top: 12rpx; padding: 0 26rpx; border-radius: 30rpx; background: var(--paper); color: var(--ink); font-size: 22rpx; }
+.daily-cta-ico { width: 24rpx; height: 24rpx; }
+
+/* ---------- 四宫格快捷入口 ----------
+   比例（2026-10-19 方案3）：卡 160 / 色块 96 / 图标 60。
+   内存占用 14 + 96 + 8 + 文字 29 + 12 = 159rpx，卡高取 160rpx 刚好容纳，勿再压到 156。
+   硬约束：单卡宽仅 164.5rpx（786 − 40×2 − 16×3，再 ÷4），
+   色块超过约 108rpx 左右边距就会被挤没，96 已接近上限，勿再放大。 */
+.cats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16rpx; margin-top: 28rpx; }
+.cat { display: flex; flex-direction: column; align-items: center; height: 160rpx; padding: 14rpx 4rpx 12rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.cat-mark { display: flex; align-items: center; justify-content: center; width: 96rpx; height: 96rpx; border-radius: 26rpx; }
+.cat-ico { width: 60rpx; height: 60rpx; }
+.cat-name { margin-top: 8rpx; color: var(--ink); font-size: 22rpx; font-weight: 500; white-space: nowrap; }
+
+/* ---------- 区块标题 ---------- */
+.home-section-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; height: 82rpx; padding: 20rpx 2rpx 0; box-sizing: border-box; }
+.home-section-title { color: #1a2520; font-size: 34rpx; font-weight: bold; }
+.home-section-more { color: var(--ink-3); font-size: 22rpx; }
+
+/* ---------- 继续学习（条卡） ---------- */
+.resume { position: relative; z-index: 1; display: flex; align-items: center; gap: 22rpx; box-sizing: border-box; min-height: 126rpx; padding: 24rpx; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+/* 原为朱砂方块 + 诗名首字（易被误读成印章），改为浅底圆槽 + 描边书卷 */
+.resume-cover { display: flex; align-items: center; justify-content: center; width: 76rpx; height: 88rpx; flex: none; border-radius: 20rpx; background: #f3ece0; border: 1rpx solid var(--line-faint); }
+.resume-cover-ico { width: 40rpx; height: 40rpx; }
+.resume-main { flex: 1; min-width: 0; }
+.resume-sub { display: block; color: #838885; font-size: 20rpx; }
+.resume-title { display: block; margin-top: 2rpx; color: var(--ink); font-size: 28rpx; font-weight: bold; }
+.resume-bar { height: 6rpx; margin-top: 12rpx; overflow: hidden; border-radius: 6rpx; background: #ece6d9; }
+.resume-bar-fill { height: 100%; background: var(--cinnabar); }
+.resume-tip { display: block; margin-top: 6rpx; color: #858983; font-size: 20rpx; }
+.resume-percent { color: var(--cinnabar); font-weight: bold; }
+.resume-go { display: flex; align-items: center; justify-content: center; width: 50rpx; height: 50rpx; flex: none; border-radius: 25rpx; background: rgba(36, 52, 71, .06); }
+.resume-go image { width: 26rpx; height: 26rpx; }
+
+/* ---------- 标准朗读（条卡） ---------- */
+.hot { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16rpx; }
+.hot-item { display: flex; align-items: center; min-height: 128rpx; padding: 18rpx 22rpx; box-sizing: border-box; border-radius: var(--r-md); background: var(--paper-card); border: 1rpx solid var(--line-faint); }
+.hot-main { flex: 1; min-width: 0; }
+.hot-title-row { display: flex; align-items: baseline; min-width: 0; }
+.hot-title { color: var(--ink); font-size: 26rpx; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hot-author { color: var(--ink-3); font-size: 20rpx; }
+/* 播放量原为朱砂红心，与「今日一诗」「0%」抢焦点，降为灰色描边 */
+.hot-count { display: flex; align-items: center; gap: 8rpx; margin-top: 6rpx; color: var(--ink-3); font-size: 20rpx; }
+.hot-count image { width: 22rpx; height: 22rpx; }
+/* 播放按钮：默认墨色圆底 + 白色三角；播放中换朱砂圆底 + 白色双竖条（icon-pause.svg）。
+   底色与图标必须同时变 —— 只改底色时按钮看着仍然像「待播放」。
+   触控热区：视觉 60rpx（30px）不足 44px 下限，用透明 ::after 撑到 88rpx，
+   与悬浮播放器边缘触发器的做法一致；左右各外扩 14rpx，仍在卡片 22rpx 内边距里，不会侵占正文的点击区。 */
+.hot-play {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60rpx;
+  height: 60rpx;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ink-card);
+  transition: background-color .18s ease;
+}
+
+.hot-play::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 88rpx;
+  height: 88rpx;
+  transform: translate(-50%, -50%);
+}
+
+.hot-play.is-playing { background: var(--cinnabar); }
+
+/* 图标盒 34rpx（A 方案：只放大，不改 SVG 视框）
+   两枚图标仍是 Figma 原稿的 12.9911 视框，图形只占中间 40%×52.5%（三角）/ 38.6%×50%（双竖条），
+   所以 34rpx 盒里实际墨迹是 三角 20.0rpx、双竖条 17.0rpx，分别占 60rpx 圆的 33% / 28%。
+   已知代价：两态身高差 15%（3.0rpx），播放↔暂停切换时图形会缩一下。
+   要消掉这一跳（不动三角），把 icon-pause.svg 两根 rect 改成 y=2.6802 h=7.6306 即可等高；
+   想要等比放大则再加上 w=2.02、x=3.556 / 7.416。 */
+.hot-play-ico { width: 34rpx; height: 34rpx; }

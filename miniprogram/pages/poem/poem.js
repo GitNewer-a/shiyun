@@ -199,9 +199,12 @@ Page({
     wx.createSelectorQuery()
       .select('.progress-bar-wrap')
       .boundingClientRect(function (rect) {
-        if (!rect) return;
+        if (!rect || !rect.width) return;
+        // ⚠️ e.detail.x 是**页面坐标**，不是相对进度条的坐标。
+        // 不减 rect.left 的话整条零点右移一个内边距，点中间会跳到 56% 之类的位置，
+        // 听感就是「点一下位置不对 / 跳了一下」。
         const x = (e.detail && e.detail.x) || 0;
-        const pct = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
         that.player.seek(pct);
       })
       .exec();
@@ -305,8 +308,21 @@ Page({
     toastReciteSoon();
   },
 
+  /**
+   * 详情页「默写」入口：诗已确定，缺的是题型。
+   * 所以先让用户选题型（actionSheet），选完直接进答题页，
+   * 不绕回记忆训练入口页让用户再找一遍这首诗。
+   */
   goRecite() {
-    wx.navigateTo({ url: '/pages/recite/recite?id=' + this.data.id });
+    const id = this.data.id;
+    if (!id) return;
+    wx.showActionSheet({
+      itemList: ['全文默写', '填空默写'],
+      success(res) {
+        const type = res.tapIndex === 1 ? 'blank' : 'write';
+        wx.navigateTo({ url: '/pages/recite/recite?id=' + id + '&type=' + type });
+      }
+    });
   },
 
   sharePoem() {

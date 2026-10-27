@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>四宫格 · 比例调整</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { padding: 40px 36px 68px; background: #efeae0; font-family: "Noto Sans SC", sans-serif; color: #243447; }
+  h1 { font-size: 20px; margin-bottom: 6px; }
+  p.desc { font-size: 12.5px; color: #7a7568; margin-bottom: 26px; max-width: 820px; line-height: 1.75; }
+
+  .stage { display: flex; gap: 26px; align-items: flex-start; flex-wrap: wrap; }
+
+  .strip { width: 393px; padding: 22px 21px 24px; background: #f8f4ea; border-radius: 18px; box-shadow: 0 14px 36px rgba(60,52,36,.12); }
+  .strip .label { font-size: 11.5px; font-weight: 700; margin-bottom: 3px; }
+  .strip .label .badge { display: inline-block; padding: 2px 7px; border-radius: 99px; font-size: 9.5px; margin-left: 6px; vertical-align: 1px; }
+  .badge.cur { background: #ded8ca; color: #6b6558; }
+  .badge.rec { background: #c94a4a; color: #fff8ec; }
+  .badge.alt { background: #6b7a4a; color: #fff8ec; }
+  .strip .spec { font-size: 10.5px; color: #8b8577; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
+
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .cat { display: flex; flex-direction: column; align-items: center; border-radius: 16px; background: #fffdf8; border: .5px solid rgba(36,52,71,.06); }
+  .mark { display: flex; align-items: center; justify-content: center; background: #e6ecf1; }
+  .mark.accent { background: #f1e6d8; }
+  .name { color: #243447; font-weight: 500; white-space: nowrap; }
+
+  /* ---- 当前 ---- */
+  .v0 .cat { height: 81px; padding: 12px 4px 9px; }
+  .v0 .mark { width: 36px; height: 36px; border-radius: 10px; }
+  .v0 .mark svg { width: 18px; height: 18px; }
+  .v0 .name { margin-top: 6px; font-size: 11px; }
+
+  /* ---- 方案1：只放大图标，卡不动 ---- */
+  .v1 .cat { height: 81px; padding: 11px 4px 9px; }
+  .v1 .mark { width: 40px; height: 40px; border-radius: 11px; }
+  .v1 .mark svg { width: 26px; height: 26px; }
+  .v1 .name { margin-top: 5px; font-size: 11px; }
+
+  /* ---- 方案2：卡收紧 + 图标放大（推荐） ---- */
+  .v2 .cat { height: 78px; padding: 10px 4px 9px; }
+  .v2 .mark { width: 44px; height: 44px; border-radius: 12px; }
+  .v2 .mark svg { width: 28px; height: 28px; }
+  .v2 .name { margin-top: 5px; font-size: 11px; }
+
+  /* ---- 方案3：再激进 ---- */
+  .v3 .cat { height: 80px; padding: 7px 4px 6px; }
+  .v3 .mark { width: 48px; height: 48px; border-radius: 13px; }
+  .v3 .mark svg { width: 30px; height: 30px; }
+  .v3 .name { margin-top: 4px; font-size: 11px; }
+
+  table { border-collapse: collapse; margin-top: 38px; font-size: 12px; width: 100%; max-width: 880px; background: #fbf8f0; border-radius: 12px; overflow: hidden; }
+  th, td { padding: 10px 13px; text-align: left; border-bottom: 1px solid rgba(36,52,71,.07); font-variant-numeric: tabular-nums; }
+  th { font-weight: 700; font-size: 11.5px; background: #f2ede1; }
+  td:first-child { font-weight: 500; color: #6e6a5e; width: 130px; }
+  tr:last-child td { border-bottom: none; }
+  .hl { background: #fdf3f2; }
+
+  .verdict { margin-top: 26px; max-width: 880px; padding: 18px 22px; border-radius: 13px; background: #fbf8f0; border-left: 3px solid #c94a4a; }
+  .verdict h3 { font-size: 12.5px; margin-bottom: 7px; }
+  .verdict p { font-size: 12px; line-height: 1.85; color: #6e6a5e; }
+  code { padding: 1px 5px; border-radius: 3px; background: #ece7da; font-size: 11px; color: #8a5a3a; }
+</style>
+</head>
+<body>
+
+<h1>四宫格比例调整（A 方案保留容器框）</h1>
+<p class="desc">关键约束：单卡宽度只有 <b>164.5rpx</b>（786 − 左右各 40 padding − 3 个 16 间距，再 ÷4）。所以色块不能无限放大，超过 ~108rpx 就会顶到卡片两侧的边距。</p>
+
+<div class="stage">
+
+  <div class="strip v0">
+    <div class="label">当前<span class="badge cur">比例失衡</span></div>
+    <div class="spec">卡 162 · 框 72 · 图标 36 · 图标占卡 22%</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+  <div class="strip v1">
+    <div class="label">方案 1<span class="badge alt">只放大图标</span></div>
+    <div class="spec">卡 162 · 框 80 · 图标 52 · 图标占卡 32%</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+  <div class="strip v2">
+    <div class="label">方案 2<span class="badge rec">推荐</span></div>
+    <div class="spec">卡 156 · 框 88 · 图标 56 · 图标占卡 36%</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+  <div class="strip v3">
+    <div class="label">方案 3<span class="badge rec">已采用</span></div>
+    <div class="spec">卡 160 · 框 96 · 图标 60 · 描边 1.5</div>
+    <div class="cats">
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M2.7 3.3h4.5a2.4 2.4 0 0 1 2.4 2.4v8.9a1.7 1.7 0 0 0-1.7-1.7H2.7z"/><path d="M15.3 3.3h-2.1a2.4 2.4 0 0 0-2.4 2.4v8.9a1.7 1.7 0 0 1 1.7-1.7h2.8z"/></svg></div><span class="name">诗词学习</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="12" height="12" rx="1.6"/><path d="M6 6.8h6M6 9.6h6M6 12.4h3.6"/></svg></div><span class="name">记忆训练</span></div>
+      <div class="cat"><div class="mark"><svg viewBox="0 0 18 18" fill="none" stroke="#3D5A73" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.5C7.5 3.4 5.6 3 3.8 3v10.5c1.8 0 3.7.4 5.2 1.5 1.5-1.1 3.4-1.5 5.2-1.5V3c-1.8 0-3.7.4-5.2 1.5z"/><path d="M9 4.5V15"/></svg></div><span class="name">诗词库</span></div>
+      <div class="cat"><div class="mark accent"><svg viewBox="0 0 18 18" fill="none" stroke="#A97A3E" stroke-width="1.28" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.8" width="12" height="11.2" rx="1.6"/><path d="M6 2.2v3M12 2.2v3M3 7.5h12"/></svg></div><span class="name">学习计划</span></div>
+    </div>
+  </div>
+
+</div>
+
+<table>
+  <tr><th>参数（rpx）</th><th>当前</th><th>方案 1</th><th>方案 2</th><th>方案 3</th></tr>
+  <tr><td>卡片高度</td><td>162</td><td>162</td><td>156</td><td>160</td></tr>
+  <tr><td>图标色块</td><td>72</td><td>80</td><td>88</td><td>96</td></tr>
+  <tr><td>图标本体</td><td>36</td><td>52</td><td>56</td><td>60</td></tr>
+  <tr class="hl"><td>图标 / 色块</td><td>50%</td><td>65%</td><td>64%</td><td>63%</td></tr>
+  <tr class="hl"><td>图标 / 卡高</td><td>22%</td><td>32%</td><td>36%</td><td>38%</td></tr>
+  <tr><td>色块上下留白</td><td>24 / 18</td><td>20 / 16</td><td>16 / 14</td><td>14 / 12</td></tr>
+  <tr><td>色块圆角</td><td>20</td><td>22</td><td>24</td><td>26</td></tr>
+  <tr><td>SVG 描边</td><td>1.28</td><td>1.28</td><td>1.28</td><td>1.5</td></tr>
+</table>
+
+<div class="verdict">
+  <h3>已采用方案 3</h3>
+  <p>实际落地时卡高从 156 收到 <b>160</b>：卡片内在占用是 14（上）+ 96（色块）+ 8（间距）+ 29（文字行）+ 12（下）= <b>159rpx</b>，156 会截断文字。改为 160 恰好容纳。<br>
+  同时把四个 SVG 的描边从 1.28 提到 <b>1.5</b> —— 图标从 36rpx 放大到 60rpx 后，同样的相对描边折合到屏幕上会更细，加粗后观感才和原来一致。<br>
+  <code>home.wxss</code> 已更新 <code>.cat</code> / <code>.cat-mark</code> / <code>.cat-ico</code> / <code>.cat-name</code> 四项。</p>
+</div>
+
+</body>
+</html>

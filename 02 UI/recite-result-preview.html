@@ -1,0 +1,79 @@
+<!doctype html><meta charset="utf-8">
+<style>
+:root{--paper:#f8f4ea;--paper-card:#fffdf8;--paper-sunken:#ece7da;--ink:#243447;--ink-2:#7e8785;--ink-3:#959b94;--ink-4:#a5aaa3;--cinnabar:#c94a4a;--gold:#c9975a;--line-faint:rgba(36,52,71,.06)}
+body{margin:0;padding:40px;background:#e9e4d8;font-family:-apple-system,'PingFang SC','Noto Sans SC',sans-serif}
+.wrap{display:flex;gap:32px;justify-content:center;flex-wrap:wrap}
+.phone{width:393px;background:var(--paper);border-radius:34px;overflow:hidden;box-shadow:0 24px 60px rgba(36,52,71,.18)}
+.bar{height:44px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--ink);font-weight:600;background:var(--paper)}
+.pad{padding:0 20px 30px}
+.serif{font-family:'Noto Serif SC','Songti SC',serif}
+h4{margin:0 0 14px;font-size:12px;color:var(--ink-3);letter-spacing:.1em;font-weight:600;text-transform:uppercase}
+.tabs{display:inline-flex;gap:0;padding:2px;background:var(--paper-sunken);border-radius:16px;font-size:12px}
+.tab{padding:6px 13px;border-radius:14px;color:var(--ink-2)}
+.tab.on{background:var(--paper-card);color:var(--ink);font-weight:600}
+.title{font-size:22px;font-weight:700;letter-spacing:.14em;margin:15px 0 4px;color:var(--ink)}
+.meta{font-size:11px;color:var(--ink-3)}
+.paper{margin-top:17px;padding:14px 13px;border-radius:16px;background:var(--paper-card);border:1px solid var(--line-faint);min-height:160px}
+.ph{color:var(--ink-4);font-size:12px}
+.written{font-family:'Noto Serif SC','Songti SC',serif;font-size:15px;line-height:30px;letter-spacing:.1em;color:var(--ink)}
+.caret{display:inline-block;width:1px;height:16px;background:var(--cinnabar);vertical-align:-2px;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.guide{margin-top:10px;font-size:11px;color:var(--ink-2);line-height:1.7}
+.guide b{color:var(--gold);font-weight:400}
+.cta{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.cnt{font-size:11px;color:var(--ink-3)}
+.btn{height:44px;padding:0 24px;border-radius:22px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600;display:flex;align-items:center;letter-spacing:.06em}
+.card{margin-top:17px;padding:18px 15px 15px;border-radius:16px;background:var(--paper-card);border:1px solid var(--line-faint)}
+.top{display:flex;align-items:center;gap:13px}
+.ring{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;background:conic-gradient(#4F7A5D 0 324.0deg,#ece6d9 324.0deg 360deg)}
+.ring i{width:50px;height:50px;border-radius:50%;background:var(--paper-card);display:flex;align-items:center;justify-content:center;font-style:normal;font-family:'Noto Serif SC',serif;font-size:20px;font-weight:700;color:var(--ink)}
+.vd{font-size:16px;font-weight:700;letter-spacing:.06em;color:var(--ink)}
+.c2{font-size:11px;color:var(--ink-2);margin-top:4px}
+.tip{font-size:10px;color:var(--ink-3);margin-top:3px}
+.verses{margin-top:15px;padding:13px 11px;border-radius:10px;background:var(--paper-sunken)}
+.rs-line{display:flex;flex-wrap:wrap;min-height:29px}
+.rs-ch{display:inline-block;padding:0 1px;font-family:'Noto Serif SC','Songti SC',serif;font-size:16px;line-height:29px;letter-spacing:.04em}
+.is-ok{color:var(--ink)}
+.is-bad{color:var(--cinnabar);text-decoration:underline wavy var(--cinnabar);text-decoration-thickness:1px;text-underline-offset:4px}
+.is-gap{color:var(--ink-4);text-decoration:underline dashed var(--ink-4);text-underline-offset:4px}
+.fh{display:flex;justify-content:space-between;align-items:baseline;padding:0 1px 7px;margin-top:14px}
+.ft{font-size:12px;font-weight:700;color:var(--ink)}
+.fl{font-size:10px;color:var(--ink-3)}
+.fi{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;margin-bottom:5px;border-radius:8px;background:var(--paper-sunken)}
+.fw{font-size:11px;color:var(--ink-2)}
+.fb{display:flex;align-items:center;gap:6px}
+.fs{font-size:15px;font-weight:700;color:var(--ink);font-family:'Noto Serif SC',serif}
+.fa{color:var(--ink-4);font-size:11px}
+.fg{color:var(--cinnabar);font-size:14px;font-family:'Noto Serif SC',serif;text-decoration:underline wavy var(--cinnabar);text-underline-offset:3px}
+.ftag{padding:1px 6px;border-radius:999px;background:rgba(36,52,71,.05);color:var(--ink-3);font-size:9px}
+.acts{display:flex;gap:8px;margin-top:15px}
+.gh,.so{flex:1;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;letter-spacing:.06em}
+.gh{border:1px solid var(--line-faint);color:var(--ink-2)}
+.so{background:var(--ink);color:var(--paper)}
+</style>
+<div class="wrap">
+  <div class="phone"><div class="bar">全文默写</div><div class="pad">
+    <div class="tabs"><span class="tab on">全文默写</span><span class="tab">填空默写</span></div>
+    <div class="title serif">静夜思</div><div class="meta">李白 · [唐] · 思乡</div>
+    <div class="paper"><div class="written">床前明月光疑是地上霜举头望明月低头思故乡<span class="caret"></span></div></div>
+    <div class="guide"><b>·</b> 凭记忆写下整首，不必打标点。判定后逐字对照，错字标朱砂。</div>
+    <div class="cta"><span class="cnt">20 字</span><span class="btn">提交默写</span></div>
+  </div></div>
+
+  <div class="phone"><div class="bar">全文默写</div><div class="pad">
+    <div class="tabs"><span class="tab on">全文默写</span><span class="tab">填空默写</span></div>
+    <div class="title serif">静夜思</div><div class="meta">李白 · [唐] · 思乡</div>
+    <div class="card">
+      <div class="top">
+        <div class="ring"><i>90</i></div>
+        <div><div class="vd">基本过关</div>
+          <div class="c2">写对 18 / 20 字</div>
+          <div class="tip">错字不多，订正后再默一遍</div></div>
+      </div>
+      <div class="verses"><div class="rs-line"><span class="rs-ch is-ok">床</span><span class="rs-ch is-ok">前</span><span class="rs-ch is-ok">明</span><span class="rs-ch is-ok">月</span><span class="rs-ch is-ok">光</span></div><div class="rs-line"><span class="rs-ch is-ok">疑</span><span class="rs-ch is-ok">是</span><span class="rs-ch is-ok">地</span><span class="rs-ch is-ok">上</span><span class="rs-ch is-bad">双</span></div><div class="rs-line"><span class="rs-ch is-ok">举</span><span class="rs-ch is-ok">头</span><span class="rs-ch is-ok">望</span><span class="rs-ch is-ok">明</span><span class="rs-ch is-ok">月</span></div><div class="rs-line"><span class="rs-ch is-ok">低</span><span class="rs-ch is-ok">头</span><span class="rs-ch is-ok">思</span><span class="rs-ch is-gap">故</span><span class="rs-ch is-ok">乡</span></div></div>
+      <div class="fh"><span class="ft">需要订正 2 处</span><span class="fl">2 笔误 · 1 漏写</span></div>
+      <div class="fix-item"><span class="fix-where">第2句 第5字</span><span class="fix-body"><span class="fix-should">霜</span><span class="fix-arrow">←</span><span class="fix-got">双</span></span></div><div class="fix-item"><span class="fix-where">第4句 第4字</span><span class="fix-body"><span class="fix-should">故</span><span class="fix-tag">漏写</span></span></div>
+      <div class="acts"><span class="gh">再默一遍</span><span class="so">看原文</span></div>
+    </div>
+  </div></div>
+</div>

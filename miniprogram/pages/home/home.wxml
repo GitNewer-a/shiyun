@@ -6,14 +6,19 @@
   </navigator>
 
   <view class="daily" bindtap="goDaily" aria-label="每日一诗 {{dailyPoem.title}}，点击开始学习">
-    <view class="daily-moon" /><view class="daily-hill daily-hill--back" /><view class="daily-hill daily-hill--front" />
+    <!-- 装饰层：卷轴线稿替代原实心圆月亮，符合「描边是系统」铁律 -->
+    <view class="daily-deco" aria-hidden="true">
+      <view class="daily-deco-scroll" />
+    </view>
+    <view class="daily-hill daily-hill--back" /><view class="daily-hill daily-hill--front" />
     <view class="daily-body">
       <view class="daily-tag">今日一诗</view>
       <text class="daily-author">{{dailyPoem.author}} · {{dailyPoem.dynasty}}</text>
       <text class="daily-title serif">{{dailyPoem.title}}</text>
+      <!-- lines 数组元素自带标点（'床前明月光，'），此处不可再拼标点，否则出现「，，」「。。」 -->
       <view class="daily-lines">
-        <text class="daily-line verse">{{dailyPoem.lines[0]}}，{{dailyPoem.lines[1]}}。</text>
-        <text class="daily-line verse">{{dailyPoem.lines[2]}}，{{dailyPoem.lines[3]}}。</text>
+        <text class="daily-line verse">{{dailyPoem.lines[0]}}{{dailyPoem.lines[1]}}</text>
+        <text class="daily-line verse">{{dailyPoem.lines[2]}}{{dailyPoem.lines[3]}}</text>
       </view>
       <view class="daily-cta"><text>开始学习</text><image src="/assets/figma-home/icon-0.svg" class="daily-cta-ico" mode="aspectFit" /></view>
     </view>
@@ -30,18 +35,22 @@
     <text class="home-section-title serif">继续学习</text>
   </view>
   <view class="resume" bindtap="goResume" aria-label="继续学习 {{resume.title}}">
-    <view class="resume-cover"><text class="serif">{{resume.mark}}</text></view>
+    <!-- 原为朱砂方块+诗名首字，易被误读成印章；改为描边书卷图标 + 浅底圆槽 -->
+    <view class="resume-cover">
+      <image class="resume-cover-ico" src="/assets/figma-home/icon-scroll.svg" mode="aspectFit" />
+    </view>
     <view class="resume-main">
       <text class="resume-sub">{{resume.author}} · {{resume.dynasty}} · 第 {{resume.lesson}} 课</text>
       <text class="resume-title serif">《{{resume.title}}》</text>
       <view class="resume-bar"><view class="resume-bar-fill" style="width:{{resume.progress}}%" /></view>
       <text class="resume-tip">学习进度 <text class="resume-percent">{{resume.progress}}%</text></text>
     </view>
-    <view class="resume-go"><image src="/assets/figma-home/icon-11.svg" mode="aspectFit" /></view>
+    <view class="resume-go"><image src="/assets/figma-home/icon-11-ink.svg" mode="aspectFit" /></view>
   </view>
 
   <view class="home-section-head">
     <text class="home-section-title serif">标准朗读</text>
+    <navigator class="home-section-more" url="/pages/browse/browse" hover-class="none">全部 40 首 ›</navigator>
   </view>
   <view class="hot">
     <view class="hot-item" wx:for="{{hotList}}" wx:key="id">
@@ -50,9 +59,15 @@
           <text class="hot-title serif">《{{item.title}}》</text>
           <text class="hot-author"> · {{item.author}}</text>
         </view>
-        <view class="hot-count"><image src="/assets/figma-home/icon-4.svg" mode="aspectFit" /><text>{{item.plays}}</text></view>
+        <!-- 播放量朱砂红心与「今日一诗」「0%」抢焦点，降为灰色描边 -->
+        <view class="hot-count"><image src="/assets/figma-home/icon-play-outline.svg" mode="aspectFit" /><text>{{item.plays}} 次播放</text></view>
       </view>
-      <view class="hot-play {{playingId === item.id ? 'is-playing' : ''}}" bindtap="togglePlay" data-id="{{item.id}}" aria-label="{{playingId === item.id ? '暂停' : '播放'}}{{item.title}}"><image src="/assets/figma-home/icon-7.svg" class="hot-play-ico" mode="aspectFit" /></view>
+      <!-- 图标必须跟着状态换：只改底色不换图标的话，正在播放时按钮仍是三角形，
+           看上去像「没点着」。暂停态用双竖条 icon-pause.svg（与 icon-7 同 viewBox）。 -->
+      <view class="hot-play {{playingId === item.id ? 'is-playing' : ''}}" bindtap="togglePlay" data-id="{{item.id}}" aria-label="{{playingId === item.id ? '暂停' : '播放'}}{{item.title}}">
+        <image wx:if="{{playingId === item.id}}" src="/assets/figma-home/icon-pause.svg" class="hot-play-ico" mode="aspectFit" />
+        <image wx:else src="/assets/figma-home/icon-7.svg" class="hot-play-ico" mode="aspectFit" />
+      </view>
     </view>
   </view>
 </view>

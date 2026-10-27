@@ -1,3 +1,5 @@
+const audioSession = require('./utils/audio-session.js');
+
 App({
   globalData: {
     openid: '',
@@ -6,6 +8,11 @@ App({
   },
 
   onLaunch() {
+    // ⚠️ 必须放在下面云开发检查之前：老基础库没有 wx.cloud 会直接 return，
+    // 但朗读出声这件事跟云环境无关，不能被一起跳过。
+    // 会话设置也必须早于任何 InnerAudioContext 创建（见 utils/audio-session.js）。
+    audioSession.setup();
+
     if (!wx.cloud) {
       console.warn('[诗韵] 当前基础库版本过低，云开发不可用，已降级为本地数据');
       return;
@@ -22,13 +29,33 @@ App({
     this.login();
   },
 
-  // 小程序退到后台时停掉朗读，避免无声播放；小程序内切页不受影响
-  onHide() {
+  /**
+   * 切回前台补设一次音频会话。
+   * 来电、被其他 app 抢走音频焦点、长时间后台，iOS 都可能把会话重置回默认类别，
+   * 那时静音开关又会重新生效 —— 表现就是「刚才还能响，接了个电话就没声了」。
+   * audio-session 内部有 800ms 节流，不会跟 onLaunch 连发两次。
+   *
+   * 顺带校正播放状态：锁屏上拖过进度条 / 按过暂停之后，那些操作不经过小程序代码，
+   * 界面上的按钮和真实播放态会对不上（显示在播其实已经停）。
+   * 这里只校正状态，不自动续播 —— 被电话打断后回来自己响起来是最差体感。
+   */
+  onShow() {
+    audioSession.setup(true);
     try {
-      const { getAudioPlayer } = require('./utils/audio.js');
-      getAudioPlayer().pause();
-    } catch (e) {}
+      // 延迟 require：audio.js 会实例化后台音频管理器，冷启动没必要为它买单
+      require('./utils/audio.js').refreshState();
+    } catch (e) {
+      console.warn('[诗韵] 播放状态校正失败', e);
+    }
   },
+
+  /**
+   * 退到后台**不停播**（2026-10-26 改）。
+   * 早期这里主动 pause，是因为 InnerAudioContext 本来就会被系统掐掉，主动停只是让状态一致；
+   * 换成 BackgroundAudioManager 后，锁屏 / 切后台续播正是它的核心能力（靠 app.json 的
+   * requiredBackgroundModes: ["audio"] 声明）。要真正停止，走悬浮条上的关闭按钮。
+   */
+  onHide() {},
 
   login() {
     if (!this.globalData.cloudReady) return Promise.resolve('');
