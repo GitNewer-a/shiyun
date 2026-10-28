@@ -141,31 +141,24 @@ const SEEK_GUARD_TAIL_MS = 1500;
  */
 
 /**
- * 暂停之后多久内收到的 onPlay 视为「系统补发的多余起播」（ms）。
+ * 「暂停执行窗」（ms）：用户暂停之后这段时间内，任何 `!want` 的 onPlay 一律压回。
  *
- * ⚠️ 这个窗口**只能短**，而且**只能拦这一个窗口内的** —— 因为「用户在通知中心 /
- * 锁屏点播放」和「系统自己补发一次 play」在 BAM 里是**同一个 onPlay**，
- * 系统控件的播放键根本不经过我们的 resume()，那时 want 还是 false。
- * 曾经把它写成纯状态判据（`pauseIntentAt > 0 && !want` 一律拦），
- * 结果通知中心暂停之后**再也播不起来**：一按播放，onPlay 进来被当场 pause 回去，
- * 界面表现就是「按钮先到播放中，然后立刻退回暂停」。
+ * 为什么是它而不是别的：
+ *   · 暂停之后系统会自发把播放拉起来（真机日志确认过，可能不止一次、最晚数秒），
+ *     而「系统的自发补播」和「用户在通知中心按播放」在 BAM 里是**同一个 onPlay、
+ *     同一组状态**，事件层面无法区分 —— 纯状态判据（一律拦）会把用户按的播放也压死
+ *     （「暂停后再也播不起来」），「压回一次就放行」会被第二次补播打穿。
+ *   · 窗内压回时**一行状态都不改**：playing 不广播，界面根本没有可回弹的东西。
+ *   · 每次压回触发的 onPause 会把窗口**续上**（见 onPause 里的 rejectingPause），
+ *     系统连着补几次就压几次，不会漏。
  *
- * 所以判据只能是时间：刚暂停那 0.5 秒内的 onPlay 按回（治回弹），
- * 再晚来的全部当成用户的播放意图接受（治播不了）。
+ * 逃生口：窗内 2 秒内（RETAP_MS）连续第二个 onPlay 视为「用户在连点播放键」放行 ——
+ * 系统补播是孤立单次（真机日志里相邻两次间隔 4 秒开外），人被拒了会马上再点。
+ * 窗口外（暂停已稳住 6 秒）来的直接放行。
  */
-const PAUSE_REJECT_MS = 500;
-
-/**
- * 「系统自己起的播」要观察多久才承认（ms）。
- *
- * 真机上的现象是：暂停之后系统可能补发**一轮** play → pause（不只是一次 play），
- * 这一轮有时在 0.4 秒，有时在 4 秒开外。所以「暂停后 N 毫秒内」这种窗口治不了它。
- * 但这一轮的特征很好认：**起了又自己停**。所以晚来的 onPlay 不立刻点亮按钮，
- * 先压 700ms 看它稳不稳 —— 期间来了 onPause 就整个丢掉（按钮一次都不亮），
- * 还在播才当用户意图接受。
- * 代价：用户在系统控件上按播放，按钮会晚 0.7 秒点亮（声音是立即响的）。
- */
-const PLAY_CONFIRM_MS = 700;
+const PAUSE_ENFORCE_MS = 6000;
+/** 「连按第二次」的判定间隔（ms），见上 */
+const RETAP_MS = 2000;
 
 /**
  * 播放器单例。
@@ -248,19 +241,18 @@ function createPlayer() {
   let resumeTimer = 0;
 
   /**
-   * 最近一次「确认的暂停」时刻（0 = 没有）。
-   * 用来挡系统补发的那一下 onPlay：暂停后 500ms 内收到的 onPlay 当作多余起播直接压回。
+   * 「暂停执行窗」的截止时间戳（0 = 不在窗内）。
+   * 窗内任何 `!want` 的 onPlay 一律压回（不改 playing、不广播），见 PAUSE_ENFORCE_MS。
    */
-  let pauseIntentAt = 0;
-
+  let pauseEnforceUntil = 0;
+  /** 最近一次「压回系统补播」的时刻（0 = 没有），用来识别「用户连按播放键」 */
+  let lastPlayRejectAt = 0;
   /**
-   * 「晚来的 onPlay 是否真的在播」的观察定时器（0 = 没有）与代数号。
-   * 晚来的 onPlay 先压 700ms（PLAY_CONFIRM_MS）再看结果：
-   * 期间来了 onPause 就把代数号 +1，回调自己作废 —— 系统的 play→pause 抖动
-   * 因此一次都不会点亮按钮；真的在播才补上 want 并广播。
+   * 「接下来这次 onPause 是我们压回造成的」标记。
+   * 压回（bgm.pause）会同步派一个 onPause，onPause 里靠它区分：
+   * 是「我们的压回」（把执行窗续上）还是「用户/系统的新暂停」（重开执行窗并清零连按记忆）。
    */
-  let playConfirmTimer = 0;
-  let playConfirmSeq = 0;
+  let rejectingPause = false;
 
   /**
    * 最近一次「我们自己调 bgm.pause()」的时刻。
@@ -321,35 +313,6 @@ function createPlayer() {
     if (playing === actual) return;
     playing = actual;
     emitState();
-  }
-
-  /**
-   * 晚来的 onPlay：先不点亮，压 700ms 看它稳不稳。
-   * 系统的「play → pause」抖动会在窗口内自己停回去，那里的 onPause 会把代数号 +1，
-   * 本次回调随之作废 —— 用户一次都不该看到按钮亮起。
-   * 真的还在播才补上 want（否则自动连播、假 ended 续播这些按 want 判断的分支会断）。
-   */
-  function armPlayConfirm(sincePause) {
-    if (playConfirmTimer) clearTimeout(playConfirmTimer);
-    const gen = ++playConfirmSeq;
-    trace('play->confirm-wait', 'sincePause=' + Math.round(sincePause));
-    playConfirmTimer = setTimeout(function () {
-      playConfirmTimer = 0;
-      if (gen !== playConfirmSeq) return;          // 期间来过 onPause → 抖动，丢弃
-      if (!bgm || !currentId) return;
-      if (bgm.paused) { trace('play->confirm-drop', 'paused=1'); return; }
-      trace('play->confirm-adopt');
-      want = true;
-      pauseIntentAt = 0;
-      syncPlaying(true);
-    }, PLAY_CONFIRM_MS);
-  }
-
-  /** 撤销上面那个观察窗口（任何一次真正的暂停 / 换曲 / 关闭都要撤） */
-  function cancelPlayConfirm() {
-    if (!playConfirmTimer && !playConfirmSeq) return;
-    playConfirmSeq++;                              // 让已在排队的回调失效
-    if (playConfirmTimer) { clearTimeout(playConfirmTimer); playConfirmTimer = 0; }
   }
 
   /** 回推进度。onTimeUpdate / seek / onSeeked 三处共用，口径必须一致 */
@@ -435,29 +398,40 @@ function createPlayer() {
       // ⚠️ 这一段是整个播放器最容易改错的地方，动之前先把三种 onPlay 分清：
       //
       //   A. 我们自己发起（api.play / api.resume / loadAndPlay / seek 后接回来）
-      //      —— 调 bgm.play() 之前 want 已置 true、pauseIntentAt 已清零。
+      //      —— 调 bgm.play() 之前 want 已置 true、执行窗已清零。
       //   B. 用户在**通知中心 / 锁屏**按播放 —— 走系统的播放键，**不经过任何 api**，
       //      进来时 want 仍是 false。这一条必须当作用户意图接受，否则「暂停后播不起来」。
-      //   C. iOS 在暂停之后自己起的一轮 play → pause（真机日志 #22 onPause → #23 onPlay，
-      //      更晚的一次在 4 秒开外）—— 这一条要吞掉，否则「按钮回弹」。
+      //   C. 系统在暂停之后自发的补播（真机日志确认存在，可能不止一次、最晚数秒）
+      //      —— 这一条要压回去，否则「按钮回弹」。
       //
-      // B 和 C 在 BAM 里是**同一个事件、同一组状态**（want 都是 false），
-      // 但它们的结果不同：C 会自己再停回去，B 不会。所以判据是**结果**，不是时间：
-      //   · 暂停后 500ms 内的：直接压回，连 playing 都不改（亚秒级回弹，没必要等）；
-      //   · 更晚的：先不点亮，压 700ms 看它稳不稳 —— 期间来 onPause 就整个作废（C），
-      //     还在播才当 B 接受。
+      // B 和 C 在 BAM 里是**同一个事件、同一组状态**（want 都是 false），事件层面
+      // 无法区分。所以策略是「执行窗 + 连按逃生」（见 PAUSE_ENFORCE_MS 注释）：
+      //   · 执行窗内：一律压回，且 **playing 一个字都不改** —— 界面没有可回弹的东西；
+      //   · 窗内快速连按第二次：当作用户在点播放键，放行；
+      //   · 窗口外：直接放行（用户暂停数秒后再按播放，是明确的意图）。
       //
-      // ⚠️ 别改回纯状态判据（`pauseIntentAt > 0 && !want` 一律压回）：
-      // 那会把 B 也拦了，通知中心暂停之后再也播不起来（按钮亮一下立刻退回暂停）。
-      const sincePause = pauseIntentAt > 0 ? Date.now() - pauseIntentAt : -1;
+      // ⚠️ 别改回「纯状态判据一律压回」（B 被压死，播不起来）、
+      // 也别改回「压回一次就放行」（C 可能来第二次，打穿）、
+      // 也别改回「观察 700ms 再收养」（C 是持续播不自己停，观察完会错误点亮按钮 ——
+      // 那就是「播放→暂停回弹」本身）。
       if (!want) {
-        if (sincePause >= 0 && sincePause < PAUSE_REJECT_MS) {
-          trace('onPlay->reject(just-paused)', 'sincePause=' + Math.round(sincePause));
-          playing = false;
+        if (!currentId) { trace('onPlay->drop(no-track)'); return; }
+        const now = Date.now();
+        const inWindow = now < pauseEnforceUntil;
+        const isRetap = lastPlayRejectAt > 0 && now - lastPlayRejectAt < RETAP_MS;
+        if (inWindow && !isRetap) {
+          trace('onPlay->reject(enforce)');
+          lastPlayRejectAt = now;
+          rejectingPause = true;               // 接下来那次 onPause 是我们压回造成的
+          playing = false;                     // 双保险：不向监听器广播，纯内部纠偏
           try { bgm.pause(); } catch (e) {}
           return;
         }
-        armPlayConfirm(sincePause);
+        trace('onPlay->adopt', isRetap ? 'retap' : 'window-expired');
+        want = true;
+        pauseEnforceUntil = 0;
+        lastPlayRejectAt = 0;
+        syncPlaying(true);
         return;
       }
 
@@ -466,9 +440,10 @@ function createPlayer() {
 
     bgm.onPause(function () {
       trace('onPause');
-      // 系统「play → pause」抖动里的那一下 pause：把还没兑现的观察窗口一起撤掉，
-      // 按钮就从始至终没亮过（见 armPlayConfirm）。
-      cancelPlayConfirm();
+      // 这次暂停是不是「我们压回系统补播」造成的？是的话它只是执行窗的一部分，
+      // 不算一次新的用户暂停。
+      const wasReject = rejectingPause;
+      rejectingPause = false;
       syncPlaying(false);
 
       // 「这次暂停是用户不想听了，还是 seek 造成的中间态？」—— 这是整个播放器
@@ -503,20 +478,23 @@ function createPlayer() {
       wantLatch = want;
       want = false;
       pausedAt = Date.now();
-      // 给 onPlay 一个「这是刚暂停，别再响」的判据（见 onPlay 里的拦截）
-      pauseIntentAt = pausedAt;
+      // 张开执行窗：接下来 PAUSE_ENFORCE_MS 内系统补播一律压回（见 onPlay）。
+      // 我们自己的压回也会派 onPause 走到这里 —— 那时把窗续上（系统连着补就连着压），
+      // 但不清连按记忆，否则「用户连按第二次」永远识别不出来。
+      pauseEnforceUntil = pausedAt + PAUSE_ENFORCE_MS;
+      if (!wasReject) lastPlayRejectAt = 0;
     });
 
     bgm.onStop(function () {
       trace('onStop');
-      cancelPlayConfirm();
       // 控制中心 / 通知栏点了「停止」：语义等同关闭本次播放。
       // ⚠️ stop 之后 play() 无效（必须重设 src），所以这里直接清空曲目，
       // 让下一次播放走 loadAndPlay 而不是空转的 play()。
       currentId = '';
       playing = false;
       want = false;
-      pauseIntentAt = Date.now();
+      pauseEnforceUntil = 0;
+      lastPlayRejectAt = 0;
       emitState();
     });
 
@@ -624,7 +602,7 @@ function createPlayer() {
       // 出错时别把音量永久留在 0（静音过渡中失败的情况）—— 否则下次播放没声
       playing = false;
       want = false;
-      pauseIntentAt = Date.now();
+      pauseEnforceUntil = Date.now() + PAUSE_ENFORCE_MS;
       emitState();
     });
 
@@ -799,9 +777,10 @@ function createPlayer() {
     wantLatch = false;
     ownSeekAt = 0;
     pausedAt = 0;
-    pauseIntentAt = 0;
+    pauseEnforceUntil = 0;
+    lastPlayRejectAt = 0;
+    rejectingPause = false;
     apiPauseAt = 0;
-    cancelPlayConfirm();
     emitState();
   }
 
@@ -821,8 +800,6 @@ function createPlayer() {
 
     // 上一首的假 ended 续播定时器要作废，否则它会在新曲目上按旧现场补一次 play()
     if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
-    // 上一首还没兑现的「onPlay 观察窗口」同理：它属于旧曲目，兑现了会点亮新曲目的按钮
-    cancelPlayConfirm();
 
     bindOnce();
     currentId = id;
@@ -853,12 +830,14 @@ function createPlayer() {
     if (poem.img && (poem.img.indexOf('cloud://') === 0 || /^https?:\/\//.test(poem.img))) {
       bgm.coverImgUrl = poem.img;
     }
-    // ⚠️ 必须在设 src 之前把「要播」的意图立起来，并把「刚暂停」的拦截窗口清掉。
+    // ⚠️ 必须在设 src 之前把「要播」的意图立起来，并把执行窗清掉。
     // src 是**同步起播**的：onPlay 会在这一行内就回调进来，那时若 want 还是 false
-    // （上一首刚 stop / 刚 pause 过），会被 onPlay 里的「系统多余起播」拦截直接压回去 ——
+    // （上一首刚 stop / 刚 pause 过），会被 onPlay 里的执行窗拦截直接压回去 ——
     // 表现是「切歌之后点了没反应」。
     want = true;
-    pauseIntentAt = 0;
+    pauseEnforceUntil = 0;
+    lastPlayRejectAt = 0;
+    rejectingPause = false;
     bgm.src = resolveSrc(poem.audioUrl);
 
     // 先假定在播：src 赋值是异步起播，若等 onPlay 才广播，
@@ -878,7 +857,8 @@ function createPlayer() {
     ownSeekAt = 0;
     wantLatch = false;
     pausedAt = 0;
-    pauseIntentAt = 0;
+    pauseEnforceUntil = 0;
+    lastPlayRejectAt = 0;
     apiPauseAt = 0;
     // 页面入口发起的播放要「亮出来」给人看。在广播前改好展开态，
     // 这一次 emitState 就同时带上新曲目与新展开态。
@@ -915,9 +895,9 @@ function createPlayer() {
       if (!bgm || playing) return;
       if (!currentId) return;
       trace('api.resume');
-      cancelPlayConfirm();          // 我们自己要播了，不需要再观察
       want = true;
-      pauseIntentAt = 0;
+      pauseEnforceUntil = 0;        // 我们自己要播了，执行窗作废
+      lastPlayRejectAt = 0;
       apiPauseAt = 0;
       playing = true;
       emitState();
@@ -931,10 +911,11 @@ function createPlayer() {
       // 「点暂停没反应」，紧接着再来一个假 ended 就变成「从头播」。
       // 真正的暂停永远执行，状态广播按变化来。
       trace('api.pause');
-      cancelPlayConfirm();          // 暂停优先：还没兑现的系统起播观察作废
       want = false;
       pausedAt = Date.now();
-      pauseIntentAt = pausedAt;
+      // 页内暂停同样张开执行窗：系统的补播不挑暂停是哪儿来的
+      pauseEnforceUntil = pausedAt + PAUSE_ENFORCE_MS;
+      lastPlayRejectAt = 0;
       // 给 onPause 一个「这肯定是用户按的」的判据：宁可把 seek 判据压掉，
       // 也不能让「点暂停」被当成拖动引起的中间态而保留 want。
       apiPauseAt = pausedAt;
@@ -1030,10 +1011,11 @@ function createPlayer() {
       ownSeekAt = 0;
       wantLatch = false;
       pausedAt = 0;
-      pauseIntentAt = 0;
+      pauseEnforceUntil = 0;
+      lastPlayRejectAt = 0;
+      rejectingPause = false;
       apiPauseAt = 0;
       if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
-      cancelPlayConfirm();
       // 状态可能本来就没变（例如已是暂停），必须强制广播一次让悬浮条收起
       emitState();
     },
@@ -1087,7 +1069,7 @@ function createPlayer() {
       if (bgm) { try { bgm.stop(); } catch (e) {} }
       currentId = ''; playing = false; expanded = false; want = false;
       pendingSeek = -1; seekGuardUntil = 0; seeking = false; lastPos = 0; lastPosAt = 0; lastDuration = 0;
-      ownSeekAt = 0; wantLatch = false; pausedAt = 0; pauseIntentAt = 0; apiPauseAt = 0;
+      ownSeekAt = 0; wantLatch = false; pausedAt = 0; pauseEnforceUntil = 0; lastPlayRejectAt = 0; rejectingPause = false; apiPauseAt = 0;
       if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = 0; }
     }
   };
