@@ -29,9 +29,9 @@ const COVERS = [
 ];
 
 function coverOf(poem) {
+  // 40 首诗均已配水墨插画（assets/poem-bg/thumb-*.jpg）；渐变仅防 img 缺失
   if (poem.img) return 'url(' + poem.img + ')';
   const n = parseInt(poem.id.slice(1), 10);
-  if (n >= 1 && n <= 12) return 'url(/assets/figma-browse/poem-' + n + '.png)';
   return COVERS[n % COVERS.length];
 }
 

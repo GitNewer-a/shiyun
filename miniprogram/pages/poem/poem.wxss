@@ -68,7 +68,9 @@
   height: 220rpx;
   background: linear-gradient(180deg, transparent, rgba(180, 200, 190, 0.06), transparent);
 }
-.poem-bg { z-index: 1; width: 100%; height: 100%; filter: brightness(0.7) saturate(1.1); }
+/* 配图源是 240px 缩略图（主包体积所限），全屏铺陈时做柔焦处理：
+   blur 把像素化融成氛围底色，scale 补偿 blur 造成的边缘透底 */
+.poem-bg { z-index: 1; width: 100%; height: 100%; filter: brightness(0.7) saturate(1.1) blur(8px); transform: scale(1.08); }
 .poem-dim {
   z-index: 2;
   background: linear-gradient(180deg, rgba(12, 18, 16, 0.28) 0%, rgba(12, 18, 16, 0.55) 100%);

@@ -1,6 +1,9 @@
 /* 诗词数据（本地兜底源）
    字段与云开发 poems 集合保持一致，导入云数据库后可整体替换。
-   img 留空：配图走云存储，上传后回填 fileID；为空时页面用远山渐变兜底。
+   img：本地 240px 水墨缩略图（assets/poem-bg/thumb-*.jpg，共 40 张约 367KB）。
+   诗词库卡片直接用；诗词详情页放大做柔焦背景（poem.wxss .poem-bg）。
+   1024px 原图在 tools/images-src/crop/（不打包），将来传云存储后把 img
+   换成 cloud:// fileID 即可整体升级高清，页面无需改动。
    lines 含规范标点；拼音只对应汉字，展示时标点拼音留空。
    ------------------------------------------------------------------
    2026-10-15 重建：诗库由 20 首改为 40 首，**与《48首动画唐诗》素材集的
@@ -31,7 +34,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '/assets/poem-bg/bg-p001.jpg',
+    img: '/assets/poem-bg/thumb-p001.jpg',
     lines: ['床前明月光，', '疑是地上霜。', '举头望明月，', '低头思故乡。'],
     pinyin: [
       'chuáng qián míng yuè guāng',
@@ -53,7 +56,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p002.jpg',
     lines: ['春眠不觉晓，', '处处闻啼鸟。', '夜来风雨声，', '花落知多少。'],
     pinyin: [
       'chūn mián bù jué xiǎo',
@@ -75,7 +78,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p003.jpg',
     lines: ['日照香炉生紫烟，', '遥看瀑布挂前川。', '飞流直下三千尺，', '疑是银河落九天。'],
     pinyin: [
       'rì zhào xiāng lú shēng zǐ yān',
@@ -97,7 +100,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p004.jpg',
     lines: ['千山鸟飞绝，', '万径人踪灭。', '孤舟蓑笠翁，', '独钓寒江雪。'],
     pinyin: [
       'qiān shān niǎo fēi jué',
@@ -119,7 +122,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p005.jpg',
     lines: ['日暮苍山远，', '天寒白屋贫。', '柴门闻犬吠，', '风雪夜归人。'],
     pinyin: [
       'rì mù cāng shān yuǎn',
@@ -141,7 +144,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p006.jpg',
     lines: ['众鸟高飞尽，', '孤云独去闲。', '相看两不厌，', '只有敬亭山。'],
     pinyin: [
       'zhòng niǎo gāo fēi jìn',
@@ -163,7 +166,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p007.jpg',
     lines: ['白日依山尽，', '黄河入海流。', '欲穷千里目，', '更上一层楼。'],
     pinyin: [
       'bái rì yī shān jìn',
@@ -185,7 +188,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p008.jpg',
     lines: ['小娃撑小艇，', '偷采白莲回。', '不解藏踪迹，', '浮萍一道开。'],
     pinyin: [
       'xiǎo wá chēng xiǎo tǐng',
@@ -207,7 +210,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p009.jpg',
     lines: ['空山不见人，', '但闻人语响。', '返景入深林，', '复照青苔上。'],
     pinyin: [
       'kōng shān bú jiàn rén',
@@ -229,7 +232,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p010.jpg',
     lines: ['大漠沙如雪，', '燕山月似钩。', '何当金络脑，', '快走踏清秋。'],
     pinyin: [
       'dà mò shā rú xuě',
@@ -251,7 +254,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p011.jpg',
     lines: ['锄禾日当午，', '汗滴禾下土。', '谁知盘中餐，', '粒粒皆辛苦。'],
     pinyin: [
       'chú hé rì dāng wǔ',
@@ -273,7 +276,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p012.jpg',
     lines: ['人闲桂花落，', '夜静春山空。', '月出惊山鸟，', '时鸣春涧中。'],
     pinyin: [
       'rén xián guì huā luò',
@@ -295,7 +298,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p013.jpg',
     lines: ['移舟泊烟渚，', '日暮客愁新。', '野旷天低树，', '江清月近人。'],
     pinyin: [
       'yí zhōu bó yān zhǔ',
@@ -317,7 +320,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p014.jpg',
     lines: ['红豆生南国，', '春来发几枝。', '愿君多采撷，', '此物最相思。'],
     pinyin: [
       'hóng dòu shēng nán guó',
@@ -339,7 +342,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p015.jpg',
     lines: ['松下问童子，', '言师采药去。', '只在此山中，', '云深不知处。'],
     pinyin: [
       'sōng xià wèn tóng zǐ',
@@ -361,7 +364,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p016.jpg',
     lines: ['危楼高百尺，', '手可摘星辰。', '不敢高声语，', '恐惊天上人。'],
     pinyin: [
       'wēi lóu gāo bǎi chǐ',
@@ -383,7 +386,7 @@ const POEMS = [
     dynasty: '宋',
     genre: '宋诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p017.jpg',
     lines: ['一去二三里，', '烟村四五家。', '亭台六七座，', '八九十枝花。'],
     pinyin: [
       'yī qù èr sān lǐ',
@@ -405,7 +408,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p018.jpg',
     lines: ['鹅，鹅，鹅，', '曲项向天歌。', '白毛浮绿水，', '红掌拨清波。'],
     pinyin: [
       'é é é',
@@ -427,7 +430,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p019.jpg',
     lines: ['碧玉妆成一树高，', '万条垂下绿丝绦。', '不知细叶谁裁出，', '二月春风似剪刀。'],
     pinyin: [
       'bì yù zhuāng chéng yī shù gāo',
@@ -449,7 +452,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p020.jpg',
     lines: ['君自故乡来，', '应知故乡事。', '来日绮窗前，', '寒梅著花未？'],
     pinyin: [
       'jūn zì gù xiāng lái',
@@ -471,7 +474,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p021.jpg',
     lines: ['远看山有色，', '近听水无声。', '春去花还在，', '人来鸟不惊。'],
     pinyin: [
       'yuǎn kàn shān yǒu sè',
@@ -493,7 +496,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p022.jpg',
     lines: ['寒雨连江夜入吴，', '平明送客楚山孤。', '洛阳亲友如相问，', '一片冰心在玉壶。'],
     pinyin: [
       'hán yǔ lián jiāng yè rù wú',
@@ -515,7 +518,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '初中',
-    img: '',
+    img: '/assets/poem-bg/thumb-p023.jpg',
     lines: ['朱雀桥边野草花，', '乌衣巷口夕阳斜。', '旧时王谢堂前燕，', '飞入寻常百姓家。'],
     pinyin: [
       'zhū què qiáo biān yě cǎo huā',
@@ -537,7 +540,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p024.jpg',
     lines: ['一道残阳铺水中，', '半江瑟瑟半江红。', '可怜九月初三夜，', '露似真珠月似弓。'],
     pinyin: [
       'yī dào cán yáng pū shuǐ zhōng',
@@ -559,7 +562,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p025.jpg',
     lines: ['月落乌啼霜满天，', '江枫渔火对愁眠。', '姑苏城外寒山寺，', '夜半钟声到客船。'],
     pinyin: [
       'yuè luò wū tí shuāng mǎn tiān',
@@ -581,7 +584,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p026.jpg',
     lines: ['千里莺啼绿映红，', '水村山郭酒旗风。', '南朝四百八十寺，', '多少楼台烟雨中。'],
     pinyin: [
       'qiān lǐ yīng tí lǜ yìng hóng',
@@ -603,7 +606,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p027.jpg',
     lines: ['人间四月芳菲尽，', '山寺桃花始盛开。', '长恨春归无觅处，', '不知转入此中来。'],
     pinyin: [
       'rén jiān sì yuè fāng fēi jìn',
@@ -625,7 +628,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p028.jpg',
     lines: ['少小离家老大回，', '乡音无改鬓毛衰。', '儿童相见不相识，', '笑问客从何处来。'],
     pinyin: [
       'shào xiǎo lí jiā lǎo dà huí',
@@ -647,7 +650,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p029.jpg',
     lines: ['慈母手中线，', '游子身上衣。', '临行密密缝，', '意恐迟迟归。', '谁言寸草心，', '报得三春晖。'],
     pinyin: [
       'cí mǔ shǒu zhōng xiàn',
@@ -671,7 +674,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p030.jpg',
     lines: [
       '离离原上草，',
       '一岁一枯荣。',
@@ -706,7 +709,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p031.jpg',
     lines: ['锦城丝管日纷纷，', '半入江风半入云。', '此曲只应天上有，', '人间能得几回闻。'],
     pinyin: [
       'jǐn chéng sī guǎn rì fēn fēn',
@@ -728,7 +731,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p032.jpg',
     lines: ['独在异乡为异客，', '每逢佳节倍思亲。', '遥知兄弟登高处，', '遍插茱萸少一人。'],
     pinyin: [
       'dú zài yì xiāng wéi yì kè',
@@ -750,7 +753,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p033.jpg',
     lines: ['渭城朝雨浥轻尘，', '客舍青青柳色新。', '劝君更尽一杯酒，', '西出阳关无故人。'],
     pinyin: [
       'wèi chéng zhāo yǔ yì qīng chén',
@@ -772,7 +775,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p034.jpg',
     lines: ['远上寒山石径斜，', '白云生处有人家。', '停车坐爱枫林晚，', '霜叶红于二月花。'],
     pinyin: [
       'yuǎn shàng hán shān shí jìng xié',
@@ -794,7 +797,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p035.jpg',
     lines: ['清明时节雨纷纷，', '路上行人欲断魂。', '借问酒家何处有，', '牧童遥指杏花村。'],
     pinyin: [
       'qīng míng shí jié yǔ fēn fēn',
@@ -816,7 +819,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '初中',
-    img: '',
+    img: '/assets/poem-bg/thumb-p036.jpg',
     lines: ['秦时明月汉时关，', '万里长征人未还。', '但使龙城飞将在，', '不教胡马度阴山。'],
     pinyin: [
       'qín shí míng yuè hàn shí guān',
@@ -838,7 +841,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p037.jpg',
     lines: ['故人西辞黄鹤楼，', '烟花三月下扬州。', '孤帆远影碧空尽，', '唯见长江天际流。'],
     pinyin: [
       'gù rén xī cí huáng hè lóu',
@@ -860,7 +863,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p038.jpg',
     lines: ['李白乘舟将欲行，', '忽闻岸上踏歌声。', '桃花潭水深千尺，', '不及汪伦送我情。'],
     pinyin: [
       'lǐ bái chéng zhōu jiāng yù xíng',
@@ -882,7 +885,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p039.jpg',
     lines: ['朝辞白帝彩云间，', '千里江陵一日还。', '两岸猿声啼不住，', '轻舟已过万重山。'],
     pinyin: [
       'zhāo cí bái dì cǎi yún jiān',
@@ -904,7 +907,7 @@ const POEMS = [
     dynasty: '唐',
     genre: '唐诗',
     stage: '小学',
-    img: '',
+    img: '/assets/poem-bg/thumb-p040.jpg',
     lines: ['两个黄鹂鸣翠柳，', '一行白鹭上青天。', '窗含西岭千秋雪，', '门泊东吴万里船。'],
     pinyin: [
       'liǎng gè huáng lí míng cuì liǔ',
